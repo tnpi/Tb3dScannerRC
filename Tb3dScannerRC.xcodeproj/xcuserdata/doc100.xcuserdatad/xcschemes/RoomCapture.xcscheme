@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "2AFC8D73176F966000F7F3B5"
-               BuildableName = "YashimaRC0.4.app"
+               BuildableName = "Tb3dScannerRC.app"
                BlueprintName = "Tb3dScannerRC"
                ReferencedContainer = "container:Tb3dScannerRC.xcodeproj">
             </BuildableReference>
@@ -33,7 +33,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2AFC8D73176F966000F7F3B5"
-            BuildableName = "YashimaRC0.4.app"
+            BuildableName = "Tb3dScannerRC.app"
             BlueprintName = "Tb3dScannerRC"
             ReferencedContainer = "container:Tb3dScannerRC.xcodeproj">
          </BuildableReference>
@@ -56,7 +56,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2AFC8D73176F966000F7F3B5"
-            BuildableName = "YashimaRC0.4.app"
+            BuildableName = "Tb3dScannerRC.app"
             BlueprintName = "Tb3dScannerRC"
             ReferencedContainer = "container:Tb3dScannerRC.xcodeproj">
          </BuildableReference>
@@ -75,7 +75,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2AFC8D73176F966000F7F3B5"
-            BuildableName = "YashimaRC0.4.app"
+            BuildableName = "Tb3dScannerRC.app"
             BlueprintName = "Tb3dScannerRC"
             ReferencedContainer = "container:Tb3dScannerRC.xcodeproj">
          </BuildableReference>
