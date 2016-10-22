@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1F52A1A11ACA3146004205DD /* Structure.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F52A1A01ACA3146004205DD /* Structure.framework */; };
 		2A0BA3E418500398008FBE2E /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A0BA3E318500398008FBE2E /* CoreImage.framework */; };
 		2A35A0101975B89700D8C0B1 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2A35A00F1975B89700D8C0B1 /* AppDelegate.mm */; };
 		2A35A0151975B89F00D8C0B1 /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2A35A0141975B89F00D8C0B1 /* ViewController.mm */; };
@@ -58,6 +57,7 @@
 		7E2288C9198FE3D300F6E3B2 /* CustomUIKitStyles.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7E2288C8198FE3D300F6E3B2 /* CustomUIKitStyles.mm */; };
 		7EAD268F198AACD500638C9C /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EAD268E198AACD500638C9C /* libz.dylib */; };
 		D2013B0C1DB3F5B90024D68D /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2013B0B1DB3F5B90024D68D /* CoreLocation.framework */; };
+		D2E1969C1DBAFF4000241B3F /* Structure.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2E1969B1DBAFF4000241B3F /* Structure.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -130,6 +130,8 @@
 		7EAD268E198AACD500638C9C /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		7EAD26A9198B015000638C9C /* CustomUIKitStyles.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CustomUIKitStyles.h; path = RoomCapture/CustomUIKitStyles.h; sourceTree = "<group>"; };
 		D2013B0B1DB3F5B90024D68D /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		D2E196991DBAFF0F00241B3F /* Frameworks */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Frameworks; sourceTree = "<group>"; };
+		D2E1969B1DBAFF4000241B3F /* Structure.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Structure.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -137,9 +139,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D2E1969C1DBAFF4000241B3F /* Structure.framework in Frameworks */,
 				D2013B0C1DB3F5B90024D68D /* CoreLocation.framework in Frameworks */,
 				77AAADA31CA5AFA400D91B6C /* Metal.framework in Frameworks */,
-				1F52A1A11ACA3146004205DD /* Structure.framework in Frameworks */,
 				7EAD268F198AACD500638C9C /* libz.dylib in Frameworks */,
 				2A3F2BB01857FB1600EE7A96 /* MessageUI.framework in Frameworks */,
 				2A0BA3E418500398008FBE2E /* CoreImage.framework in Frameworks */,
@@ -202,6 +204,8 @@
 		2AFC8D76176F966000F7F3B5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D2E1969B1DBAFF4000241B3F /* Structure.framework */,
+				D2E196991DBAFF0F00241B3F /* Frameworks */,
 				D2013B0B1DB3F5B90024D68D /* CoreLocation.framework */,
 				77AAADA21CA5AFA400D91B6C /* Metal.framework */,
 				1F52A1A01ACA3146004205DD /* Structure.framework */,
@@ -436,6 +440,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					../Frameworks,
+					"$(PROJECT_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "RoomCapture/Tb3dScannerRC-Prefix.pch";
@@ -474,6 +479,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					../Frameworks,
+					"$(PROJECT_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "RoomCapture/Tb3dScannerRC-Prefix.pch";
