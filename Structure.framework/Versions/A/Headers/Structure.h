@@ -256,8 +256,8 @@ STInfraredFrame is the raw infrared frame object for frames streaming from Struc
 /** Color Frame.
  
 STColorFrame represents a frame from a color camera, captured from the device which Structure Sensor is attached to.
- 
-@warning: the only supported color resolutions are 640x480, 2592x1936. 720p and 1080p modes are not supported and will return an exception.
+
+@warning: The only supported color resolutions are  640x480, 2048x1536, 2592x1936, 3264x2448 and 4032x3024. Other color resolutions are not supported and will throw an exception.
 */
 @interface STColorFrame : NSObject<NSCopying>
 
