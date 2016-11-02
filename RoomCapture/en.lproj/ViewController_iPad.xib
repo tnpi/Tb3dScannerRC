@@ -27,6 +27,12 @@
                 <outlet property="intervalSliderLabel" destination="nCZ-5b-0Jc" id="PPA-Kv-UDR"/>
                 <outlet property="latitudeLabel" destination="LQS-Lb-N6Q" id="cmc-46-TUC"/>
                 <outlet property="longitudeLabel" destination="xDb-Rh-Lmw" id="qhf-D4-c1o"/>
+                <outlet property="nearModeSwitch" destination="HQv-7c-q9D" id="Wgb-43-MMb"/>
+                <outlet property="nearModeSwitchLabel" destination="Ybq-4K-QkT" id="mfc-wb-49M"/>
+                <outlet property="recordGpsSwitch" destination="D4x-hb-61w" id="h2M-4R-GLI"/>
+                <outlet property="recordGpsSwitchLabel" destination="Ybq-4K-QkT" id="JKU-RY-IDB"/>
+                <outlet property="recordToMemorySwitch" destination="si1-Zp-xdO" id="rgA-Sg-EbQ"/>
+                <outlet property="recordToMemorySwitchLabel" destination="gLD-Aq-JHD" id="a5X-Vs-8OU"/>
                 <outlet property="resetButton" destination="RfT-0h-QSo" id="iaF-8t-Snv"/>
                 <outlet property="resolutionLabel" destination="ySE-hU-kv5" id="SMt-6g-nxN"/>
                 <outlet property="resolutionSlider" destination="cCu-Ak-P8S" id="YEM-Hv-SMZ"/>
@@ -35,6 +41,7 @@
                 <outlet property="roomSizeSlider" destination="ZMm-ES-m1Y" id="Hvk-qE-sus"/>
                 <outlet property="roomSizeSliderLabel" destination="Zgv-or-kH1" id="zpJ-ni-MSl"/>
                 <outlet property="roomSizeUiLabel" destination="hdX-sz-SFj" id="Mkk-Q0-nD5"/>
+                <outlet property="saveSettingsButton" destination="wQg-yv-geC" id="pre-RB-jze"/>
                 <outlet property="saveToFileSwitch" destination="V6S-iH-HRQ" id="sow-KT-5g9"/>
                 <outlet property="saveToFileSwitchLabel" destination="0Dc-M1-7x3" id="ANe-Vw-ORO"/>
                 <outlet property="scanButton" destination="Y9C-vE-QSA" id="dCm-Se-q6y"/>
@@ -159,6 +166,11 @@ Please Realign or Press Reset.</string>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <nil key="highlightedColor"/>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="6"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
                 </label>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Resolution" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ySE-hU-kv5">
                     <frame key="frameInset" minX="43" minY="676" width="81" height="21"/>
@@ -167,6 +179,11 @@ Please Realign or Press Reset.</string>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <nil key="highlightedColor"/>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="6"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
                 </label>
                 <slider opaque="NO" contentMode="scaleToFill" misplaced="YES" restorationIdentifier="IntervalSlider" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="60" minValue="1" maxValue="180" id="Lrh-SX-ugN">
                     <frame key="frameInset" minX="141" minY="621" width="807" height="31"/>
@@ -182,6 +199,11 @@ Please Realign or Press Reset.</string>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <nil key="highlightedColor"/>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="6"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
                 </label>
                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" restorationIdentifier="saveToFileSwitch" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="V6S-iH-HRQ" userLabel="saveToFileSwitch">
                     <frame key="frameInset" minX="955" minY="572" width="51" height="31"/>
@@ -194,6 +216,11 @@ Please Realign or Press Reset.</string>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <nil key="highlightedColor"/>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="6"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
                 </label>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" restorationIdentifier="roomSizeSliderLabel" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Zgv-or-kH1">
                     <frame key="frameInset" minX="959" minY="722" width="65" height="21"/>
@@ -202,6 +229,11 @@ Please Realign or Press Reset.</string>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <nil key="highlightedColor"/>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="6"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
                 </label>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" restorationIdentifier="intervalSliderLabel" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="nCZ-5b-0Jc">
                     <frame key="frameInset" minX="959" minY="625" width="65" height="21"/>
@@ -211,8 +243,8 @@ Please Realign or Press Reset.</string>
                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <nil key="highlightedColor"/>
                     <userDefinedRuntimeAttributes>
-                        <userDefinedRuntimeAttribute type="number" keyPath="keyPath">
-                            <integer key="value" value="8"/>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="6"/>
                         </userDefinedRuntimeAttribute>
                     </userDefinedRuntimeAttributes>
                 </label>
@@ -357,7 +389,7 @@ Please Realign or Press Reset.</string>
                     <nil key="highlightedColor"/>
                 </label>
                 <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="wQg-yv-geC">
-                    <frame key="frameInset" minX="817" minY="29" width="183" height="55"/>
+                    <frame key="frameInset" minX="817" minY="94" width="183" height="55"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                     <fontDescription key="fontDescription" name=".SFNSDisplay-Regular" family=".SF NS Display" pointSize="24"/>
@@ -370,33 +402,33 @@ Please Realign or Press Reset.</string>
                     </userDefinedRuntimeAttributes>
                 </button>
                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="D4x-hb-61w">
-                    <frame key="frameInset" minX="955" minY="225" width="51" height="31"/>
+                    <frame key="frameInset" minX="955" minY="285" width="51" height="31"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 </switch>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="RecordGPS" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Ybq-4K-QkT">
-                    <frame key="frameInset" minX="797" minY="230" width="140" height="21"/>
+                    <frame key="frameInset" minX="797" minY="290" width="140" height="21"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="HQv-7c-q9D">
-                    <frame key="frameInset" minX="955" minY="176" width="51" height="31"/>
+                    <frame key="frameInset" minX="955" minY="236" width="51" height="31"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 </switch>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="NearMode (onNextBoot)" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="LC1-cJ-G4W">
-                    <frame key="frameInset" minX="742" minY="181" width="195" height="21"/>
+                    <frame key="frameInset" minX="742" minY="241" width="195" height="21"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="si1-Zp-xdO">
-                    <frame key="frameInset" minX="955" minY="127" width="51" height="31"/>
+                    <frame key="frameInset" minX="955" minY="187" width="51" height="31"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 </switch>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="RecordToMemory" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="gLD-Aq-JHD">
-                    <frame key="frameInset" minX="742" minY="132" width="195" height="21"/>
+                    <frame key="frameInset" minX="742" minY="192" width="195" height="21"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="textColor"/>

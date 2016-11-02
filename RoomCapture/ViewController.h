@@ -267,6 +267,9 @@ struct DisplayData
 @property (weak, nonatomic) IBOutlet UISwitch *drawModeSwitch;
 @property (weak, nonatomic) IBOutlet UISwitch *colorScanSwitch;
 @property (weak, nonatomic) IBOutlet UISwitch *saveToFileSwitch;
+@property (weak, nonatomic) IBOutlet UISwitch *recordToMemorySwitch;
+@property (weak, nonatomic) IBOutlet UISwitch *nearModeSwitch;
+@property (weak, nonatomic) IBOutlet UISwitch *recordGpsSwitch;
 @property (weak, nonatomic) IBOutlet UISlider *intervalSlider;
 
 @property (weak, nonatomic) IBOutlet UILabel *resolutionLabel;
@@ -276,10 +279,14 @@ struct DisplayData
 @property (weak, nonatomic) IBOutlet UILabel *roomSizeUiLabel;
 
 @property (weak, nonatomic) IBOutlet UIButton *uiHideButton;
+@property (weak, nonatomic) IBOutlet UIButton *saveSettingsButton;
 
 @property (weak, nonatomic) IBOutlet UILabel *drawModeSwitchLabel;
 @property (weak, nonatomic) IBOutlet UILabel *colorScanSwitchLabel;
 @property (weak, nonatomic) IBOutlet UILabel *saveToFileSwitchLabel;
+@property (weak, nonatomic) IBOutlet UILabel *recordToMemorySwitchLabel;
+@property (weak, nonatomic) IBOutlet UILabel *nearModeSwitchLabel;
+@property (weak, nonatomic) IBOutlet UILabel *recordGpsSwitchLabel;
 
 @property (weak, nonatomic) IBOutlet UILabel *intervalSliderLabel;
 @property (weak, nonatomic) IBOutlet UILabel *resolutionSliderLabel;
