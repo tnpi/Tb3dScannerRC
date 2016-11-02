@@ -257,6 +257,10 @@ struct DisplayData
     bool udNearModeSwitch;
     bool udRecordToMemorySwitch;
     
+    int udIntervalSlider;
+    float udResolutionSlider;
+    float udRoomSizeSlider;
+    
 }
 
 @property (nonatomic, retain) AVCaptureSession *avCaptureSession;

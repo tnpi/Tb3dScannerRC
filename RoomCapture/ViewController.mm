@@ -77,7 +77,16 @@
         const char *chars = [content UTF8String];
         NSLog(@"filePathList: %s", chars);
     }
+
+    self.recordToMemorySwitch.on = udRecordToMemorySwitch ? YES:NO;
+    self.nearModeSwitch.on = udNearModeSwitch ? YES:NO;
+    self.roomSizeSlider.value = udRoomSizeSlider;
+    self.resolutionSlider.value = udResolutionSlider;
+    self.intervalSlider.value = udIntervalSlider;
     
+    [self actionOnResolutionSliderValueChanged];
+    [self actionOnRoomSizeSliderValueChanged];
+
     self.resolutionSliderLabel.text = [NSString stringWithFormat:@"%.3f", self.resolutionSlider.value ];
     
     self.intervalSliderLabel.text = [NSString stringWithFormat:@"%d", (int)self.intervalSlider.value ];
@@ -85,8 +94,6 @@
     
     self.roomSizeSliderLabel.text = [NSString stringWithFormat:@"%f", self.roomSizeSlider.value ];
 
-    self.recordToMemorySwitch.on = udRecordToMemorySwitch ? YES:NO;
-    self.nearModeSwitch.on = udNearModeSwitch ? YES:NO;
 
     // GPS ---------------------------------------------------
     lm = [[CLLocationManager alloc] init];
@@ -379,6 +386,9 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     udRecordToMemorySwitch = [defaults boolForKey:@"recordToMemorySwitch"];
     udNearModeSwitch = [defaults boolForKey:@"nearModeSwitch"];
+    udIntervalSlider = (int)[defaults integerForKey:@"intervalSlider"];
+    udResolutionSlider = [defaults floatForKey:@"resolutionSlider"];
+    udRoomSizeSlider = [defaults floatForKey:@"roomSizeSlider"];
 
     NSLog(@"udNearMode: %d", udRecordToMemorySwitch?1:0);
     NSLog(@"udRecordToMemory: %d", udNearModeSwitch?1:0);
@@ -575,6 +585,13 @@
 - (IBAction)uiHideButton:(id)sender {
 }
 
+- (void)actionOnResolutionSliderValueChanged {
+    _options.initialVolumeResolutionInMeters = self.resolutionSlider.value;
+    
+    self.resolutionSliderLabel.text = [NSString stringWithFormat:@"%.3f", self.resolutionSlider.value ];
+
+}
+
 - (void)actionOnRoomSizeSliderValueChanged {
     float scale = self.roomSizeSlider.value;
     
@@ -768,6 +785,9 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setBool:_nearModeSwitch.isOn forKey:@"nearModeSwitch"];
     [defaults setBool:_recordToMemorySwitch.isOn forKey:@"recordToMemorySwitch"];
+    [defaults setInteger:_intervalSlider.value forKey:@"intervalSlider"];
+    [defaults setFloat:_resolutionSlider.value  forKey:@"resolutionSlider"];
+    [defaults setFloat:_roomSizeSlider.value  forKey:@"roomSizeSlider"];
     BOOL successful = [defaults synchronize];
     if (successful) {
         NSLog(@"%@", @"ユーザデフォルト設定データの保存に成功しました。");
@@ -792,9 +812,7 @@
 // tanaka add
 - (IBAction)resolutionSliderValueChanged:(id)sender
 {
-    _options.initialVolumeResolutionInMeters = self.resolutionSlider.value;
-    
-    self.resolutionSliderLabel.text = [NSString stringWithFormat:@"%.3f", self.resolutionSlider.value ];
+    [self actionOnResolutionSliderValueChanged];
 }
 
 - (IBAction)intervalSliderValueChanged:(id)sender {
