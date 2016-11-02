@@ -80,6 +80,10 @@
 
     self.recordToMemorySwitch.on = udRecordToMemorySwitch ? YES:NO;
     self.nearModeSwitch.on = udNearModeSwitch ? YES:NO;
+    self.recordGpsSwitch.on = udRecordGpsSwitch ? YES:NO;
+    self.saveToFileSwitch.on = udSaveToFileSwitch ? YES:NO;
+    self.colorScanSwitch.on = udColorScanSwitch ? YES:NO;
+    self.drawModeSwitch.on = udDrawModeSwitch ? YES:NO;
     self.roomSizeSlider.value = udRoomSizeSlider;
     self.resolutionSlider.value = udResolutionSlider;
     self.intervalSlider.value = udIntervalSlider;
@@ -386,6 +390,11 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     udRecordToMemorySwitch = [defaults boolForKey:@"recordToMemorySwitch"];
     udNearModeSwitch = [defaults boolForKey:@"nearModeSwitch"];
+    udRecordGpsSwitch = [defaults boolForKey:@"recordGpsSwitch"];
+    udSaveToFileSwitch = [defaults boolForKey:@"saveToFileSwitch"];
+    udColorScanSwitch = [defaults boolForKey:@"colorScanSwitch"];
+    udDrawModeSwitch = [defaults boolForKey:@"drawModeSwitch"];
+    
     udIntervalSlider = (int)[defaults integerForKey:@"intervalSlider"];
     udResolutionSlider = [defaults floatForKey:@"resolutionSlider"];
     udRoomSizeSlider = [defaults floatForKey:@"roomSizeSlider"];
@@ -785,6 +794,11 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setBool:_nearModeSwitch.isOn forKey:@"nearModeSwitch"];
     [defaults setBool:_recordToMemorySwitch.isOn forKey:@"recordToMemorySwitch"];
+    [defaults setBool:_recordGpsSwitch.isOn forKey:@"recordGpsSwitch"];
+    [defaults setBool:_drawModeSwitch.isOn forKey:@"drawModeSwitch"];
+    [defaults setBool:_saveToFileSwitch.isOn forKey:@"saveToFileSwitch"];
+    [defaults setBool:_colorScanSwitch.isOn forKey:@"colorScanSwitch"];
+    
     [defaults setInteger:_intervalSlider.value forKey:@"intervalSlider"];
     [defaults setFloat:_resolutionSlider.value  forKey:@"resolutionSlider"];
     [defaults setFloat:_roomSizeSlider.value  forKey:@"roomSizeSlider"];

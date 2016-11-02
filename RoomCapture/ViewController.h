@@ -256,6 +256,10 @@ struct DisplayData
     
     bool udNearModeSwitch;
     bool udRecordToMemorySwitch;
+    bool udRecordGpsSwitch;
+    bool udSaveToFileSwitch;
+    bool udColorScanSwitch;
+    bool udDrawModeSwitch;
     
     int udIntervalSlider;
     float udResolutionSlider;
