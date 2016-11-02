@@ -335,6 +335,7 @@ struct DisplayData
 - (IBAction)resolutionSliderValueChanged:(id)sender;
 - (IBAction)intervalSliderValueChanged:(id)sender;
 - (IBAction)roomSizeSliderValueChanged:(id)sender;
+- (IBAction)nearModeSwitchValueChanged:(id)sender;
 
 
 

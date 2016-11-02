@@ -591,6 +591,11 @@
     [self actionOnRoomSizeSliderValueChanged];
 }
 
+- (IBAction)nearModeSwitchValueChanged:(id)sender {
+    [_sensorController setHighGainEnabled:_nearModeSwitch.isOn?NO:YES];
+    NSLog(@"Sensor gain changed. %d", _nearModeSwitch.isOn?NO:YES);
+}
+
 - (IBAction)uiHideButton:(id)sender {
 }
 

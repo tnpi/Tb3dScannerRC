@@ -141,24 +141,17 @@
     NSError *error = nil;
         
     // We will use color for tracking and rendering, so let's use registered depth.
-    //STStreamConfig structureStreamConfig = _options.useHardwareRegisteredDepth ? STStreamConfigRegisteredDepth320x240 : STStreamConfigDepth320x240;
+    STStreamConfig structureStreamConfig = _options.useHardwareRegisteredDepth ? STStreamConfigRegisteredDepth320x240 : STStreamConfigDepth320x240;
+    //STStreamConfig structureStreamConfig = STStreamConfigDepth320x240;
     // We will use color for tracking and rendering, so let's use registered depth.
-    STStreamConfig structureStreamConfig =  STStreamConfigRegisteredDepth320x240;
     
     // 起動時のみに有効な？ 重要なスキャニングの設定 tanaka
-    /*BOOL optionsAreValid = [_sensorController startStreamingWithOptions:@{
-                                                                          kSTStreamConfigKey : @(structureStreamConfig),
-                                                                          kSTFrameSyncConfigKey : @(STFrameSyncDepthAndRgb),
-                                                                          kSTColorCameraFixedLensPositionKey: @(_options.colorCameraLensPosition)
-                                                                          }
-                                                                  error:nil];
-     */
     BOOL optionsAreValid = [_sensorController startStreamingWithOptions:@{
                                                                           kSTStreamConfigKey : @(structureStreamConfig),
                                                                           kSTFrameSyncConfigKey : @(STFrameSyncDepthAndRgb),
                                                                           kSTColorCameraFixedLensPositionKey: @(_options.colorCameraLensPosition),
-                                                                          kSTHighGainEnabledKey: udNearModeSwitch ? @(NO):@(YES),              // tanaka add for dark/far item scan(near is bad) default:NO
-                                                                          //kSTHoleFilterEnabledKey:@(NO),
+                                                                          kSTHighGainEnabledKey: udNearModeSwitch ? @NO:@YES,              // tanaka add for dark/far item scan(near is bad) default:NO
+                                                                          kSTHoleFilterEnabledKey:@(YES),
                                                                           }
                                                                   error:nil];
     
@@ -169,7 +162,6 @@
     }
     
     NSLog(@"[Structure] Streaming started.");
-    
     
     // We'll only turn on the color camera if we have at least an approximate calibration
     STCalibrationType calibrationType = [_sensorController calibrationType];
@@ -193,7 +185,6 @@
     // Notify and initialize streaming dependent objects.
     [self onStructureSensorStartedStreaming];
     
-    //[_sensorController setHighGainEnabled:@(YES)];
 }
 
 - (void)onStructureSensorStartedStreaming
