@@ -157,7 +157,7 @@
                                                                           kSTStreamConfigKey : @(structureStreamConfig),
                                                                           kSTFrameSyncConfigKey : @(STFrameSyncDepthAndRgb),
                                                                           kSTColorCameraFixedLensPositionKey: @(_options.colorCameraLensPosition),
-                                                                          kSTHighGainEnabledKey: @(YES),              // tanaka add for dark/far item scan(near is bad) default:NO
+                                                                          kSTHighGainEnabledKey: udNearModeSwitch ? @(NO):@(YES),              // tanaka add for dark/far item scan(near is bad) default:NO
                                                                           //kSTHoleFilterEnabledKey:@(NO),
                                                                           }
                                                                   error:nil];

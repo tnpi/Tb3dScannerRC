@@ -33,6 +33,8 @@
 
 - (void)viewDidLoad
 {
+    [self loadUserDefaultSettingData];
+
     [super viewDidLoad];
     
     [self setupGL];
@@ -82,6 +84,9 @@
 
     
     self.roomSizeSliderLabel.text = [NSString stringWithFormat:@"%f", self.roomSizeSlider.value ];
+
+    self.recordToMemorySwitch.on = udRecordToMemorySwitch ? YES:NO;
+    self.nearModeSwitch.on = udNearModeSwitch ? YES:NO;
 
     // GPS ---------------------------------------------------
     lm = [[CLLocationManager alloc] init];
@@ -369,6 +374,19 @@
     }
 }
 
+- (void) loadUserDefaultSettingData {
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    udRecordToMemorySwitch = [defaults boolForKey:@"recordToMemorySwitch"];
+    udNearModeSwitch = [defaults boolForKey:@"nearModeSwitch"];
+
+    NSLog(@"udNearMode: %d", udRecordToMemorySwitch?1:0);
+    NSLog(@"udRecordToMemory: %d", udNearModeSwitch?1:0);
+    
+}
+
+
+
 #pragma mark - IMU
 
 - (void)setupIMU
@@ -590,8 +608,6 @@
 }
 
 
-
-
 // スキャンボタンが押された場合の処理
 - (IBAction)scanButtonPressed:(id)sender
 {
@@ -623,6 +639,7 @@
 {
     [self doUiHideAction];
 }
+
 
 - (void)doUiHideAction {
     if (!uiHideFlag) {
@@ -745,6 +762,18 @@
 
 - (IBAction)uiHideButtonTouchDowned:(id)sender {
     [self doUiHideAction];
+}
+
+- (IBAction)uiSaveSettingButtonPressed:(id)sender {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setBool:_nearModeSwitch.isOn forKey:@"nearModeSwitch"];
+    [defaults setBool:_recordToMemorySwitch.isOn forKey:@"recordToMemorySwitch"];
+    BOOL successful = [defaults synchronize];
+    if (successful) {
+        NSLog(@"%@", @"ユーザデフォルト設定データの保存に成功しました。");
+    } else {
+        NSLog(@"%@", @"ユーザデフォルト設定データの保存に失敗しました。");
+    }
 }
 
 - (IBAction)roomSizeSliderTouchDown:(id)sender {

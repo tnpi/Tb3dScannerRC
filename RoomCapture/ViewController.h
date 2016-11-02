@@ -53,11 +53,13 @@ struct Options
     
     // Whether we should use depth aligned to the color viewpoint when Structure Sensor was calibrated.
     // This setting may get overwritten to false if no color camera can be used.
-    bool useHardwareRegisteredDepth = false;
+    //bool useHardwareRegisteredDepth = false;
+    bool useHardwareRegisteredDepth = true;     // tanaka add
     
     // Whether to enable an expensive per-frame depth accuracy refinement.
     // Note: this option requires useHardwareRegisteredDepth to be set to false.
-    const bool applyExpensiveCorrectionToDepth = true;
+    //const bool applyExpensiveCorrectionToDepth = true;
+    const bool applyExpensiveCorrectionToDepth = false;     // tanaka add for get fast speed
 };
 
 enum RoomCaptureState
@@ -251,6 +253,10 @@ struct DisplayData
     
     CLLocationManager *lm;
     CLLocation* recentLocation;
+    
+    bool udNearModeSwitch;
+    bool udRecordToMemorySwitch;
+    
 }
 
 @property (nonatomic, retain) AVCaptureSession *avCaptureSession;
@@ -310,6 +316,7 @@ struct DisplayData
 - (IBAction)doneButtonPressed:(id)sender;
 - (IBAction)uiHideButtonPressed:(id)sender;
 - (IBAction)uiHideButtonTouchDowned:(id)sender;
+- (IBAction)uiSaveSettingButtonPressed:(id)sender;
 
 - (IBAction)roomSizeSliderTouchDown:(id)sender;
 - (IBAction)roomSizeSliderTouchUpInside:(id)sender;
