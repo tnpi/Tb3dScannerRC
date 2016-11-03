@@ -336,9 +336,8 @@
     // Take a copy of the scene mesh to safely modify it.
     //_colorizedMesh = [_slamState.scene lockAndGetSceneMesh];//[[STMesh alloc] initWithMesh:[_slamState.scene lockAndGetSceneMesh]];
     _colorizedMesh = [[STMesh alloc] initWithMesh:[_slamState.scene lockAndGetSceneMesh]];  // very stable!
-    [_slamState.scene unlockSceneMesh];
     
-    _appStatus.backgroundProcessingStatus = AppStatus::BackgroundProcessingStatusFinalizing;
+    //_appStatus.backgroundProcessingStatus = AppStatus::BackgroundProcessingStatusFinalizing;
     //[self updateAppStatusMessage];
     
     STBackgroundTask* colorizeTask = [STColorizer
@@ -366,6 +365,7 @@
     [colorizeTask start];
     
     [colorizeTask waitUntilCompletion]; // add by tanaka カラー化が終わるまで処理まち
+    [_slamState.scene unlockSceneMesh];
 }
 //------------------------------------------------------
 
