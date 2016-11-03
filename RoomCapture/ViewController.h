@@ -295,6 +295,7 @@ struct DisplayData
 @property (weak, nonatomic) IBOutlet UISwitch *nearModeSwitch;
 @property (weak, nonatomic) IBOutlet UISwitch *recordGpsSwitch;
 @property (weak, nonatomic) IBOutlet UISwitch *trackingSmallObjectSwitch;
+@property (weak, nonatomic) IBOutlet UISwitch *liveWireframeSwitch;
 
 @property (weak, nonatomic) IBOutlet UISwitch *trackerQualityAccurateSwitch;
 @property (weak, nonatomic) IBOutlet UISlider *intervalSlider;
@@ -307,7 +308,7 @@ struct DisplayData
 
 @property (weak, nonatomic) IBOutlet UIButton *uiHideButton;
 @property (weak, nonatomic) IBOutlet UIButton *saveSettingsButton;
-@property (weak, nonatomic) IBOutlet UILabel *mapperDepthThlesholdSliderLabel;
+@property (weak, nonatomic) IBOutlet UILabel *mapperDepthThresholdSliderLabel;
 
 @property (weak, nonatomic) IBOutlet UILabel *drawModeSwitchLabel;
 @property (weak, nonatomic) IBOutlet UILabel *colorScanSwitchLabel;

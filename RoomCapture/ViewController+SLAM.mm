@@ -145,7 +145,7 @@ namespace // anonymous namespace for local functions
                                     
                                     kSTMapperDepthIntegrationFarThresholdKey:@(self.mapperDepthThresholdSlider.value),
                                     
-                                    kSTMapperEnableLiveWireFrameKey: @(YES), // more speedy? test
+                                    kSTMapperEnableLiveWireFrameKey: self.liveWireframeSwitch.isOn ? @(YES):@(NO), // more speedy? test
                                     //kSTMapperEnableLiveWireFrameKey: @(YES), // We need a live wireframe mesh for our visualization.
                                     };
     /*

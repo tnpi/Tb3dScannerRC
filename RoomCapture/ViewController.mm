@@ -646,6 +646,7 @@
 }
 
 - (IBAction)mapperDepthThlesholdSliderValueChanged:(id)sender {
+    self.mapperDepthThresholdSliderLabel.text = [NSString stringWithFormat:@"%.3f", self.mapperDepthThresholdSlider.value ];
 }
 
 - (IBAction)uiHideButton:(id)sender {

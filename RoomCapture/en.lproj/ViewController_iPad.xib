@@ -26,9 +26,10 @@
                 <outlet property="intervalSlider" destination="Lrh-SX-ugN" id="NYJ-Km-sgO"/>
                 <outlet property="intervalSliderLabel" destination="nCZ-5b-0Jc" id="PPA-Kv-UDR"/>
                 <outlet property="latitudeLabel" destination="LQS-Lb-N6Q" id="cmc-46-TUC"/>
+                <outlet property="liveWireframeSwitch" destination="rQZ-DM-1o3" id="f5c-x7-LqT"/>
                 <outlet property="longitudeLabel" destination="xDb-Rh-Lmw" id="qhf-D4-c1o"/>
-                <outlet property="mapperDepthThlesholdSliderLabel" destination="sxh-4r-Ov9" id="0NZ-xw-q2P"/>
                 <outlet property="mapperDepthThresholdSlider" destination="FKA-xI-t8v" id="Thx-8A-W8P"/>
+                <outlet property="mapperDepthThresholdSliderLabel" destination="sxh-4r-Ov9" id="6mu-PF-gY5"/>
                 <outlet property="nearModeSwitch" destination="HQv-7c-q9D" id="Wgb-43-MMb"/>
                 <outlet property="nearModeSwitchLabel" destination="Ybq-4K-QkT" id="mfc-wb-49M"/>
                 <outlet property="recordGpsSwitch" destination="D4x-hb-61w" id="h2M-4R-GLI"/>
@@ -488,6 +489,17 @@ Please Realign or Press Reset.</string>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="live wireframe" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="R1d-Hh-TfM">
+                    <frame key="frameInset" minX="583" minY="428" width="107" height="21"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="rQZ-DM-1o3">
+                    <frame key="frameInset" minX="708" minY="423" width="51" height="31"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                </switch>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <gestureRecognizers/>
