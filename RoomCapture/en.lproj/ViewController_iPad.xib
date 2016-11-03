@@ -64,6 +64,18 @@ Please Realign or Press Reset.</string>
                     <color key="textColor" red="1" green="0.035351606611024211" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
+                <label hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Please Connect Structure Sensor" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="6ly-If-uZh" userLabel="Label - App Status Message">
+                    <frame key="frameInset" width="1024" height="768"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <accessibility key="accessibilityConfiguration">
+                        <accessibilityTraits key="traits" staticText="YES" notEnabled="YES"/>
+                        <real key="isElement" value="0.0"/>
+                    </accessibility>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="36"/>
+                    <color key="textColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Y9C-vE-QSA" userLabel="Button - Scan">
                     <frame key="frameInset" minX="876" minY="320" width="128" height="128"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -81,7 +93,7 @@ Please Realign or Press Reset.</string>
                         <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </state>
                     <connections>
-                        <action selector="resetButtonPressed:" destination="-1" eventType="touchUpInside" id="1HD-9l-Dl3"/>
+                        <action selector="doneButtonPressed:" destination="-1" eventType="touchUpInside" id="OQT-H2-8q9"/>
                     </connections>
                 </button>
                 <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="RfT-0h-QSo" userLabel="Reset">
@@ -94,18 +106,6 @@ Please Realign or Press Reset.</string>
                         <action selector="resetButtonPressed:" destination="-1" eventType="touchUpInside" id="ViX-eg-0Uv"/>
                     </connections>
                 </button>
-                <label hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Please Connect Structure Sensor" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="6ly-If-uZh" userLabel="Label - App Status Message">
-                    <frame key="frameInset" width="1024" height="768"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                    <accessibility key="accessibilityConfiguration">
-                        <accessibilityTraits key="traits" staticText="YES" notEnabled="YES"/>
-                        <real key="isElement" value="0.0"/>
-                    </accessibility>
-                    <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="36"/>
-                    <color key="textColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                    <nil key="highlightedColor"/>
-                </label>
                 <slider opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1.6659999999999999" minValue="0.33300000000000002" maxValue="3.3330000000000002" id="ZMm-ES-m1Y" userLabel="Horizontal Slider - RoomSize">
                     <frame key="frameInset" minX="141" minY="718" width="807" height="31"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>

@@ -246,7 +246,11 @@
 
 - (void)enterScanningState
 {
-
+    
+    NSLog(@"enterScanningState start");
+    
+    scanStartDate = [NSDate date];
+    
     if (!uiHideFlag) {
         // Switch to the Done button.
         self.scanButton.hidden = YES;
@@ -272,6 +276,8 @@
 
 - (void)enterFinalizingState
 {
+    NSLog(@"enterFinalizingState() start");
+
     // Cannot be lost if not scanning anymore.
     [self hideTrackingErrorMessage];
     
