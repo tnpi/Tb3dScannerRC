@@ -74,14 +74,17 @@
     }
     
     // Use VGA color.
-    NSString *sessionPreset = AVCaptureSessionPreset640x480;
+    NSString *sessionPreset = AVCaptureSessionPreset640x480;//AVCaptureSessionPreset640x480;  changed tanaka
     
     // Set up Capture Session.
     self.avCaptureSession = [[AVCaptureSession alloc] init];
     [self.avCaptureSession beginConfiguration];
     
     // Set preset session size.
-    [self.avCaptureSession setSessionPreset:sessionPreset];
+    //[self.avCaptureSession setSessionPreset:sessionPreset];
+    
+    // InputPriority allows us to select a more precise format (below)
+    [self.avCaptureSession setSessionPreset:AVCaptureSessionPresetInputPriority];
     
     // Create a video device and input from that Device.  Add the input to the capture session.
     self.videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
@@ -94,6 +97,32 @@
     // Use auto-exposure, and auto-white balance and set the focus to infinity.
     if([self.videoDevice lockForConfiguration:&error])
     {
+        // add by tanaka for more color resolution ----------------------------------------------
+        int imageWidth = -1;
+        int imageHeight = -1;
+        
+        if (false)//self.enableHighResolutionColorSwitch.on)
+        {
+            // High-resolution uses 2592x1936, which is close to a 4:3 aspect ratio.
+            // Other aspect ratios such as 720p or 1080p are not yet supported.
+            imageWidth = 2592;
+            imageHeight = 1936;
+        }
+        else
+        {
+            // Low resolution uses VGA.
+            imageWidth = 640;
+            imageHeight = 480;
+        }
+        
+        // Select capture format
+        [self selectCaptureFormat:@{ @"width": @(imageWidth),
+                                     @"height": @(imageHeight)}];
+        // ----------------------------------------------
+        
+
+        
+        
         // Allow exposure to initially change
         if ([self.videoDevice isExposureModeSupported:AVCaptureExposureModeContinuousAutoExposure])
             [self.videoDevice setExposureMode:AVCaptureExposureModeContinuousAutoExposure];
@@ -209,5 +238,43 @@
     // Pass color buffers directly to the driver, which will then produce synchronized depth/color pairs.
     [_sensorController frameSyncNewColorBuffer:sampleBuffer];
 }
+
+// add by tanaka from scanner ------------------------------
+// キャプチャフォーマットの選択
+- (void)selectCaptureFormat:(NSDictionary*)demandFormat
+{
+    AVCaptureDeviceFormat * selectedFormat = nil;
+    
+    for (AVCaptureDeviceFormat* format in self.videoDevice.formats)
+    {
+        double formatMaxFps = ((AVFrameRateRange *)[format.videoSupportedFrameRateRanges objectAtIndex:0]).maxFrameRate;
+        
+        CMFormatDescriptionRef formatDesc = format.formatDescription;
+        FourCharCode fourCharCode = CMFormatDescriptionGetMediaSubType(formatDesc);
+        
+        CMVideoFormatDescriptionRef videoFormatDesc = formatDesc;
+        CMVideoDimensions formatDims = CMVideoFormatDescriptionGetDimensions(videoFormatDesc);
+        
+        NSNumber * widthNeeded  = demandFormat[@"width"];
+        NSNumber * heightNeeded = demandFormat[@"height"];
+        
+        if ( widthNeeded && widthNeeded .intValue!= formatDims.width )
+            continue;
+        
+        if( heightNeeded && heightNeeded.intValue != formatDims.height )
+            continue;
+        
+        // we only support full range YCbCr for now
+        if(fourCharCode != (FourCharCode)'420f')
+            continue;
+        
+        
+        selectedFormat = format;
+        break;
+    }
+    
+    self.videoDevice.activeFormat = selectedFormat;
+}
+
 
 @end
