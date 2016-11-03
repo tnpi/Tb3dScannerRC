@@ -45,7 +45,9 @@
                 <outlet property="saveToFileSwitch" destination="V6S-iH-HRQ" id="sow-KT-5g9"/>
                 <outlet property="saveToFileSwitchLabel" destination="0Dc-M1-7x3" id="ANe-Vw-ORO"/>
                 <outlet property="scanButton" destination="Y9C-vE-QSA" id="dCm-Se-q6y"/>
+                <outlet property="trackerQualityAccurateSwitch" destination="Tj3-ei-TQc" id="8XW-1x-EX4"/>
                 <outlet property="trackingMessageLabel" destination="8b4-Zl-yJD" id="U7K-8F-qVd"/>
+                <outlet property="trackingSmallObjectSwitch" destination="IcE-6B-v4k" id="Ide-rZ-bIM"/>
                 <outlet property="uiHideButton" destination="Gr3-be-4gl" id="u85-Wk-WcO"/>
                 <outlet property="view" destination="1" id="3"/>
             </connections>
@@ -435,6 +437,28 @@ Please Realign or Press Reset.</string>
                 </switch>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="RecordToMemory" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="gLD-Aq-JHD">
                     <frame key="frameInset" minX="495" minY="476" width="195" height="21"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="IcE-6B-v4k">
+                    <frame key="frameInset" minX="483" minY="471" width="51" height="31"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                </switch>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Tracking Small&amp;Closest (next boot)" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="nP2-mK-sg5">
+                    <frame key="frameInset" minX="188" minY="476" width="270" height="21"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="Tj3-ei-TQc">
+                    <frame key="frameInset" minX="483" minY="520" width="51" height="31"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                </switch>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Tracker Quality Accurate(next boot)" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="fQS-hV-UWZ">
+                    <frame key="frameInset" minX="186" minY="523" width="272" height="21"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="textColor"/>

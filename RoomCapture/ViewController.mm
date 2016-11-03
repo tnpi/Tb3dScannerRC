@@ -57,6 +57,28 @@
         NSLog(@"filePathList: %s", chars);
     }
     
+    // UI ---------------------------------------------------------------------------
+    
+    self.recordToMemorySwitch.on = udRecordToMemorySwitch ? YES:NO;
+    self.nearModeSwitch.on = udNearModeSwitch ? YES:NO;
+    self.recordGpsSwitch.on = udRecordGpsSwitch ? YES:NO;
+    self.saveToFileSwitch.on = udSaveToFileSwitch ? YES:NO;
+    self.colorScanSwitch.on = udColorScanSwitch ? YES:NO;
+    self.drawModeSwitch.on = udDrawModeSwitch ? YES:NO;
+    self.trackingSmallObjectSwitch.on = udTrackingSmallObjectSwitch ? YES:NO;
+    self.trackerQualityAccurateSwitch.on = udTrackerQualityAccurate ? YES:NO;
+    self.roomSizeSlider.value = udRoomSizeSlider;
+    self.resolutionSlider.value = udResolutionSlider;
+    self.intervalSlider.value = udIntervalSlider;
+    
+    [self actionOnResolutionSliderValueChanged];
+    [self actionOnRoomSizeSliderValueChanged];
+    
+    self.resolutionSliderLabel.text = [NSString stringWithFormat:@"%.3f", self.resolutionSlider.value ];
+    self.intervalSliderLabel.text = [NSString stringWithFormat:@"%d", (int)self.intervalSlider.value ];
+    self.roomSizeSliderLabel.text = [NSString stringWithFormat:@"%.3f", self.roomSizeSlider.value ];
+
+    
     // -----------------------------------------------------------------------
 
     [self setupGL];
@@ -99,23 +121,6 @@
         const char *chars = [content UTF8String];
         NSLog(@"filePathList: %s", chars);
     }
-
-    self.recordToMemorySwitch.on = udRecordToMemorySwitch ? YES:NO;
-    self.nearModeSwitch.on = udNearModeSwitch ? YES:NO;
-    self.recordGpsSwitch.on = udRecordGpsSwitch ? YES:NO;
-    self.saveToFileSwitch.on = udSaveToFileSwitch ? YES:NO;
-    self.colorScanSwitch.on = udColorScanSwitch ? YES:NO;
-    self.drawModeSwitch.on = udDrawModeSwitch ? YES:NO;
-    self.roomSizeSlider.value = udRoomSizeSlider;
-    self.resolutionSlider.value = udResolutionSlider;
-    self.intervalSlider.value = udIntervalSlider;
-    
-    [self actionOnResolutionSliderValueChanged];
-    [self actionOnRoomSizeSliderValueChanged];
-
-    self.resolutionSliderLabel.text = [NSString stringWithFormat:@"%.3f", self.resolutionSlider.value ];
-    self.intervalSliderLabel.text = [NSString stringWithFormat:@"%d", (int)self.intervalSlider.value ];
-    self.roomSizeSliderLabel.text = [NSString stringWithFormat:@"%.3f", self.roomSizeSlider.value ];
 
     // GPS ---------------------------------------------------
     lm = [[CLLocationManager alloc] init];
@@ -380,12 +385,29 @@
     // Place the camera in the center of the scanning volume.
     GLKVector3 cameraCenter = GLKVector3MultiplyScalar(_slamState.cameraPoseInitializer.volumeSizeInMeters, 0.5);
     GLKMatrix4 initialCameraPose = GLKMatrix4MakeTranslation(cameraCenter.x, cameraCenter.y, cameraCenter.z);
-    
+
+    STMesh *mesh = [_slamState.scene lockAndGetSceneMesh];   //original
+    [_slamState.scene unlockSceneMesh];
+    NSLog(@"enterViewingState set mesh end ?");          // この時点でsetMesh->uploadMeshが実行される？
+
     [self presentMeshViewer:_colorizedMesh withCameraPose:initialCameraPose];
     
     _slamState.roomCaptureState = RoomCaptureStateViewing;
-    
+
     [self updateIdleTimer];
+    
+    /* for mem rec
+     // 最初の２コマがなぜかゴミデータなので取り除いてから次に移動させる
+     //[recordMeshList removeObjectsInRange:NSMakeRange(0, 2)];
+    
+    [_meshViewController setRecordMeshList:recordMeshList]; //add by tanaka
+    [_meshViewController setScanFrameDateList:scanFrameDateList]; //add by tanaka add 2016.6
+    [_meshViewController setRecordMeshNum:(int)[recordMeshList count]];//add by tanaka
+    [_meshViewController setScanStartDate:scanStartDate ];//add by tanaka
+    
+     */
+
+    
 }
 
 - (void)adjustVolumeSize:(GLKVector3)volumeSize
@@ -419,6 +441,8 @@
     udSaveToFileSwitch = [defaults boolForKey:@"saveToFileSwitch"];
     udColorScanSwitch = [defaults boolForKey:@"colorScanSwitch"];
     udDrawModeSwitch = [defaults boolForKey:@"drawModeSwitch"];
+    udTrackingSmallObjectSwitch = [defaults boolForKey:@"trackingSmallObjectSwitch"];
+    udTrackerQualityAccurate = [defaults boolForKey:@"trackerQualityAccurateSwitch"];
     
     udIntervalSlider = (int)[defaults integerForKey:@"intervalSlider"];
     udResolutionSlider = [defaults floatForKey:@"resolutionSlider"];
@@ -675,6 +699,12 @@
 // リセットボタンが押された場合の処理
 - (IBAction)resetButtonPressed:(id)sender
 {
+    recordMeshNum = 0;
+    [recordMeshList removeAllObjects];
+    [scanFrameDateList removeAllObjects];       // add 2016.6
+    NSUInteger elements = [recordMeshList count];
+    //self.recFramesValueLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)elements];
+    
     // Handles simultaneous press of Done & Reset.
     if(self.doneButton.hidden) return;
     
@@ -684,10 +714,15 @@
 
 - (IBAction)doneButtonPressed:(id)sender
 {
+    NSLog(@"doneButtonPressed: start");
+    
     // Handles simultaneous press of Done & Reset.
     if(self.doneButton.hidden) return;
     
-    [self enterFinalizingState];
+    //[self enterFinalizingState];  default
+    
+    
+    
 }
 
 
@@ -728,6 +763,9 @@
         self.resolutionSliderLabel.hidden = YES;
         self.roomSizeSliderLabel.hidden = YES;
         
+        self.trackingSmallObjectSwitch.hidden = YES;
+        self.trackerQualityAccurateSwitch.hidden = YES;
+
         // Cannot be lost in cube placement mode.
         _trackingMessageLabel.hidden = YES;
         
@@ -755,6 +793,9 @@
             self.roomSizeUiLabel.hidden = NO;
             self.resolutionLabel.hidden = NO;
             self.intervalLabel.hidden = NO;
+            
+            self.trackingSmallObjectSwitch.hidden = NO;
+            self.trackerQualityAccurateSwitch.hidden = NO;
             
             self.debugInfoLabel.hidden = NO;
             
@@ -789,6 +830,9 @@
             self.roomSizeUiLabel.hidden = NO;
             self.resolutionLabel.hidden = NO;
             self.intervalLabel.hidden = NO;
+            
+            self.trackingSmallObjectSwitch.hidden = NO;
+            self.trackerQualityAccurateSwitch.hidden = NO;
 
             self.debugInfoLabel.hidden = NO;
             
@@ -828,6 +872,8 @@
     [defaults setBool:_drawModeSwitch.isOn forKey:@"drawModeSwitch"];
     [defaults setBool:_saveToFileSwitch.isOn forKey:@"saveToFileSwitch"];
     [defaults setBool:_colorScanSwitch.isOn forKey:@"colorScanSwitch"];
+    [defaults setBool:_trackingSmallObjectSwitch.isOn forKey:@"trackingSmallObjectSwitch"];
+    [defaults setBool:_trackerQualityAccurateSwitch.isOn forKey:@"trackerQualityAccurateSwitch"];
     
     [defaults setInteger:_intervalSlider.value forKey:@"intervalSlider"];
     [defaults setFloat:_resolutionSlider.value  forKey:@"resolutionSlider"];

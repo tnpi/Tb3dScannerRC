@@ -62,8 +62,8 @@ namespace // anonymous namespace for local functions
     // Initialize the camera pose tracker.
     NSDictionary* trackerOptions = @{
                                      kSTTrackerTypeKey: @(STTrackerDepthAndColorBased),
-                                     kSTTrackerTrackAgainstModelKey: @FALSE, // Tracking against model works better in smaller scale scanning.
-                                     kSTTrackerQualityKey: @(STTrackerQualityAccurate),
+                                     kSTTrackerTrackAgainstModelKey: self.trackingSmallObjectSwitch.isOn ? @TRUE:@FALSE, // Tracking against model works better in smaller scale scanning.
+                                     kSTTrackerQualityKey: self.trackerQualityAccurateSwitch.isOn ?  @(STTrackerQualityAccurate):@(STTrackerQualityFast),
                                      };
     
     // Initialize the camera pose tracker.
