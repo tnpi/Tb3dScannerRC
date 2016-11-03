@@ -177,9 +177,9 @@
     //self.roomSizeSlider.minimumValue = 1.0/3.0;
     //self.roomSizeSlider.maximumValue = 5.0/3.0;
     // tanaka changed
-    self.roomSizeSlider.value = 0.99;
-    self.roomSizeSlider.minimumValue = 0.1;
-    self.roomSizeSlider.maximumValue = 0.99;
+    self.roomSizeSlider.value = 0.999;
+    self.roomSizeSlider.minimumValue = 0.100;
+    self.roomSizeSlider.maximumValue = 0.999;
 
     self.roomSizeLabel.hidden = true;
     
@@ -634,7 +634,7 @@
     [self adjustVolumeSize:newVolumeSize];
     
     
-    self.roomSizeSliderLabel.text = [NSString stringWithFormat:@"%.2f", self.roomSizeSlider.value ];  // tanaka add
+    self.roomSizeSliderLabel.text = [NSString stringWithFormat:@"%.3f", self.roomSizeSlider.value ];  // tanaka add
 
 }
 

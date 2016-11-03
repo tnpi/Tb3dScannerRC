@@ -137,10 +137,25 @@ namespace // anonymous namespace for local functions
     NSDictionary* mapperOptions = @{
                                     kSTMapperVolumeResolutionKey: @(volumeResolution),
                                     kSTMapperVolumeBoundsKey: @[@(volumeBounds.x), @(volumeBounds.y), @(volumeBounds.z)],
-                                    kSTMapperVolumeHasSupportPlaneKey: @(_slamState.cameraPoseInitializer.hasSupportPlane),
                                     
-                                    kSTMapperEnableLiveWireFrameKey: @(YES), // We need a live wireframe mesh for our visualization.
+                                    kSTMapperVolumeHasSupportPlaneKey: @(_slamState.cameraPoseInitializer.hasSupportPlane),
+                                    kSTMapperDepthIntegrationFarThresholdKey:@7.0f,     // 7.0f ok!  0.5fok!   0.6と変わらない？ 0.9error!
+                                    
+                                    kSTMapperEnableLiveWireFrameKey: @(YES), // more speedy? test
+                                    //kSTMapperEnableLiveWireFrameKey: @(YES), // We need a live wireframe mesh for our visualization.
                                     };
+    /*
+     NSDictionary* mapperOptions = @{
+     kSTMapperVolumeResolutionKey: @(volumeResolution),
+     kSTMapperVolumeBoundsKey: @[@(volumeBounds.x), @(volumeBounds.y), @(volumeBounds.z)],
+     kSTMapperVolumeHasSupportPlaneKey: @(_slamState.cameraPoseInitializer.hasSupportPlane),
+     kSTMapperDepthIntegrationFarThresholdKey:4.0f.
+     
+     kSTMapperEnableLiveWireFrameKey: @(YES), // more speedy? test
+     //kSTMapperEnableLiveWireFrameKey: @(YES), // We need a live wireframe mesh for our visualization.
+     };
+
+     */
     
 
     // Initialize the mapper.

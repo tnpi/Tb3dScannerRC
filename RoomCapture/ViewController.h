@@ -242,7 +242,12 @@ struct DisplayData
     
     NSDate *scanStartDate;
     NSDate *scanNowDate;
+    
+    NSMutableArray *recordMeshList; // add by tanaka
+
     NSMutableArray *scanFrameDateList;
+    NSMutableArray *scanGpsDataList;
+    NSMutableArray *scanDoFDataList;
     NSDate *getSceneMeshDate;
     
     //FILE *fpScanDateListFile;
@@ -265,6 +270,8 @@ struct DisplayData
     float udResolutionSlider;
     float udRoomSizeSlider;
     
+    // tanaka rec to memory --------------------------------------------------
+
 }
 
 @property (nonatomic, retain) AVCaptureSession *avCaptureSession;
