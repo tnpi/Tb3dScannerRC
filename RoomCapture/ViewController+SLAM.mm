@@ -350,6 +350,7 @@ namespace // anonymous namespace for local functions
                         NSError* error;
                         BOOL success = [sceneMesh writeToFile:zipTemporaryFilePath options:fileWriteOptions error:&error];
                         [_slamState.scene unlockSceneMesh];     // ロック解除
+                        
                         if (!success)
                         {
                             /*
@@ -449,12 +450,15 @@ namespace // anonymous namespace for local functions
                             
                         });
                          */
+                        
+                        
                         savedFrameCount++;
                     }
+                    [self countFps];
                     
                     [self resetSLAM];
-                    [self enterPoseInitializationState];
-                    [self enterScanningState];
+                    //[self enterPoseInitializationState];
+                    //[self enterScanningState];
                     
                     
                 }

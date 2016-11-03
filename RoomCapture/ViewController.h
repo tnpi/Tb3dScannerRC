@@ -272,6 +272,10 @@ struct DisplayData
     float udResolutionSlider;
     float udRoomSizeSlider;
     
+    NSDate *fpsBasetime;   //測定基準時間
+    int fpsCount;      //フレーム数
+    float fpsFramerate;  //フレームレート
+    
     // tanaka rec to memory --------------------------------------------------
 
 }
@@ -330,6 +334,7 @@ struct DisplayData
 @property (weak, nonatomic) IBOutlet UILabel *gpsSpeed;
 @property (weak, nonatomic) IBOutlet UILabel *gpsCourse;
 
+@property (weak, nonatomic) IBOutlet UILabel *scanFpsLabel;
 
 
 
@@ -367,5 +372,6 @@ struct DisplayData
 
 // tanaka add -----
 - (void)colorizeMesh;
+- (void)countFps;
 
 @end

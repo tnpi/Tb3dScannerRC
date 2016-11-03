@@ -139,6 +139,8 @@
     }
     [lm startUpdatingLocation];         // デリゲートに通知が来るようになる
     // GPS end -----------------------------------------------
+    
+    fpsCount = 0;
 }
 
 
@@ -255,6 +257,7 @@
     NSLog(@"enterScanningState start");
     
     scanStartDate = [NSDate date];
+    fpsBasetime = [NSDate date];
     
     if (!uiHideFlag) {
         // Switch to the Done button.
@@ -453,7 +456,23 @@
     
 }
 
-
+- (void) countFps {
+    fpsCount++;
+    NSDate *tNowDate = [NSDate date];
+    
+    NSTimeInterval deltaTime = [tNowDate timeIntervalSinceDate:fpsBasetime];
+    NSLog(@"countFps fpsBasetime:%@", fpsBasetime);
+    NSLog(@"countFps tNowDate:%@", tNowDate);
+    NSLog(@"countFps deltaTime:%.3f", deltaTime);
+    if (deltaTime > 1.0) {
+        NSLog(@"countFps Update");
+        fpsFramerate = (float)fpsCount / (float)deltaTime;
+        fpsBasetime = tNowDate;
+        fpsCount = 0;
+        _scanFpsLabel.text = [NSString stringWithFormat:@"%.2f fps", fpsFramerate];
+    }
+    
+}
 
 #pragma mark - IMU
 
@@ -920,6 +939,7 @@
 
 
 
+
 #pragma mark - MeshViewController delegates
 
 - (void)presentMeshViewer:(STMesh *)mesh withCameraPose:(GLKMatrix4)cameraPose
@@ -1290,5 +1310,7 @@
 
     }
 }
+
+
 
 @end

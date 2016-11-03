@@ -48,6 +48,7 @@
                 <outlet property="saveToFileSwitch" destination="V6S-iH-HRQ" id="sow-KT-5g9"/>
                 <outlet property="saveToFileSwitchLabel" destination="0Dc-M1-7x3" id="ANe-Vw-ORO"/>
                 <outlet property="scanButton" destination="Y9C-vE-QSA" id="dCm-Se-q6y"/>
+                <outlet property="scanFpsLabel" destination="5Sg-ue-AHc" id="s3O-2S-VQm"/>
                 <outlet property="trackerQualityAccurateSwitch" destination="Tj3-ei-TQc" id="8XW-1x-EX4"/>
                 <outlet property="trackingMessageLabel" destination="8b4-Zl-yJD" id="U7K-8F-qVd"/>
                 <outlet property="trackingSmallObjectSwitch" destination="IcE-6B-v4k" id="Ide-rZ-bIM"/>
@@ -500,6 +501,19 @@ Please Realign or Press Reset.</string>
                     <frame key="frameInset" minX="708" minY="423" width="51" height="31"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 </switch>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="5Sg-ue-AHc">
+                    <frame key="frameInset" minX="856" minY="175" width="141" height="45"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="8"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                </label>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <gestureRecognizers/>
