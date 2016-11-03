@@ -287,6 +287,7 @@ struct DisplayData
 @property (weak, nonatomic) IBOutlet UILabel *roomSizeLabel;
 @property (weak, nonatomic) IBOutlet UISlider *roomSizeSlider;
 @property (weak, nonatomic) IBOutlet UISlider *resolutionSlider;
+@property (weak, nonatomic) IBOutlet UISlider *mapperDepthThresholdSlider;
 @property (weak, nonatomic) IBOutlet UISwitch *drawModeSwitch;
 @property (weak, nonatomic) IBOutlet UISwitch *colorScanSwitch;
 @property (weak, nonatomic) IBOutlet UISwitch *saveToFileSwitch;
@@ -306,6 +307,7 @@ struct DisplayData
 
 @property (weak, nonatomic) IBOutlet UIButton *uiHideButton;
 @property (weak, nonatomic) IBOutlet UIButton *saveSettingsButton;
+@property (weak, nonatomic) IBOutlet UILabel *mapperDepthThlesholdSliderLabel;
 
 @property (weak, nonatomic) IBOutlet UILabel *drawModeSwitchLabel;
 @property (weak, nonatomic) IBOutlet UILabel *colorScanSwitchLabel;
@@ -348,6 +350,7 @@ struct DisplayData
 - (IBAction)intervalSliderValueChanged:(id)sender;
 - (IBAction)roomSizeSliderValueChanged:(id)sender;
 - (IBAction)nearModeSwitchValueChanged:(id)sender;
+- (IBAction)mapperDepthThlesholdSliderValueChanged:(id)sender;
 
 
 

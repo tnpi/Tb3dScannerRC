@@ -76,7 +76,9 @@ namespace // anonymous namespace for local functions
     // maximize the area of scan. The rotation will also be aligned to gravity.
     _slamState.cameraPoseInitializer = [[STCameraPoseInitializer alloc]
                                         initWithVolumeSizeInMeters:_slamState.volumeSizeInMeters
-                                        options:@{kSTCameraPoseInitializerStrategyKey:@(STCameraPoseInitializerStrategyGravityAlignedAtVolumeCenter)}];
+                                        //options:@{kSTCameraPoseInitializerStrategyKey:@(STCameraPoseInitializerStrategyGravityAlignedAtVolumeCenter)}
+                                        options:@{kSTCameraPoseInitializerStrategyKey:@(STCameraPoseInitializerStrategyGravityAlignedAtOrigin)}
+    ];
     
     // Setup the initial volume size.
     [self adjustVolumeSize:_slamState.volumeSizeInMeters];
@@ -139,7 +141,9 @@ namespace // anonymous namespace for local functions
                                     kSTMapperVolumeBoundsKey: @[@(volumeBounds.x), @(volumeBounds.y), @(volumeBounds.z)],
                                     
                                     kSTMapperVolumeHasSupportPlaneKey: @(_slamState.cameraPoseInitializer.hasSupportPlane),
-                                    kSTMapperDepthIntegrationFarThresholdKey:@7.0f,     // 7.0f ok!  0.5fok!   0.6と変わらない？ 0.9error!
+                                    //kSTMapperDepthIntegrationFarThresholdKey:@8.0f,     // 8.0f ok!  0.5fok! 8.1error! 0.9error!
+                                    
+                                    kSTMapperDepthIntegrationFarThresholdKey:@(self.mapperDepthThresholdSlider.value),     // 8.0f ok!  0.5fok! 8.1error! 0.9error!
                                     
                                     kSTMapperEnableLiveWireFrameKey: @(YES), // more speedy? test
                                     //kSTMapperEnableLiveWireFrameKey: @(YES), // We need a live wireframe mesh for our visualization.

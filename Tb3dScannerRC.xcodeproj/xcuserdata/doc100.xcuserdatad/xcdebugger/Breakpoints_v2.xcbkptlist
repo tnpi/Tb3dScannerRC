@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "RoomCapture/ViewController.h"
-            timestampString = "499896546.796508"
+            timestampString = "499899631.446991"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "296"
-            endingLineNumber = "296"
+            startingLineNumber = "297"
+            endingLineNumber = "297"
             landmarkName = "trackingSmallObjectSwitch"
             landmarkType = "24">
          </BreakpointContent>

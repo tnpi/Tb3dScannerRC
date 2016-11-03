@@ -645,6 +645,9 @@
     NSLog(@"Sensor gain changed. %d", _nearModeSwitch.isOn?NO:YES);
 }
 
+- (IBAction)mapperDepthThlesholdSliderValueChanged:(id)sender {
+}
+
 - (IBAction)uiHideButton:(id)sender {
 }
 

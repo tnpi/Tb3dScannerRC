@@ -27,6 +27,8 @@
                 <outlet property="intervalSliderLabel" destination="nCZ-5b-0Jc" id="PPA-Kv-UDR"/>
                 <outlet property="latitudeLabel" destination="LQS-Lb-N6Q" id="cmc-46-TUC"/>
                 <outlet property="longitudeLabel" destination="xDb-Rh-Lmw" id="qhf-D4-c1o"/>
+                <outlet property="mapperDepthThlesholdSliderLabel" destination="sxh-4r-Ov9" id="0NZ-xw-q2P"/>
+                <outlet property="mapperDepthThresholdSlider" destination="FKA-xI-t8v" id="Thx-8A-W8P"/>
                 <outlet property="nearModeSwitch" destination="HQv-7c-q9D" id="Wgb-43-MMb"/>
                 <outlet property="nearModeSwitchLabel" destination="Ybq-4K-QkT" id="mfc-wb-49M"/>
                 <outlet property="recordGpsSwitch" destination="D4x-hb-61w" id="h2M-4R-GLI"/>
@@ -460,6 +462,28 @@ Please Realign or Press Reset.</string>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Tracker Quality Accurate(next boot)" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="fQS-hV-UWZ">
                     <frame key="frameInset" minX="186" minY="523" width="272" height="21"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <slider opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="8" minValue="0.29999999999999999" maxValue="10" id="FKA-xI-t8v">
+                    <frame key="frameInset" minX="141" minY="570" width="319" height="31"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <connections>
+                        <action selector="mapperDepthThlesholdSliderValueChanged:" destination="-1" eventType="valueChanged" id="hyG-aQ-vDh"/>
+                    </connections>
+                </slider>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="depth  thleshold" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="TZU-dH-ZGB">
+                    <frame key="frameInset" minX="-1" minY="575" width="125" height="21"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="sxh-4r-Ov9">
+                    <frame key="frameInset" minX="486" minY="574" width="42" height="21"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
