@@ -15,13 +15,38 @@
 - (void)meshViewDidDismiss;
 - (void)meshViewDidRequestRegularMesh;
 - (void)meshViewDidRequestHoleFilling;
+- (BOOL)meshViewDidRequestColorizing:(STMesh*)mesh
+            previewCompletionHandler:(void(^)(void))previewCompletionHandler
+           enhancedCompletionHandler:(void(^)(void))enhancedCompletionHandler;
+
 @end
 
-@interface MeshViewController : UIViewController <UIGestureRecognizerDelegate, MFMailComposeViewControllerDelegate>
+@interface MeshViewController : UIViewController <UIGestureRecognizerDelegate, MFMailComposeViewControllerDelegate> {
+    
+    // add tanaka
+    int playMeshCounter;
+    bool playbackFlag;
+    int playbackFrameCounter;
+    int playbackFrame;
+    int savedMeshNum;
+    int gestureAreaHeight;
+    
+    NSDate *scanStartDate;
+    
+    NSMutableArray *mvcRecordMeshList;
+    NSMutableArray *mvcScanFrameDateList;        // add 2016.6
+
+}
 
 @property (nonatomic, assign) id<MeshViewDelegate> delegate;
 
 @property (nonatomic) BOOL needsDisplay; // force the view to redraw.
+
+// tanaka --------
+@property (nonatomic) int recordMeshNum;
+@property (nonatomic) BOOL colorEnabled;
+@property (nonatomic) STMesh * mesh;
+//---------
 
 @property (weak, nonatomic) IBOutlet UILabel *meshViewerMessageLabel;
 @property (weak, nonatomic) IBOutlet UILabel *measurementGuideLabel;
@@ -43,5 +68,48 @@
 
 - (void)setHorizontalFieldOfView:(float)fovXRadians aspectRatio:(float)aspectRatio;
 - (void)setCameraPose:(GLKMatrix4)pose;
+
+
+/* scanner
+@property (weak, nonatomic) IBOutlet UISegmentedControl *displayControl;
+@property (weak, nonatomic) IBOutlet UISlider *playbackRecordTimeSlider;
+@property (weak, nonatomic) IBOutlet UILabel *playbackRecordTimeValueLabel;
+@property (strong, nonatomic) IBOutletCollection(UILabel) NSArray *playbackRecordMaxTime;
+@property (weak, nonatomic) IBOutlet UILabel *debugTraceLabelMV;
+@property (weak, nonatomic) IBOutlet UILabel *saveRecordMeshNumLabel;
+@property (weak, nonatomic) IBOutlet UILabel *allRecordMeshNumLabel;
+@property (weak, nonatomic) IBOutlet UISwitch *loopPlaySwitch;
+
+@property (weak, nonatomic) IBOutlet UILabel *recordMeshNumLabel;
+
+@property (weak, nonatomic) IBOutlet UILabel *diskSpaceLabel;
+@property (weak, nonatomic) IBOutlet UILabel *maxDiskSpaceLabel;
+// ogawa add
+@property (weak, nonatomic) IBOutlet UILabel *renderUdpData;
+@property (weak, nonatomic) IBOutlet UILabel *receivedMessageUDPLabel;
+
+
+- (IBAction)displayControlChanged:(id)sender;
+- (IBAction)playRecordButtonPressed:(UIButton *)sender;
+- (IBAction)stopRecordButtonPressed:(UIButton *)sender;
+- (IBAction)backRecordButtonPressed:(UIButton *)sender;
+- (IBAction)playbackRecordTimeSliderChange:(UISlider *)sender;
+- (IBAction)mvcSaveButtonPressed:(id)sender;
+
+- (IBAction)loopPlaySwitchPressed:(id)sender;
+
+- (void)updateFrame:(NSTimer*)timer;
+- (void)showMeshViewerMessage:(NSString *)msg;
+- (void)hideMeshViewerMessage;
+
+- (void)setCameraProjectionMatrix:(GLKMatrix4)projRt;
+- (void)resetMeshCenter:(GLKVector3)center;
+
+- (void)setupGL:(EAGLContext*)context;
+- (void)setRecordMeshList:(NSMutableArray*)context;
+- (void)setScanFrameDateList:(NSMutableArray*)context;  // add 2016.6
+- (void)setScanStartDate:(NSDate*)date;
+//- (void)setMeshB:(STMesh *)meshRef;
+*/
 
 @end

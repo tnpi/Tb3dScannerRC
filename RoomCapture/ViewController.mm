@@ -31,12 +31,34 @@
     }
 }
 
+// 画面のインスタンスが初期化される時、一回だけ
+// アプリを起動して、画面を読み込み終わった時
+// important
 - (void)viewDidLoad
 {
-    [self loadUserDefaultSettingData];
+    [self loadUserDefaultSettingData];  // add tanaka
 
     [super viewDidLoad];
     
+    // for mem rec - tanaka add ------------------------------------------------
+    scanFrameTime = 1;      // add by tanaka
+    scanFrameCount = 0;      // add by tanaka
+    recordMeshNum = 0;      // add by tanaka
+    recordMeshList = [NSMutableArray array];
+    scanFrameDateList = [NSMutableArray array];     // add 2016.6
+    
+    basePath = @"";
+    fileManager = [[NSFileManager alloc] init];
+    //filePath = [[NSBundle mainBundle] bundlePath];
+    filePath = @"Documents/artdkt_structure3d";
+    NSLog(@"filePathScan: %s", [filePath UTF8String] );
+    for (NSString *content in [fileManager contentsOfDirectoryAtPath:filePath error:nil ]) {
+        const char *chars = [content UTF8String];
+        NSLog(@"filePathList: %s", chars);
+    }
+    
+    // -----------------------------------------------------------------------
+
     [self setupGL];
     
     [self setupUserInterface];
@@ -92,12 +114,8 @@
     [self actionOnRoomSizeSliderValueChanged];
 
     self.resolutionSliderLabel.text = [NSString stringWithFormat:@"%.3f", self.resolutionSlider.value ];
-    
     self.intervalSliderLabel.text = [NSString stringWithFormat:@"%d", (int)self.intervalSlider.value ];
-
-    
-    self.roomSizeSliderLabel.text = [NSString stringWithFormat:@"%f", self.roomSizeSlider.value ];
-
+    self.roomSizeSliderLabel.text = [NSString stringWithFormat:@"%.3f", self.roomSizeSlider.value ];
 
     // GPS ---------------------------------------------------
     lm = [[CLLocationManager alloc] init];
@@ -178,7 +196,7 @@
     //self.roomSizeSlider.maximumValue = 5.0/3.0;
     // tanaka changed
     self.roomSizeSlider.value = 0.999;
-    self.roomSizeSlider.minimumValue = 0.100;
+    self.roomSizeSlider.minimumValue = 0.0500;
     self.roomSizeSlider.maximumValue = 0.999;
 
     self.roomSizeLabel.hidden = true;
@@ -316,7 +334,8 @@
 - (void)colorizeMesh
 {
     // Take a copy of the scene mesh to safely modify it.
-    _colorizedMesh = [[STMesh alloc] initWithMesh:[_slamState.scene lockAndGetSceneMesh]];
+    //_colorizedMesh = [_slamState.scene lockAndGetSceneMesh];//[[STMesh alloc] initWithMesh:[_slamState.scene lockAndGetSceneMesh]];
+    _colorizedMesh = [[STMesh alloc] initWithMesh:[_slamState.scene lockAndGetSceneMesh]];  // very stable!
     [_slamState.scene unlockSceneMesh];
     
     _appStatus.backgroundProcessingStatus = AppStatus::BackgroundProcessingStatusFinalizing;
@@ -610,7 +629,7 @@
     float scale = self.roomSizeSlider.value;
     
     GLKVector3 newVolumeSize = GLKVector3MultiplyScalar(_options.initialVolumeSizeInMeters, scale);
-    newVolumeSize.y = std::max (newVolumeSize.y, _options.minVerticalVolumeSize);
+    //newVolumeSize.y = std::max (newVolumeSize.y, _options.minVerticalVolumeSize);
     
     // Helper function.
     auto keepInRange = [](float value, float minValue, float maxValue)
@@ -625,11 +644,11 @@
     //newVolumeSize.y = keepInRange (newVolumeSize.y, 3.f, 10.f);
     //newVolumeSize.z = keepInRange (newVolumeSize.z, 3.f, 10.f);
     // tanaka changed
-    newVolumeSize.x = keepInRange (newVolumeSize.x, 1.f, 20.f);
-    newVolumeSize.y = keepInRange (newVolumeSize.y, 1.f, 20.f);
-    newVolumeSize.z = keepInRange (newVolumeSize.z, 1.f, 20.f);
+    newVolumeSize.x = keepInRange (newVolumeSize.x, 0.3f, 20.f);
+    newVolumeSize.y = keepInRange (newVolumeSize.y, 0.3f, 20.f);
+    newVolumeSize.z = keepInRange (newVolumeSize.z, 0.3f, 20.f);
     
-    [self.roomSizeLabel setText:[NSString stringWithFormat:@"%.1f x %.1f x %.1f meters", newVolumeSize.x, newVolumeSize.y, newVolumeSize.z]];
+    [self.roomSizeLabel setText:[NSString stringWithFormat:@"%.3f x %.3f x %.3f meters", newVolumeSize.x, newVolumeSize.y, newVolumeSize.z]];
     
     [self adjustVolumeSize:newVolumeSize];
     

@@ -81,10 +81,10 @@
     [self.avCaptureSession beginConfiguration];
     
     // Set preset session size.
-    //[self.avCaptureSession setSessionPreset:sessionPreset];
+    [self.avCaptureSession setSessionPreset:sessionPreset];
     
     // InputPriority allows us to select a more precise format (below)
-    [self.avCaptureSession setSessionPreset:AVCaptureSessionPresetInputPriority];
+    //[self.avCaptureSession setSessionPreset:AVCaptureSessionPresetInputPriority];
     
     // Create a video device and input from that Device.  Add the input to the capture session.
     self.videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
@@ -97,6 +97,7 @@
     // Use auto-exposure, and auto-white balance and set the focus to infinity.
     if([self.videoDevice lockForConfiguration:&error])
     {
+        /*
         // add by tanaka for more color resolution ----------------------------------------------
         int imageWidth = -1;
         int imageHeight = -1;
@@ -118,10 +119,8 @@
         // Select capture format
         [self selectCaptureFormat:@{ @"width": @(imageWidth),
                                      @"height": @(imageHeight)}];
+         */
         // ----------------------------------------------
-        
-
-        
         
         // Allow exposure to initially change
         if ([self.videoDevice isExposureModeSupported:AVCaptureExposureModeContinuousAutoExposure])

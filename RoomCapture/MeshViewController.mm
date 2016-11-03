@@ -4,6 +4,9 @@
   http://structure.io
 */
 
+#include <vector>
+#include <cmath>
+
 #import "MeshViewController.h"
 #import "MeshRenderer.h"
 #import "GraphicsRenderer.h"
@@ -13,7 +16,6 @@
 
 #import <ImageIO/ImageIO.h>
 
-#include <vector>
 
 // Local Helper Functions
 namespace
@@ -99,6 +101,8 @@ enum MeasurementState {
 
 @implementation MeshViewController
 
+@synthesize mesh = _mesh;
+
 - (id)initWithNibName:(NSString *)nibNameOrNil
                bundle:(NSBundle *)nibBundleOrNil
 {
@@ -171,12 +175,42 @@ enum MeasurementState {
 
 - (void)viewDidLoad
 {
+    NSLog(@"MeshViewControler::viewDidLoad ");
+
     [super viewDidLoad];
 
+    gestureAreaHeight = 650;
+    NSLog(@"viewDidLoad _recordMeshNum:%d", _recordMeshNum);
+    
+    playbackFlag = true;
+    playbackFrameCounter = 0;
+    /* mem play
+    _playbackRecordTimeSlider.minimumValue = 0;
+    _playbackRecordTimeSlider.maximumValue = _recordMeshNum;
+    _playbackRecordTimeSlider.value = 0;//_recordMeshNum/2;
+     */
+    
+    savedMeshNum = 0;
+    
     self.meshViewerMessageLabel.alpha = 0.0;
     self.meshViewerMessageLabel.hidden = true;
-
+    
     [self.meshViewerMessageLabel applyCustomStyleWithBackgroundColor:blackLabelColorWithLightAlpha];
+    /* mem play
+    _saveRecordMeshNumLabel.text = [NSString stringWithFormat:@"%d", savedMeshNum ];
+    _allRecordMeshNumLabel.text = [NSString stringWithFormat:@"%d", _recordMeshNum ];
+    
+    
+    UIFont *font = [UIFont boldSystemFontOfSize:14.0f];
+    NSDictionary *attributes = [NSDictionary dictionaryWithObject:font
+                                                           forKey:NSFontAttributeName];
+    
+    [self.displayControl setTitleTextAttributes:attributes
+                                       forState:UIControlStateNormal];
+    */
+    
+    // オブジェクトの初期化
+    //_renderer = new MeshRenderer();
     
     _meshRenderer = new MeshRenderer;
     _graphicsRenderer = new GraphicsRenderer(@"measurementTape.png");
@@ -288,6 +322,13 @@ enum MeasurementState {
         if([self.delegate respondsToSelector:@selector(meshViewDidDismiss)])
             [self.delegate meshViewDidDismiss];
     }];
+    
+    
+    // 戻るときに配列を全削除　これしないと落ちる tanaka
+    _recordMeshNum = 0;
+    [mvcRecordMeshList removeAllObjects];
+    [mvcScanFrameDateList removeAllObjects];    // 2016.6
+
 }
 
 #pragma mark - MeshViewer Camera and Mesh Setup
@@ -314,6 +355,54 @@ enum MeasurementState {
     _meshRenderer->uploadMesh(meshRef);
     self.needsDisplay = true;
 }
+
+- (void)setMesh:(STMesh *)meshRef
+{
+    NSLog(@"MeshViewController setMesh start");
+    _mesh = meshRef;
+    
+    /*
+    if (meshRef)
+    {
+        NSLog(@"MeshViewController setMesh mesh exists");
+        
+        _renderer->uploadMesh(meshRef);
+        //NSLog(@"MeshViewController setMesh mesh upload 2times");
+        //_renderer->uploadMesh(meshRef);
+        
+        [self trySwitchToColorRenderingMode];
+        
+        self.needsDisplay = TRUE;
+    }
+     */
+}
+
+
+// tanaka add
+- (void)setRecordMeshList:(NSMutableArray *)listRef
+{
+    mvcRecordMeshList = listRef; // add by tanaka
+    savedMeshNum = 0;
+    
+}
+
+// add 2016.6
+- (void)setScanFrameDateList:(NSMutableArray *)listRef
+{
+    mvcScanFrameDateList = listRef; // add by tanaka
+    
+}
+
+
+// tanaka add
+- (void)setScanStartDate:(NSDate *)date
+{
+    scanStartDate = date; // add by tanaka
+}
+
+
+
+
 
 #pragma mark - Email
 
@@ -537,8 +626,34 @@ enum MeasurementState {
     view.center = center;
 }
 
+// レンダリング tanaka
+// important
 - (void)draw
 {
+    //NSLog(@"meshViewController::draw");
+    // 残容量表示
+    /*
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+    NSDictionary *dictionary = [[NSFileManager defaultManager] attributesOfFileSystemForPath:[paths lastObject] error:nil];
+    if (dictionary) {
+        int GiB = 1024*1024*1024;
+        float free = [[dictionary objectForKey: NSFileSystemFreeSize] floatValue]/GiB;
+        float total = [[dictionary objectForKey: NSFileSystemSize] floatValue]/GiB;
+        //NSLog(@"Space: %.1f", free);
+        //NSLog(@"Total: %.1f", total);
+        _diskSpaceLabel.text = [NSString stringWithFormat:@"%.1f", free];
+        _maxDiskSpaceLabel.text = [NSString stringWithFormat:@"%.1f GB", total];
+    }
+     */
+    
+    
+    /* for mem play
+     playbackFrame = (playbackFrameCounter % (_recordMeshNum-2)) + 2;
+     STMesh* tMesh = [mvcRecordMeshList objectAtIndex:playbackFrame];       // tanaka add important!
+     //[self setMesh:tMesh];
+     _renderer->uploadMesh(tMesh); // ここを更新しないとアニメーションはしなくなります tanaka
+     */
+    
     [(EAGLView *)self.view setFramebuffer];
     
     glViewport(_glViewport[0], _glViewport[1], _glViewport[2], _glViewport[3]);
@@ -546,13 +661,16 @@ enum MeasurementState {
     // Take this opportunity to process the Joystick information.
     _viewpointController->processJoystickRadiusAndTheta([_translationJoystick radius], [_translationJoystick theta]);
     
+    // アニメのために描画内容に変化がなくても描画し直すように変更 comment out by tanaka
+    /*
     static MeasurementState previousState;
     bool viewpointChanged = (_viewpointController->update()) || (_measurementState != previousState);
     previousState = _measurementState;
     
     // If nothing changed, do not waste time and resources rendering.
-    if (!_needsDisplay && !viewpointChanged)
-        return;
+    //if (!_needsDisplay && !viewpointChanged)
+    //    return;
+     */
     
     GLKMatrix4 currentModelView = _viewpointController->currentGLModelViewMatrix();
     GLKMatrix4 currentProjection = _viewpointController->currentGLProjectionMatrix();
@@ -597,6 +715,38 @@ enum MeasurementState {
     [(EAGLView *)self.view presentFramebuffer];
     
     _needsDisplay = false;
+    
+    /* mem play
+     add by tanaka -------------------------------------------------------
+     
+    if (playbackFlag) {     // tanaka add
+        NSLog(@"now on play..");
+        playbackFrameCounter++;
+        
+        if (_loopPlaySwitch.isOn) {
+            playbackFrameCounter %= _recordMeshNum;
+        } else {
+            if (playbackFrameCounter >= _recordMeshNum) {
+                playbackFrameCounter = 0;
+                playbackFlag = false;
+            }
+        }
+        
+        //self.playbackRecordTimeValueLabel.text = [NSString stringWithFormat:@"%d",playbackFrameCounter];
+    }
+    _playbackRecordTimeSlider.value = playbackFrameCounter;
+    _playbackRecordTimeValueLabel.text = [NSString stringWithFormat:@"%d", playbackFrameCounter];
+    
+    _debugTraceLabelMV.text = [NSString stringWithFormat:@"recordMeshNum: %d \n playbackFrameCounter: %d \n playFrame(playbackFrame): %d", _recordMeshNum, playbackFrameCounter, playbackFrame];
+    
+    _recordMeshNumLabel.text = [NSString stringWithFormat:@"%d", _recordMeshNum];
+    
+    
+    _playbackRecordTimeSlider.maximumValue = _recordMeshNum;
+    _saveRecordMeshNumLabel.text = [NSString stringWithFormat:@"%d", savedMeshNum ];
+    _allRecordMeshNumLabel.text = [NSString stringWithFormat:@"%d", _recordMeshNum ];
+    */
+
 }
 
 #pragma mark - UI Control
@@ -893,5 +1043,129 @@ enum MeasurementState {
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
 {
 }
+
+
+-(void) doSaveAction {
+    /*
+    int newSaveNum = 0;
+    
+    NSLog(@"mvcSaveButtonPressed saveWithData start2");
+    
+    // Documentsフォルダを得る
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *DocumentsDirPath = [paths objectAtIndex:0];
+    
+    NSLog(@"Documents folder path: %s", [DocumentsDirPath UTF8String]);
+    
+    NSString *artdktPath = [NSString stringWithFormat:@"%s/%s", [DocumentsDirPath UTF8String], [@"artdkt_structure3d" UTF8String]];
+    
+    NSLog(@"artDkt folder path: %s", [artdktPath UTF8String]);
+    
+    // 新しい保存のための番号を作るため、現在一番新しいセーブの番号を取得する
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSLog(@"filePathScan: %s", [artdktPath UTF8String] );
+    for (NSString *content in [fileManager contentsOfDirectoryAtPath:artdktPath error:nil ]) {
+        const char *chars = [content UTF8String];
+        
+        NSString *str = [NSString stringWithCString: chars encoding:NSUTF8StringEncoding];
+        
+        NSLog(@"filePathList: %s", chars);
+        
+        //NSSTring型をInt型に
+        int oldSaveId = [ str intValue ];
+        if (oldSaveId >= newSaveNum) {
+            newSaveNum = oldSaveId;
+        }
+    }
+    newSaveNum += 1;
+    
+    NSString *modelDirPath = [NSString stringWithFormat:@"%s/%d", [artdktPath UTF8String], newSaveNum];
+    
+    NSLog(@"make folder  proccess!");
+    // フォルダを作る
+    {
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        NSError *error = nil;
+        BOOL created = [fileManager createDirectoryAtPath:modelDirPath
+                              withIntermediateDirectories:YES
+                                               attributes:nil
+                                                    error:&error];
+        
+        if (!error){
+            NSLog(@"error: %@", error);
+        } else {
+            NSLog(@"folder make success!");
+        }
+        
+    }
+    
+    _saveRecordMeshNumLabel.text = @"0";
+    
+    NSString *scanTimeRecordList = @"";
+    
+    for(int i=0; i<[mvcRecordMeshList count]; i++) {
+        STMesh *mesh = mvcRecordMeshList[i];
+        NSError* error;
+        NSString *tFilePath = [NSString stringWithFormat:@"%s/mesh_%d.obj", [modelDirPath UTF8String], i ];
+        NSLog(@"write filePath: %s", [tFilePath UTF8String]);
+        
+        [mesh writeToFile:tFilePath
+                  options:@{kSTMeshWriteOptionFileFormatKey: @(STMeshWriteOptionFileFormatObjFile)} //STMeshWriteOptionFileFormatObjFileZip}       // STMeshWriteOptionFileFormatObjFileZip
+                    error:&error];
+        savedMeshNum++;
+        if (!error){
+            NSLog(@"error: %@", error);
+        }else{
+            NSLog(@"save: %d/%d SUCCESS! ", savedMeshNum, _recordMeshNum);
+        }
+        _saveRecordMeshNumLabel.text = [NSString stringWithFormat:@"%d", savedMeshNum ];
+        
+        NSDateFormatter *df = [[NSDateFormatter alloc] init];
+        [df setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"ja_JP"]]; // Localeの指定
+        [df setDateFormat:@"yyyy/MM/dd HH:mm:ss.SSS"];
+        
+        //NSDate *nsd =  [NSDate date]; // comment out critical bug 2016.6
+        NSDate *nsd = mvcScanFrameDateList[i];
+        
+        NSString *strNow = [df stringFromDate:nsd];
+        
+        // ミリセカンド(ms)を取得
+        long timeFromScanStart =  (long)([nsd timeIntervalSinceDate:scanStartDate] * 1000);
+        
+        NSString *lineStr = [NSString stringWithFormat:@"%i,%li,%@\n", i, timeFromScanStart, strNow];
+        
+        scanTimeRecordList = [scanTimeRecordList stringByAppendingString:lineStr ];//@"";
+        
+    }
+    
+    NSError* tError;
+    NSString *timeRecordPath = [NSString stringWithFormat:@"%s/scanTimeRecord.csv", [modelDirPath UTF8String]];
+    [scanTimeRecordList writeToFile:timeRecordPath
+                         atomically:YES
+                           encoding:NSUTF8StringEncoding
+                              error:&tError];
+    
+    NSLog(@"after fileScan filePath: %s", [modelDirPath UTF8String]);
+    
+    // ディレクトリのファイル一覧を取得
+    NSLog(@"filePathScan: %s", [DocumentsDirPath UTF8String] );
+    for (NSString *content in [fileManager contentsOfDirectoryAtPath:DocumentsDirPath error:nil ]) {
+        const char *chars = [content UTF8String];
+        NSLog(@"filePathList: %s", chars);
+    }
+    
+    // 1撮影分モデルのファイル一覧を取得
+    NSLog(@"filePathScan: %s", [modelDirPath UTF8String] );
+    for (NSString *content in [fileManager contentsOfDirectoryAtPath:modelDirPath error:nil ]) {
+        const char *chars = [content UTF8String];
+        NSLog(@"filePathList: %s", chars);
+    }
+    
+    NSLog(@"saveWithData end2");
+     */
+    
+}
+
+
 
 @end
