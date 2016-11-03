@@ -141,9 +141,9 @@ namespace // anonymous namespace for local functions
                                     kSTMapperVolumeBoundsKey: @[@(volumeBounds.x), @(volumeBounds.y), @(volumeBounds.z)],
                                     
                                     kSTMapperVolumeHasSupportPlaneKey: @(_slamState.cameraPoseInitializer.hasSupportPlane),
-                                    //kSTMapperDepthIntegrationFarThresholdKey:@8.0f,     // 8.0f ok!  0.5fok! 8.1error! 0.9error!
+                                    //kSTMapperDepthIntegrationFarThresholdKey:@8.0f,     // 0.5f-0.8f (meter) SDK
                                     
-                                    kSTMapperDepthIntegrationFarThresholdKey:@(self.mapperDepthThresholdSlider.value),     // 8.0f ok!  0.5fok! 8.1error! 0.9error!
+                                    kSTMapperDepthIntegrationFarThresholdKey:@(self.mapperDepthThresholdSlider.value),
                                     
                                     kSTMapperEnableLiveWireFrameKey: @(YES), // more speedy? test
                                     //kSTMapperEnableLiveWireFrameKey: @(YES), // We need a live wireframe mesh for our visualization.
