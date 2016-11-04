@@ -137,7 +137,6 @@
     if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined) {       // 位置情報使用許可をもらっていない時は初回だけ確認
         [lm requestAlwaysAuthorization];
     }
-    [lm startUpdatingLocation];         // デリゲートに通知が来るようになる
     // GPS end -----------------------------------------------
     
     fpsCount = 0;
@@ -1304,45 +1303,50 @@
     scanFrameCount = 0;      // add by tanaka
     recordMeshNum = 0;      // add by tanaka
     [scanFrameDateList removeAllObjects];       // add 2016.6
-
+    
     ownKeyframeCounts = 0;
     scanStartDate = [NSDate date];
 
+    if (_recordGpsSwitch.isOn) {
+        [lm startUpdatingLocation];         // デリゲートに通知が来るようになる
+    }
+    
     //---------------------------------
     int newSaveNum = 0;
     
     NSLog(@"mvcSaveButtonPressed saveWithData start2");
     
-    // Documentsフォルダを得る
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *DocumentsDirPath = [paths objectAtIndex:0];
+    if (_saveToFileSwitch.isOn) {
     
-    NSLog(@"Documents folder path: %s", [DocumentsDirPath UTF8String]);
-    
-    saveBaseDirPath = [NSString stringWithFormat:@"%s/%s", [DocumentsDirPath UTF8String], [saveBaseDirName UTF8String]];
-    
-    NSLog(@"artDkt folder path: %s", [saveBaseDirPath UTF8String]);
-    
-    // 新しい保存のための番号を作るため、現在一番新しいセーブの番号を取得する
-    NSFileManager *tFileManager = [NSFileManager defaultManager];
-    NSLog(@"filePathScan: %s", [saveBaseDirPath UTF8String] );
-    for (NSString *content in [tFileManager contentsOfDirectoryAtPath:saveBaseDirPath error:nil ]) {
-        const char *chars = [content UTF8String];
+        // Documentsフォルダを得る
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString *DocumentsDirPath = [paths objectAtIndex:0];
         
-        NSString *str = [NSString stringWithCString: chars encoding:NSUTF8StringEncoding];
+        NSLog(@"Documents folder path: %s", [DocumentsDirPath UTF8String]);
         
-        NSLog(@"filePathList: %s", chars);
+        saveBaseDirPath = [NSString stringWithFormat:@"%s/%s", [DocumentsDirPath UTF8String], [saveBaseDirName UTF8String]];
         
-        //NSString型をInt型に
-        int oldSaveId = [ str intValue ];
-        if (oldSaveId >= newSaveNum) {
-            newSaveNum = oldSaveId;
+        NSLog(@"artDkt folder path: %s", [saveBaseDirPath UTF8String]);
+        
+        // 新しい保存のための番号を作るため、現在一番新しいセーブの番号を取得する
+        NSFileManager *tFileManager = [NSFileManager defaultManager];
+        NSLog(@"filePathScan: %s", [saveBaseDirPath UTF8String] );
+        for (NSString *content in [tFileManager contentsOfDirectoryAtPath:saveBaseDirPath error:nil ]) {
+            const char *chars = [content UTF8String];
+            
+            NSString *str = [NSString stringWithCString: chars encoding:NSUTF8StringEncoding];
+            
+            NSLog(@"filePathList: %s", chars);
+            
+            //NSString型をInt型に
+            int oldSaveId = [ str intValue ];
+            if (oldSaveId >= newSaveNum) {
+                newSaveNum = oldSaveId;
+            }
         }
+        newSaveNum += 1;
+        nowSaveDirNum = newSaveNum;
     }
-    newSaveNum += 1;
-    nowSaveDirNum = newSaveNum;
-    
-    
     
     NSString *modelDirPath = [NSString stringWithFormat:@"%s/%d", [saveBaseDirPath UTF8String], nowSaveDirNum];
     
