@@ -479,12 +479,12 @@
     // Setup names and paths.
     NSString *modelDirPath = [NSString stringWithFormat:@"%s/%d/", [saveBaseDirPath UTF8String], nowSaveDirNum];
     
-    NSString* zipFilename = [NSString stringWithFormat:@"mesh_%d.obj", savedFrameCount]; //@"Model.zip";
-    NSString* zipTemporaryFilePath = [modelDirPath stringByAppendingPathComponent:zipFilename];
-    
     for(int i=0; i<savedFrameCount; i++) {
-        
+
         STMesh *sceneMesh = recordMeshList[i];
+
+        NSString* zipFilename = [NSString stringWithFormat:@"mesh_%d.obj", i]; //@"Model.zip";
+        NSString* zipTemporaryFilePath = [modelDirPath stringByAppendingPathComponent:zipFilename];
         
         // We want a ZIP with OBJ, MTL and JPG inside.
         NSDictionary* fileWriteOptions = @{kSTMeshWriteOptionFileFormatKey: @(STMeshWriteOptionFileFormatObjFile) };            // need set same type file name ext(.zip/.obj)
@@ -527,7 +527,7 @@
         
         NSString *lineStr = [NSString
                              stringWithFormat:@"%i,%li,%@,%f,%f,%f,%f,%f,%f,%f,%@\n",
-                             savedFrameCount,
+                             i,
                              timeFromScanStart,
                              strNow,
                              tempLocation.coordinate.latitude,
@@ -556,10 +556,6 @@
         [fileHandle closeFile];
         
     }
-    
-    savedFrameCount = 0;
-    
-    //scanGpsDataList;
     
     
     /*
@@ -886,7 +882,9 @@
 - (IBAction)resetButtonPressed:(id)sender
 {
     recordMeshNum = 0;
+    savedFrameCount = 0;
     [recordMeshList removeAllObjects];
+    [scanGpsDataList removeAllObjects];
     [scanFrameDateList removeAllObjects];       // add 2016.6
     NSUInteger elements = [recordMeshList count];
     //self.recFramesValueLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)elements];
