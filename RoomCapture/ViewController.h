@@ -248,6 +248,7 @@ struct DisplayData
     NSMutableArray *scanFrameDateList;
     NSMutableArray *scanGpsDataList;
     NSMutableArray *scanDoFDataList;
+    NSMutableArray *slamStateList;
     NSDate *getSceneMeshDate;
     
     //FILE *fpScanDateListFile;
@@ -280,6 +281,10 @@ struct DisplayData
 
     
     NSTimer *clockTimer;
+    
+    int trackingOkCounter;
+    int allFrameCounter;
+    
 }
 
 @property (nonatomic, retain) AVCaptureSession *avCaptureSession;

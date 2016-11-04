@@ -62,8 +62,11 @@ namespace // anonymous namespace for local functions
     // Initialize the camera pose tracker.
     NSDictionary* trackerOptions = @{
                                      kSTTrackerTypeKey: @(STTrackerDepthAndColorBased),
-                                     kSTTrackerTrackAgainstModelKey: self.trackingSmallObjectSwitch.isOn ? @TRUE:@FALSE, // Tracking against model works better in smaller scale scanning.
+                                     kSTTrackerTrackAgainstModelKey: self.trackingSmallObjectSwitch.isOn ? @YES:@NO, // Tracking against model works better in smaller scale scanning.
                                      kSTTrackerQualityKey: self.trackerQualityAccurateSwitch.isOn ?  @(STTrackerQualityAccurate):@(STTrackerQualityFast),
+                                     
+                                     // add tanaka
+                                     kSTTrackerBackgroundProcessingEnabledKey:@YES,     // defaults: NO
                                      };
     
     // Initialize the camera pose tracker.
@@ -96,7 +99,6 @@ namespace // anonymous namespace for local functions
     _slamState.keyFrameManager = [[STKeyFrameManager alloc] initWithOptions:keyframeManagerOptions];
     
     _slamState.initialized = true;
-    
     
 }
 
@@ -170,6 +172,9 @@ namespace // anonymous namespace for local functions
 - (void)processDepthFrame:(STDepthFrame *)depthFrame
                colorFrame:(STColorFrame *)colorFrame
 {
+    //[_slamState.tracker setOptions:@{kSTTrackerQualityKey:@(STTrackerQualityFast)}];
+
+    /*
     if (_options.applyExpensiveCorrectionToDepth)
     {
         NSAssert (!_options.useHardwareRegisteredDepth, @"Cannot enable both expensive depth correction and registered depth.");
@@ -179,10 +184,13 @@ namespace // anonymous namespace for local functions
             NSLog(@"Warning: could not improve depth map accuracy, is your firmware too old?");
         }
     }
+    */
 
     // Upload the new color image for next rendering.
-    if (colorFrame != nil)
-        [self uploadGLColorTexture:colorFrame];
+    if (self.drawModeSwitch.isOn) {
+        if (colorFrame != nil)
+            [self uploadGLColorTexture:colorFrame];
+    }
     
     switch (_slamState.roomCaptureState)
     {
@@ -212,8 +220,10 @@ namespace // anonymous namespace for local functions
             // Estimate the new camera pose.　新しいカメラ姿勢の推定
             BOOL trackingOk = [_slamState.tracker updateCameraPoseWithDepthFrame:depthFrame colorFrame:colorFrame error:&trackingError];
             
-            NSLog(@"[Structure] STTracker Error: %@.", [trackingError localizedDescription]);
-            trackingMessage = [trackingError localizedDescription];
+            if (!trackingOk) {
+                NSLog(@"[Structure] STTracker Error: %@.", [trackingError localizedDescription]);
+                trackingMessage = [trackingError localizedDescription];
+            }
             
             if (trackingOk)
             {
@@ -296,7 +306,22 @@ namespace // anonymous namespace for local functions
                 {
                     [self hideTrackingErrorMessage];
                 }
+
+                [self countFps];
                 
+               // [self resetSLAM];
+                _slamState.prevFrameTimeStamp = -1.0;
+                [_slamState.mapper reset];            // 最初に撮った形状にマッピングできればいいのであれば、リセットしなくて良さそう？　しかし、今回は立体的な動きを取るのでリセットは必須…？　有効にすると約20fpsになる=そこそこ重い　このリセットと他2つだけでは時系列再生にならない、trackerが大事？　形状変わらずに絵だけが変わる場合はok
+                [_slamState.tracker reset];             // これのリセットを有効にすると時系列再生でき始めた  mapperリセットしないと6fps->8fpsくらいには上がる
+                //[_slamState.tracker];
+                [_slamState.scene clear];               // 軽い  あってもほぼ30fps
+                [_slamState.keyFrameManager clear];     // 軽い　 あっても30fps
+                
+                _colorizedMesh = nil;
+                _holeFilledMesh = nil;
+
+
+                /*
                 // -----------------------------------------------
                 // tanaka
                 // ------------------------------------------------------------------
@@ -408,8 +433,11 @@ namespace // anonymous namespace for local functions
                     
                     
                 }
+                 */
+                
                 scanFrameCount++;
                 // -----------------------------------------------
+                trackingOkCounter++;
             }
             else
             {
@@ -435,6 +463,11 @@ namespace // anonymous namespace for local functions
             {
                 [self hideTrackingErrorMessage];
             }
+            
+            allFrameCounter++;
+            
+            self.debugInfoLabel.text = [NSString stringWithFormat:@"ok: %d /  all: %d", trackingOkCounter, allFrameCounter];
+            
             break;
         }
             

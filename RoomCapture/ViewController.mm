@@ -908,6 +908,7 @@
     [recordMeshList removeAllObjects];
     [scanGpsDataList removeAllObjects];
     [scanFrameDateList removeAllObjects];       // add 2016.6
+    [slamStateList removeAllObjects];
     NSUInteger elements = [recordMeshList count];
     //self.recFramesValueLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)elements];
     
@@ -916,6 +917,7 @@
     
     [self resetSLAM];
     [self enterPoseInitializationState];
+    [lm stopUpdatingLocation];
 }
 
 - (IBAction)doneButtonPressed:(id)sender
@@ -1295,6 +1297,8 @@
 -(void) doSaveInitializeAction {
     
     savedFrameCount = 0;
+    trackingOkCounter = 0;
+    allFrameCounter = 0;
     //_recordMeshNum;
     
     //mvcRecordMeshList;
@@ -1302,7 +1306,9 @@
     scanFrameTime = 1;      // add by tanaka
     scanFrameCount = 0;      // add by tanaka
     recordMeshNum = 0;      // add by tanaka
+    [recordMeshList removeAllObjects];       // add 2016.6
     [scanFrameDateList removeAllObjects];       // add 2016.6
+    [scanGpsDataList removeAllObjects];       // add 2016.6
     
     ownKeyframeCounts = 0;
     scanStartDate = [NSDate date];
@@ -1346,115 +1352,30 @@
         }
         newSaveNum += 1;
         nowSaveDirNum = newSaveNum;
-    }
     
-    NSString *modelDirPath = [NSString stringWithFormat:@"%s/%d", [saveBaseDirPath UTF8String], nowSaveDirNum];
-    
-    NSLog(@"make folder  proccess!");
-    // 一撮影ごとのフォルダを作る
-    {
-        NSFileManager *tFileManager = [NSFileManager defaultManager];
-        NSError *error = nil;
-        BOOL created = [tFileManager createDirectoryAtPath:modelDirPath
-                              withIntermediateDirectories:YES
-                                               attributes:nil
-                                                    error:&error];
+        NSString *modelDirPath = [NSString stringWithFormat:@"%s/%d", [saveBaseDirPath UTF8String], nowSaveDirNum];
         
-        if (!error){
-            NSLog(@"error: %@", error);
-        } else {
-            NSLog(@"folder make success!");
+        NSLog(@"make folder  proccess!");
+        // 一撮影ごとのフォルダを作る
+        {
+            NSFileManager *tFileManager = [NSFileManager defaultManager];
+            NSError *error = nil;
+            BOOL created = [tFileManager createDirectoryAtPath:modelDirPath
+                                  withIntermediateDirectories:YES
+                                                   attributes:nil
+                                                        error:&error];
+            
+            if (!error){
+                NSLog(@"error: %@", error);
+            } else {
+                NSLog(@"folder make success!");
+            }
+            
         }
-        
     }
-    
-    //_saveRecordMeshNumLabel.text = @"0";
     
     
     NSString *scanTimeRecordList = @"";
-    /*
-    for(int i=0; i<[mvcRecordMeshList count]; i++) {
-        STMesh *mesh = mvcRecordMeshList[i];
-        NSError* error;
-        NSString *tFilePath = [NSString stringWithFormat:@"%s/mesh_%d.obj", [modelDirPath UTF8String], i ];
-        NSLog(@"write filePath: %s", [tFilePath UTF8String]);
-        
-        [mesh writeToFile:tFilePath
-                  options:@{kSTMeshWriteOptionFileFormatKey: @(STMeshWriteOptionFileFormatObjFile)} //STMeshWriteOptionFileFormatObjFileZip}       // STMeshWriteOptionFileFormatObjFileZip
-                    error:&error];
-        savedMeshNum++;
-        if (!error){
-            NSLog(@"error: %@", error);
-        }else{
-            NSLog(@"save: %d/%d SUCCESS! ", savedMeshNum, _recordMeshNum);
-        }
-        _saveRecordMeshNumLabel.text = [NSString stringWithFormat:@"%d", savedMeshNum ];
-     
-        NSDateFormatter *df = [[NSDateFormatter alloc] init];
-        [df setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"ja_JP"]]; // Localeの指定
-        [df setDateFormat:@"yyyy/MM/dd HH:mm:ss.SSS"];
-     
-        NSDate *nsd = mvcScanFrameDateList[i];
-        
-        NSString *strNow = [df stringFromDate:nsd];
-        
-        // ミリセカンド(ms)を取得
-        long timeFromScanStart =  (long)([nsd timeIntervalSinceDate:scanStartDate] * 1000);
-        
-        
-        NSString *lineStr = [NSString stringWithFormat:@"%i,%li,%@\n", i, timeFromScanStart, strNow];
-        
-        
-        
-        // 日付(NSDate) => 文字列(NSString)に変換
-        //NSString* strNow = [NSString stringWithFormat:@"%@.%03d", [df stringFromDate: now], intMillSec];
-        
-        
-        scanTimeRecordList = [scanTimeRecordList stringByAppendingString:lineStr ];//@"";
-        
-    }
-     */
-    
-    /*
-    NSError* tError;
-    NSString *timeRecordPath = [NSString stringWithFormat:@"%s/scanTimeRecord.csv", [modelDirPath UTF8String]];
-    [scanTimeRecordList writeToFile:timeRecordPath
-                         atomically:YES
-                           encoding:NSUTF8StringEncoding
-                              error:&tError];
-    */
-    
-    /*
-    //NSString *tFilePath = @"Documents/artdkt_structure3d/1/";
-    NSLog(@"after fileScan filePath: %s", [modelDirPath UTF8String]);
-    //filePath = [[NSBundle mainBundle] bundlePath];
-    //filePath = @"Documents/artdkt_structure3d";
-    
-    
-    // ディレクトリのファイル一覧を取得
-    NSLog(@"filePathScan: %s", [DocumentsDirPath UTF8String] );
-    for (NSString *content in [fileManager contentsOfDirectoryAtPath:DocumentsDirPath error:nil ]) {
-        const char *chars = [content UTF8String];
-        NSLog(@"filePathList: %s", chars);
-    }
-    
-    // 1撮影分モデルのファイル一覧を取得
-    NSLog(@"filePathScan: %s", [modelDirPath UTF8String] );
-    for (NSString *content in [fileManager contentsOfDirectoryAtPath:modelDirPath error:nil ]) {
-        const char *chars = [content UTF8String];
-        NSLog(@"filePathList: %s", chars);
-    }
-     */
-    
-    
-    /*
-     for(int i=0; i<[mvcRecordMeshList count]; i++) {
-     //NSLog( [NSString stringWithFormat:@"%d: %@", i, mvcRecordMeshList[i]] );
-     STMesh *mesh = mvcRecordMeshList[i];
-     NSLog( [NSString stringWithFormat:@"%d: meshFaces %d", i, [mesh numberOfMeshFaces:i] ] );
-     }
-     */
-    
     
     
     
