@@ -742,7 +742,7 @@
     // Handles simultaneous press of Done & Reset.
     if(self.doneButton.hidden) return;
     
-    //[self enterFinalizingState];  default
+    [self enterFinalizingState];  //default
     
     
     
