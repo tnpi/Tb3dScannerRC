@@ -321,6 +321,7 @@ namespace // anonymous namespace for local functions
                             [scanGpsDataList addObject:recentLocation];
                             
                         } else {
+                            
                             // Setup names and paths.
                             NSString *modelDirPath = [NSString stringWithFormat:@"%s/%d/", [saveBaseDirPath UTF8String], nowSaveDirNum];
                             
@@ -330,58 +331,30 @@ namespace // anonymous namespace for local functions
                             // We want a ZIP with OBJ, MTL and JPG inside.
                             NSDictionary* fileWriteOptions = @{kSTMeshWriteOptionFileFormatKey: @(STMeshWriteOptionFileFormatObjFile) };            // need set same type file name ext(.zip/.obj)
                             
-                            // Temporary path for the zip file.
-                            
                             NSDate *scanNowDate = [NSDate date];
-                            //[scanFrameDateList addObject:scanNowDate];      // １コマ スキャンし終わった日時を保存しておく
-                            
-                            //[recordMeshList addObject:sceneMesh];
                             
                             NSString* scanDateListFilePath = [modelDirPath stringByAppendingPathComponent:scanDateListFileName];
                             NSLog(@"scanDateListFilePath: %@", scanDateListFilePath);
-                            /*
-                            self.debugInfoLabel.text = [NSString stringWithFormat:@"datePath: %@", scanDateListFilePath];
-                             */
+                            // self.debugInfoLabel.text = [NSString stringWithFormat:@"datePath: %@", scanDateListFilePath];
                             
                             NSError* error;
                             BOOL success = [sceneMesh writeToFile:zipTemporaryFilePath options:fileWriteOptions error:&error];
-                            [_slamState.scene unlockSceneMesh];     // ロック解除
-                            
-                            if (!success)
-                            {
-                                /*
-                                NSLog (@"Could not save the mesh: %@", [error localizedDescription]);
-                                
-                                dispatch_async(dispatch_get_main_queue() , ^(){
-                                    [self showMeshViewerMessage:self.meshViewerMessageLabel msg:@"Failed to save the OBJ file!"];
-                                    
-                                    // Hide the error message after 2 seconds.
-                                    dispatch_after (dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue() , ^(){
-                                        [self hideMeshViewerMessage:self.meshViewerMessageLabel];
-                                    });
-                                });
-                                */
+                            if (!success) {
                                 return;
                             }
                             
-                            
                             dataTypeFileName = @"";
-
-                            
                             NSDateFormatter *df = [[NSDateFormatter alloc] init];
                             [df setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"ja_JP"]]; // Localeの指定
                             [df setDateFormat:@"yyyy/MM/dd HH:mm:ss.SSS"];
                             
                             
-                            NSDate *nsd = [NSDate date];//scanFrameDateList[savedFrameCount];       // temporary
-                            
+                            NSDate *nsd = [NSDate date];
                             NSString *strNow = [df stringFromDate:nsd];
                             
                             // ミリセカンド(ms)を取得
                             long timeFromScanStart =  (long)([nsd timeIntervalSinceDate:scanStartDate] * 1000);
                             
-                            //recentLocation;
-
                             NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
                             
                             // 変換用の書式を設定します。
@@ -405,19 +378,6 @@ namespace // anonymous namespace for local functions
                                                  gpsDateConverted
                                                  ];
                             
-                            //scanTimeRecordList = [scanTimeRecordList stringByAppendingString:lineStr ];//@"";
-                          /*
-                            _latitudeLabel.text = [NSString stringWithFormat:@"%+.6f", location.coordinate.latitude];
-                            _longitudeLabel.text = [NSString stringWithFormat:@"%+.6f", location.coordinate.longitude];
-                            _gpsAltitudeLabel.text = [NSString stringWithFormat:@"%+.6f \n", location.altitude];
-                            _gpsDescriptionLabel.text = [NSString stringWithFormat:@"%@ \n", [location description]];
-                            
-                            _gpsHorizontalAccuracy.text = [NSString stringWithFormat:@"%+6.f \n", [location horizontalAccuracy]];
-                            _gpsVerticalAccuracy.text = [NSString stringWithFormat:@"%+6.f \n", [location verticalAccuracy]];
-                            _gpsSpeed.text = [NSString stringWithFormat:@"%+.6f \n", [location speed]];
-                            _gpsCourse.text = [NSString stringWithFormat:@"%+.6f \n", [location course]];
-                        */
-
                             NSFileManager *fManager = [NSFileManager defaultManager];
                             BOOL result = [fManager fileExistsAtPath:scanDateListFilePath];
                             if(!result){
@@ -433,18 +393,6 @@ namespace // anonymous namespace for local functions
                             [fileHandle synchronizeFile];
                             [fileHandle closeFile];
                             
-                            
-                            /*
-                            dispatch_async(dispatch_get_main_queue() , ^(){
-                                
-                                NSDictionary* attachmentsInfo = @{
-                                                                  @"zipTemporaryFilePath": zipTemporaryFilePath,
-                                                                  @"zipFilename": zipFilename,
-                                                                  };
-                                [self didFinishSavingMeshWithAttachmentInfo:attachmentsInfo];
-                                
-                            });
-                             */
                         }
                         
                         savedFrameCount++;
