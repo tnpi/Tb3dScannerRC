@@ -474,6 +474,169 @@
     
 }
 
+- (void)saveDataMemoryToFile {
+    
+    // Setup names and paths.
+    NSString *modelDirPath = [NSString stringWithFormat:@"%s/%d/", [saveBaseDirPath UTF8String], nowSaveDirNum];
+    
+    NSString* zipFilename = [NSString stringWithFormat:@"mesh_%d.obj", savedFrameCount]; //@"Model.zip";
+    NSString* zipTemporaryFilePath = [modelDirPath stringByAppendingPathComponent:zipFilename];
+    
+    for(int i=0; i<savedFrameCount; i++) {
+        
+        STMesh *sceneMesh = recordMeshList[i];
+        
+        // We want a ZIP with OBJ, MTL and JPG inside.
+        NSDictionary* fileWriteOptions = @{kSTMeshWriteOptionFileFormatKey: @(STMeshWriteOptionFileFormatObjFile) };            // need set same type file name ext(.zip/.obj)
+        
+        NSDate *scanNowDate = [NSDate date];
+        
+        NSString* scanDateListFilePath = [modelDirPath stringByAppendingPathComponent:scanDateListFileName];
+        NSLog(@"scanDateListFilePath: %@", scanDateListFilePath);
+        // self.debugInfoLabel.text = [NSString stringWithFormat:@"datePath: %@", scanDateListFilePath];
+        
+        NSError* error;
+        BOOL success = [sceneMesh writeToFile:zipTemporaryFilePath options:fileWriteOptions error:&error];
+        if (!success) {
+            return;
+        }
+
+        // ---
+        
+        CLLocation* tempLocation = scanGpsDataList[i];
+        
+        dataTypeFileName = @"";
+        NSDateFormatter *df = [[NSDateFormatter alloc] init];
+        [df setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"ja_JP"]]; // Localeの指定
+        [df setDateFormat:@"yyyy/MM/dd HH:mm:ss.SSS"];
+        
+        
+        NSDate *nsd = [NSDate date];
+        NSString *strNow = [df stringFromDate:nsd];
+        
+        // ミリセカンド(ms)を取得
+        long timeFromScanStart =  (long)([nsd timeIntervalSinceDate:scanStartDate] * 1000);
+        
+        NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
+        
+        // 変換用の書式を設定します。
+        [formatter setDateFormat:@"yyyy/MM/dd hh:mm:ss"];
+        
+        // NSDate を NSString に変換します。
+        NSString *gpsDateConverted = [formatter stringFromDate:recentLocation.timestamp];
+        
+        NSString *lineStr = [NSString
+                             stringWithFormat:@"%i,%li,%@,%f,%f,%f,%f,%f,%f,%f,%@\n",
+                             savedFrameCount,
+                             timeFromScanStart,
+                             strNow,
+                             tempLocation.coordinate.latitude,
+                             tempLocation.coordinate.longitude,
+                             tempLocation.altitude,
+                             tempLocation.horizontalAccuracy,
+                             tempLocation.verticalAccuracy,
+                             tempLocation.speed,
+                             tempLocation.course,
+                             gpsDateConverted
+                             ];
+        
+        NSFileManager *fManager = [NSFileManager defaultManager];
+        BOOL result = [fManager fileExistsAtPath:scanDateListFilePath];
+        if(!result){
+            result = [self createFile:scanDateListFilePath];
+        }
+        NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:scanDateListFilePath];
+        
+        [fileHandle seekToEndOfFile];
+        
+        NSData *dat = [lineStr dataUsingEncoding:NSUTF8StringEncoding];
+        [fileHandle writeData:dat];
+        //効率化のためにファイルに書き込まれずにキャッシュされる場合があるらしいのでsynchronizeFileで書き込み
+        [fileHandle synchronizeFile];
+        [fileHandle closeFile];
+        
+    }
+    
+    savedFrameCount = 0;
+    
+    //scanGpsDataList;
+    
+    
+    /*
+     // We want a ZIP with OBJ, MTL and JPG inside.
+     NSDictionary* fileWriteOptions = @{kSTMeshWriteOptionFileFormatKey: @(STMeshWriteOptionFileFormatObjFile) };            // need set same type file name ext(.zip/.obj)
+     
+     NSDate *scanNowDate = [NSDate date];
+     
+     NSString* scanDateListFilePath = [modelDirPath stringByAppendingPathComponent:scanDateListFileName];
+     NSLog(@"scanDateListFilePath: %@", scanDateListFilePath);
+     // self.debugInfoLabel.text = [NSString stringWithFormat:@"datePath: %@", scanDateListFilePath];
+     
+     NSError* error;
+     BOOL success = [sceneMesh writeToFile:zipTemporaryFilePath options:fileWriteOptions error:&error];
+     if (!success) {
+     return;
+     }
+     
+     dataTypeFileName = @"";
+     NSDateFormatter *df = [[NSDateFormatter alloc] init];
+     [df setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"ja_JP"]]; // Localeの指定
+     [df setDateFormat:@"yyyy/MM/dd HH:mm:ss.SSS"];
+     
+     
+     NSDate *nsd = [NSDate date];
+     NSString *strNow = [df stringFromDate:nsd];
+     
+     // ミリセカンド(ms)を取得
+     long timeFromScanStart =  (long)([nsd timeIntervalSinceDate:scanStartDate] * 1000);
+     
+     NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
+     
+     // 変換用の書式を設定します。
+     [formatter setDateFormat:@"yyyy/MM/dd hh:mm:ss"];
+     
+     // NSDate を NSString に変換します。
+     NSString *gpsDateConverted = [formatter stringFromDate:recentLocation.timestamp];
+     
+     NSString *lineStr = [NSString
+     stringWithFormat:@"%i,%li,%@,%f,%f,%f,%f,%f,%f,%f,%@\n",
+     savedFrameCount,
+     timeFromScanStart,
+     strNow,
+     recentLocation.coordinate.latitude,
+     recentLocation.coordinate.longitude,
+     recentLocation.altitude,
+     recentLocation.horizontalAccuracy,
+     recentLocation.verticalAccuracy,
+     recentLocation.speed,
+     recentLocation.course,
+     gpsDateConverted
+     ];
+     
+     NSFileManager *fManager = [NSFileManager defaultManager];
+     BOOL result = [fManager fileExistsAtPath:scanDateListFilePath];
+     if(!result){
+     result = [self createFile:scanDateListFilePath];
+     }
+     NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:scanDateListFilePath];
+     
+     [fileHandle seekToEndOfFile];
+     
+     NSData *dat = [lineStr dataUsingEncoding:NSUTF8StringEncoding];
+     [fileHandle writeData:dat];
+     //効率化のためにファイルに書き込まれずにキャッシュされる場合があるらしいのでsynchronizeFileで書き込み
+     [fileHandle synchronizeFile];
+     [fileHandle closeFile];
+     */
+    
+}
+
+
+- (BOOL)createFile:(NSString *)localFilePath
+{
+    return [[NSFileManager defaultManager] createFileAtPath:localFilePath contents:[NSData data] attributes:nil];
+}
+
 #pragma mark - IMU
 
 - (void)setupIMU
@@ -742,9 +905,11 @@
     // Handles simultaneous press of Done & Reset.
     if(self.doneButton.hidden) return;
     
+    if (self.recordToMemorySwitch.isOn) {
+        [self saveDataMemoryToFile];
+    }
+    
     [self enterFinalizingState];  //default
-    
-    
     
 }
 

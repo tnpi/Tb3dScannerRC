@@ -42,12 +42,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "RoomCapture/ViewController.mm"
-            timestampString = "499905984.763214"
+            timestampString = "499914407.496957"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "664"
-            endingLineNumber = "664"
-            landmarkName = "-nearModeSwitchValueChanged:"
+            startingLineNumber = "739"
+            endingLineNumber = "739"
+            landmarkName = "-updateAppStatusMessage"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -74,12 +74,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "RoomCapture/ViewController.mm"
-            timestampString = "499905984.763214"
+            timestampString = "499914407.496957"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "490"
-            endingLineNumber = "490"
-            landmarkName = "-setupIMU"
+            startingLineNumber = "559"
+            endingLineNumber = "559"
+            landmarkName = "-saveDataMemoryToFile"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

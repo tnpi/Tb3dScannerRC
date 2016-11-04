@@ -373,5 +373,7 @@ struct DisplayData
 // tanaka add -----
 - (void)colorizeMesh;
 - (void)countFps;
+- (void)saveDataMemoryToFile;
+- (BOOL)createFile:(NSString *)localFilePath;
 
 @end

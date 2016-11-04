@@ -297,7 +297,8 @@ namespace // anonymous namespace for local functions
                 }
                 
                 // -----------------------------------------------
-                // 強制リセット実験 tanaka
+                // tanaka
+                // ------------------------------------------------------------------
                 if (((int)self.intervalSlider.value >= 1) && (scanFrameCount % (int)self.intervalSlider.value == 0)) {
                     
                     if (self.saveToFileSwitch.isOn) {
@@ -315,7 +316,7 @@ namespace // anonymous namespace for local functions
                         
                         [scanFrameDateList addObject:[NSDate date]];      // １コマ スキャンし終わった日時を保存しておく
                         
-                        if (self.recordToMemorySwitch.isOn) {
+                        if (self.recordToMemorySwitch.isOn) {       // 速度を稼ぐためにメモリ上にいったん記録して、あとでまとめてファイルに保存
                             
                             [recordMeshList addObject:sceneMesh];
                             [scanGpsDataList addObject:recentLocation];
@@ -442,9 +443,5 @@ namespace // anonymous namespace for local functions
     }
 }
 
-- (BOOL)createFile:(NSString *)localFilePath
-{
-    return [[NSFileManager defaultManager] createFileAtPath:localFilePath contents:[NSData data] attributes:nil];
-}
 
 @end
