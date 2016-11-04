@@ -141,8 +141,21 @@
     // GPS end -----------------------------------------------
     
     fpsCount = 0;
+    
 }
 
+- (void)updateClockLabel
+{
+    NSDate *date = [NSDate date];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    
+    dateFormatter.dateFormat = @"yyyy/MM/dd HH:mm:ss.SSS";
+    NSString *dateStr = [dateFormatter stringFromDate:date];
+    
+    // 2014/02/18 11:08:12
+    _clockLabel.text = [NSString stringWithFormat:@"%@", dateStr ];
+  
+}
 
 - (void)viewDidAppear:(BOOL)animated
 {
@@ -154,11 +167,19 @@
     [self setupGLViewport];
     
     // We will connect to the sensor when we receive appDidBecomeActive.
+    
+    clockTimer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(updateClockLabel) userInfo:nil repeats:YES];
+
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
+    
+    if ( clockTimer ) {
+        [clockTimer invalidate];
+        clockTimer = nil;
+    }
 }
 
 - (void)appDidBecomeActive
@@ -909,7 +930,9 @@
         [self saveDataMemoryToFile];
     }
     
-    [self enterFinalizingState];  //default
+    [self resetButtonPressed:self.resetButton];
+    
+    //[self enterFinalizingState];  //default
     
 }
 

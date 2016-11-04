@@ -278,6 +278,8 @@ struct DisplayData
     
     // tanaka rec to memory --------------------------------------------------
 
+    
+    NSTimer *clockTimer;
 }
 
 @property (nonatomic, retain) AVCaptureSession *avCaptureSession;
@@ -336,6 +338,7 @@ struct DisplayData
 
 @property (weak, nonatomic) IBOutlet UILabel *scanFpsLabel;
 
+@property (weak, nonatomic) IBOutlet UILabel *clockLabel;
 
 
 
@@ -375,5 +378,6 @@ struct DisplayData
 - (void)countFps;
 - (void)saveDataMemoryToFile;
 - (BOOL)createFile:(NSString *)localFilePath;
+- (void)updateClockLabel;
 
 @end

@@ -79,7 +79,8 @@ namespace // anonymous namespace for local functions
                                         options:@{kSTCameraPoseInitializerStrategyKey:@(STCameraPoseInitializerStrategyGravityAlignedAtVolumeCenter)}
                                         //options:@{kSTCameraPoseInitializerStrategyKey:@(STCameraPoseInitializerStrategyGravityAlignedAtOrigin)}
     ];
-    
+    //_slamState.cameraPoseInitializer.
+     
     // Setup the initial volume size.
     [self adjustVolumeSize:_slamState.volumeSizeInMeters];
     
