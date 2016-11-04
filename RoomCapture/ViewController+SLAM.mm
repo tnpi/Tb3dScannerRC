@@ -76,8 +76,8 @@ namespace // anonymous namespace for local functions
     // maximize the area of scan. The rotation will also be aligned to gravity.
     _slamState.cameraPoseInitializer = [[STCameraPoseInitializer alloc]
                                         initWithVolumeSizeInMeters:_slamState.volumeSizeInMeters
-                                        //options:@{kSTCameraPoseInitializerStrategyKey:@(STCameraPoseInitializerStrategyGravityAlignedAtVolumeCenter)}
-                                        options:@{kSTCameraPoseInitializerStrategyKey:@(STCameraPoseInitializerStrategyGravityAlignedAtOrigin)}
+                                        options:@{kSTCameraPoseInitializerStrategyKey:@(STCameraPoseInitializerStrategyGravityAlignedAtVolumeCenter)}
+                                        //options:@{kSTCameraPoseInitializerStrategyKey:@(STCameraPoseInitializerStrategyGravityAlignedAtOrigin)}
     ];
     
     // Setup the initial volume size.

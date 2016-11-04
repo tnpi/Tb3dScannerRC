@@ -489,7 +489,9 @@
         // We want a ZIP with OBJ, MTL and JPG inside.
         NSDictionary* fileWriteOptions = @{kSTMeshWriteOptionFileFormatKey: @(STMeshWriteOptionFileFormatObjFile) };            // need set same type file name ext(.zip/.obj)
         
-        NSDate *scanNowDate = [NSDate date];
+        NSDate *scanNowDate = scanFrameDateList[i];
+        
+        
         
         NSString* scanDateListFilePath = [modelDirPath stringByAppendingPathComponent:scanDateListFileName];
         NSLog(@"scanDateListFilePath: %@", scanDateListFilePath);
@@ -503,15 +505,15 @@
 
         // ---
         
-        CLLocation* tempLocation = scanGpsDataList[i];
         
         dataTypeFileName = @"";
         NSDateFormatter *df = [[NSDateFormatter alloc] init];
         [df setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"ja_JP"]]; // Localeの指定
         [df setDateFormat:@"yyyy/MM/dd HH:mm:ss.SSS"];
         
+        CLLocation* tempLocation = scanGpsDataList[i];
         
-        NSDate *nsd = [NSDate date];
+        NSDate *nsd = scanFrameDateList[i];
         NSString *strNow = [df stringFromDate:nsd];
         
         // ミリセカンド(ms)を取得
