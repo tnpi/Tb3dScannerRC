@@ -285,6 +285,10 @@ struct DisplayData
     int trackingOkCounter;
     int allFrameCounter;
     
+    STDepthFrame *firstGetDepthFrame;
+    STColorFrame *firstGetColorFrame;
+    GLKMatrix4 firstCameraPoseOnScan;
+    
 }
 
 @property (nonatomic, retain) AVCaptureSession *avCaptureSession;

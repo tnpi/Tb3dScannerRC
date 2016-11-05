@@ -204,11 +204,12 @@
             GLKMatrix4 cameraViewpoint = GLKMatrix4Multiply(depthCameraPose, colorCameraPoseInDepthCoordinateSpace);
             
             // Render the current mesh reconstruction using the last estimated camera pose.
-            [_slamState.scene renderMeshFromViewpoint:cameraViewpoint
+            [_slamState.scene renderMeshFromViewpoint:cameraViewpoint           // 視点だけ変えられる？
                                    cameraGLProjection:cameraGLProjection
-                                                alpha:1.0
+                                                alpha:1.0                   // default: 1.0
                              highlightOutOfRangeDepth:false
-                                            wireframe:true];
+                                            wireframe:false];               // Scanner風味の面表示で再生
+                                            //wireframe:true];              // ワイヤーフレーム表示
             
             break;
         }
