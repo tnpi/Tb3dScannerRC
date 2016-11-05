@@ -208,6 +208,7 @@ namespace // anonymous namespace for local functions
             
         case RoomCaptureStateScanning:
         {
+            // 前回の（情報を更新しない、今の時点で最新の）カメラの姿勢を取得保存する　デプスカメラの姿勢としtえ
             GLKMatrix4 depthCameraPoseBeforeTracking = [_slamState.tracker lastFrameCameraPose];
             
             NSError* trackingError = nil;
@@ -218,81 +219,103 @@ namespace // anonymous namespace for local functions
             NSString* keyframeErrorMessage = nil;
 
             // Estimate the new camera pose.　新しいカメラ姿勢の推定
-            BOOL trackingOk = [_slamState.tracker updateCameraPoseWithDepthFrame:depthFrame colorFrame:colorFrame error:&trackingError];
+            // ||||||||||||||| トラッカーの更新 ||||||||||||||||　今回のカメラ姿勢を推定して取得・更新を試みる
+            BOOL trackingOk;
+            //if (scanFrameCount == 0) {
+                trackingOk = [_slamState.tracker updateCameraPoseWithDepthFrame:depthFrame colorFrame:colorFrame error:&trackingError]; // important!
+                //trackingOk = [_slamState.tracker updateCameraPoseWithMotion:motion error:&trackingError];
+            //}
             
             if (!trackingOk) {
                 NSLog(@"[Structure] STTracker Error: %@.", [trackingError localizedDescription]);
                 trackingMessage = [trackingError localizedDescription];
+                // ※次のエラーが主に出る　[Structure] STTracker Error: STTracker needs DeviceMotion input for tracking.
             }
             
+            // 今の状況から、今回の新しいカメラ姿勢が取得できたら
             if (trackingOk)
             {
-                // Integrate it to update the current mesh estimate.
+                // ||||||||| Integrate it to update the current mesh estimate. |||||||||||||||||||||
+                // マッパーのカメラ姿勢・デプス画像ともに最新の（トラッキング成功後の）のデータに更新
                 GLKMatrix4 depthCameraPoseAfterTracking = [_slamState.tracker lastFrameCameraPose];
                 [_slamState.mapper integrateDepthFrame:depthFrame cameraPose:depthCameraPoseAfterTracking];
                 
                 // Make sure the pose is in color camera coordinates in case we are not using registered depth.
-                GLKMatrix4 colorCameraPoseInDepthCoordinateSpace;
-                [depthFrame colorCameraPoseInDepthCoordinateFrame:colorCameraPoseInDepthCoordinateSpace.m];
+                // 確認してください　私達がレジスターデプスを使わない場合、姿勢はカラーカメラの座標内です
+                // colorCameraPoseInDepthCoordinateFrame: Get the rigid body transformation (RBT) between the iOS color camera and the depth image viewpoint.
+                GLKMatrix4 colorCameraPoseInDepthCoordinateSpace;       // デプス座標空間内のカラーカメラの姿勢　の宣言
+                [depthFrame colorCameraPoseInDepthCoordinateFrame:colorCameraPoseInDepthCoordinateSpace.m]; // デプス座標フレーム内のカラーカメラ姿勢
+                // 最新の（トラッキング成功後の）カラーカメラ姿勢を、最新のデプスカメラ姿勢とデプス座標空間内のカラーカメラ姿勢から 乗算から計算？
                 GLKMatrix4 colorCameraPoseAfterTracking = GLKMatrix4Multiply(depthCameraPoseAfterTracking,
                                                                              colorCameraPoseInDepthCoordinateSpace);
                 
-                bool showHoldDeviceStill = false;
+                bool showHoldDeviceStill = false;   // デバイスを固定して待っててねメッセージを出すフラグをfalseで初期化
                 
                 // Check if the viewpoint has moved enough to add a new keyframe
+                // 新しいカラーカメラ姿勢で、新しいであろうキーフレーム　視点が新しいキーフレームを追加するほどに十分に動いたかどうかを調べた結果、必要だった場合？
+                // 新しいフレームによって新しい姿勢が得られるかどうか調べる関数　真偽値が返る
                 if ([_slamState.keyFrameManager wouldBeNewKeyframeWithColorCameraPose:colorCameraPoseAfterTracking])
                 {
-                    const bool isFirstFrame = (_slamState.prevFrameTimeStamp < 0.);
-                    bool canAddKeyframe = false;
+                    const bool isFirstFrame = (_slamState.prevFrameTimeStamp < 0.); // 今回が初めてのフレームかどうかを表すフラグ　だった場合true
+                    bool canAddKeyframe = false;                                    // キーフレームを追加できるかどうかのフラグ
                     
                     if (isFirstFrame)
                     {
-                        canAddKeyframe = true;
+                        canAddKeyframe = true;                                      // 一番最初のフレームならばキーフレームは常に追加できる
                     }
-                    else
+                    else    // 一番初めのフレームでない場合　（無条件にキーフレームを追加できない場合
                     {
+                        // 前回の姿勢との角度の変化差分　秒間の角度変化
                         float deltaAngularSpeedInDegreesPerSeconds = FLT_MAX;
                         NSTimeInterval deltaSeconds = depthFrame.timestamp - _slamState.prevFrameTimeStamp;
                         
                         // If deltaSeconds is 2x longer than the frame duration of the active video device, do not use it either
-                        CMTime frameDuration = self.videoDevice.activeVideoMaxFrameDuration;
+                        // トラッキングに成功した時間間隔がビデオデバイスのフレーム間時間の2倍以上の場合、使わない
+                        // たぶん撮影者がカメラをおおきく振りすぎたときとか、画像がブレブレになるので、キーフレームとしては使わないということ
+                        CMTime frameDuration = self.videoDevice.activeVideoMaxFrameDuration;        // 1フレームの時間の長さ
                         if (deltaSeconds < (float)frameDuration.value/frameDuration.timescale*2.f)
                         {
-                            // Compute angular speed
+                            // Compute angular speed　角速度の計算
+                            // 秒間の角速度 = 2つの姿勢から回転量を度単位で計算し、差分時間で割って秒間の角速度を求める
                             deltaAngularSpeedInDegreesPerSeconds = deltaRotationAngleBetweenPosesInDegrees (depthCameraPoseBeforeTracking, depthCameraPoseAfterTracking)/deltaSeconds;
                         }
                         
                         // If the camera moved too much since the last frame, we will likely end up
                         // with motion blur and rolling shutter, especially in case of rotation. This
                         // checks aims at not grabbing keyframes in that case.
+                        // 前回のフレームからカメラが移動しすぎていた場合、ブレとかこんにゃく現象を避けるため、特に回転について、ここで変なキーフレームを掴まないように処理する
                         if (deltaAngularSpeedInDegreesPerSeconds < _options.maxKeyframeRotationSpeedInDegreesPerSecond)
                         {
                             canAddKeyframe = true;
                         }
                     }
                     
+                    // キーフレーム画像を追加できるとわかった場合　最新のカラーカメラ姿勢と画像をセットで渡す
                     if (canAddKeyframe)
                     {
                         [_slamState.keyFrameManager processKeyFrameCandidateWithColorCameraPose:colorCameraPoseAfterTracking
                                                                                      colorFrame:colorFrame
                                                                                      depthFrame:nil];
-                    }
-                    else
-                    {
+                    } else { // 早すぎたりしてとにかくキーフレームが追加できなかった場合
                         // Moving too fast. Hint the user to slow down to capture a keyframe
                         // without rolling shutter and motion blur.
+                        // 早く動かしすぎた場合、キーフレームを捕まえるために、ヒントをユーザーに伝えてゆっくりにさせる
+                        // ブレとかこんにゃく現象とかのないものにするため。
                         if (_slamState.prevFrameTimeStamp > 0.) // only show the message if it's not the first frame.
                         {
-                            showHoldDeviceStill = true;
+                            showHoldDeviceStill = true;         // デバイスを固定して待っててねメッセージを出すフラグをOnに
                         }
                     }
                 }
                 
                 // Compute the translation difference between the initial camera pose and the current one.
-                GLKMatrix4 initialPose = _slamState.tracker.initialCameraPose;
+                // 初期のカメラの姿勢と今のカメラ姿勢の間の移動量の差を計算する
+                GLKMatrix4 initialPose = _slamState.tracker.initialCameraPose;      // 初期カメラ姿勢
+                // 初期と現在の移動量（位置の差分
                 float deltaTranslation = GLKVector4Distance(GLKMatrix4GetColumn(depthCameraPoseAfterTracking, 3), GLKMatrix4GetColumn(initialPose, 3));
                 
                 // Show some messages if needed.
+                // 必要なら警告メッセージを表示する
                 if (showHoldDeviceStill)
                 {
                     [self showTrackingMessage:@"Please hold still so we can capture a keyframe..."];
@@ -307,21 +330,8 @@ namespace // anonymous namespace for local functions
                     [self hideTrackingErrorMessage];
                 }
 
-                [self countFps];
+                // ここにリセットを入れてもいい
                 
-               // [self resetSLAM];
-                _slamState.prevFrameTimeStamp = -1.0;
-                [_slamState.mapper reset];            // 最初に撮った形状にマッピングできればいいのであれば、リセットしなくて良さそう？　しかし、今回は立体的な動きを取るのでリセットは必須…？　有効にすると約20fpsになる=そこそこ重い　このリセットと他2つだけでは時系列再生にならない、trackerが大事？　形状変わらずに絵だけが変わる場合はok
-                [_slamState.tracker reset];             // これのリセットを有効にすると時系列再生でき始めた  mapperリセットしないと6fps->8fpsくらいには上がる
-                //[_slamState.tracker];
-                [_slamState.scene clear];               // 軽い  あってもほぼ30fps
-                [_slamState.keyFrameManager clear];     // 軽い　 あっても30fps
-                
-                _colorizedMesh = nil;
-                _holeFilledMesh = nil;
-
-
-                /*
                 // -----------------------------------------------
                 // tanaka
                 // ------------------------------------------------------------------
@@ -427,13 +437,22 @@ namespace // anonymous namespace for local functions
                     
                     [self countFps];
                     
-                    [self resetSLAM];
+                    //[self resetSLAM];
+                    _slamState.prevFrameTimeStamp = -1.0;
+                    [_slamState.mapper reset];            // 最初に撮った形状にマッピングできればいいのであれば、リセットしなくて良さそう？　しかし、今回は立体的な動きを取るのでリセットは必須…？　有効にすると約20fpsになる=そこそこ重い　このリセットと他2つだけでは時系列再生にならない、trackerが大事？　形状変わらずに絵だけが変わる場合はok
+                    //[_slamState.tracker reset];             // これのリセットを有効にすると時系列再生でき始めた  mapperリセットしないと6fps->8fpsくらいには上がる
+                    //[_slamState.tracker];
+                    [_slamState.scene clear];               // 軽い  あってもほぼ30fps
+                    [_slamState.keyFrameManager clear];     // 軽い　 あっても30fps
+                    
+                    _colorizedMesh = nil;
+                    _holeFilledMesh = nil;
+                    
                     //[self enterPoseInitializationState];
                     //[self enterScanningState];
                     
                     
                 }
-                 */
                 
                 scanFrameCount++;
                 // -----------------------------------------------

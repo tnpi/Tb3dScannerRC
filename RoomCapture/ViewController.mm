@@ -659,6 +659,7 @@
 
 - (void)setupIMU
 {
+    NSLog(@"setupIMU. started");
     _lastCoreMotionGravity = GLKVector3Make (0,0,0);
     
     // 60 FPS is responsive enough for motion events.
@@ -681,10 +682,14 @@
     };
     
     [_motionManager startDeviceMotionUpdatesToQueue:_imuQueue withHandler:dmHandler];
+
+    NSLog(@"setupIMU. ended");
 }
 
 - (void)processDeviceMotion:(CMDeviceMotion *)motion withError:(NSError *)error
 {
+    //NSLog(@"processDeviceMotion. started"); // testlog
+
     if (_slamState.roomCaptureState == RoomCaptureStatePoseInitialization)
     {
         // Update our gravity vector, it will be used by the cube placement initializer.
@@ -693,6 +698,7 @@
     
     if (_slamState.roomCaptureState == RoomCaptureStatePoseInitialization || _slamState.roomCaptureState == RoomCaptureStateScanning)
     {
+        //NSLog(@"processDeviceMotion.updateCameraPoseWithMotion "); // testlog
         // The tracker is more robust to fast moves if we feed it with motion data.
         [_slamState.tracker updateCameraPoseWithMotion:motion];
     }
