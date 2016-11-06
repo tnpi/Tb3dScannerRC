@@ -209,6 +209,18 @@ namespace // anonymous namespace for local functions
             
         case RoomCaptureStateScanning:
         {
+            if (((int)self.intervalSlider.value >= 1) && (scanFrameCount % (int)self.intervalSlider.value != 0)){
+                scanFrameCount++;
+                allFrameCounter++;
+                if (_slamState.tracker.poseAccuracy >= STTrackerPoseAccuracyHigh)
+                {
+                    //
+                    [_slamState.mapper integrateDepthFrame:depthFrame cameraPose:firstCameraPoseOnScan];//_slamState.tracker.lastFrameCameraPose];
+                }
+
+                break;
+            }
+            
             NSLog(@"RoomCaptureStateScanning: start");
 
             [_slamState.mapper reset];            // 最初に撮った形状にマッピングできればいいのであれば、リセットしなくて良さそう？　しかし、今回は立体的な動きを取るのでリセットは必須…？　有効にすると約20fpsになる=そこそこ重い　このリセットと他2つだけでは時系列再生にならない、trackerが大事？　形状変わらずに絵だけが変わる場合はok

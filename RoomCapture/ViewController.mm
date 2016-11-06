@@ -57,7 +57,11 @@
         NSLog(@"filePathList: %s", chars);
     }
     
+    [self setupUserInterface];
+    
     // UI ---------------------------------------------------------------------------
+
+    [self setupUserInterface];
     
     self.recordToMemorySwitch.on = udRecordToMemorySwitch ? YES:NO;
     self.nearModeSwitch.on = udNearModeSwitch ? YES:NO;
@@ -83,7 +87,6 @@
 
     [self setupGL];
     
-    [self setupUserInterface];
     
     [self setupMeshViewController];
     
@@ -140,6 +143,9 @@
     // GPS end -----------------------------------------------
     
     fpsCount = 0;
+    
+    [self actionOnRoomSizeSliderValueChanged];
+
     
 }
 
@@ -911,6 +917,7 @@
 }
 
 - (void)actionOnRoomSizeSliderValueChanged {
+    
     float scale = self.roomSizeSlider.value;
     
     GLKVector3 newVolumeSize = GLKVector3MultiplyScalar(_options.initialVolumeSizeInMeters, scale);
