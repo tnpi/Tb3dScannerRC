@@ -193,23 +193,26 @@
             // Render the background image from the color camera.
             [self renderColorImage];
             
-            GLKMatrix4 depthCameraPose = [_slamState.tracker lastFrameCameraPose];
-            GLKMatrix4 cameraGLProjection = _display.colorCameraGLProjectionMatrix;
+            if (self.liveWireframeSwitch.isOn) {
             
-            // In case we are not using registered depth.
-            GLKMatrix4 colorCameraPoseInDepthCoordinateSpace;
-            [depthFrame colorCameraPoseInDepthCoordinateFrame:colorCameraPoseInDepthCoordinateSpace.m];
-            
-            // colorCameraPoseInWorld
-            GLKMatrix4 cameraViewpoint = GLKMatrix4Multiply(depthCameraPose, colorCameraPoseInDepthCoordinateSpace);
-            
-            // Render the current mesh reconstruction using the last estimated camera pose.
-            [_slamState.scene renderMeshFromViewpoint:cameraViewpoint           // 視点だけ変えられる？
-                                   cameraGLProjection:cameraGLProjection
-                                                alpha:1.0                   // default: 1.0
-                             highlightOutOfRangeDepth:false
-                                            wireframe:false];               // Scanner風味の面表示で再生
-                                            //wireframe:true];              // ワイヤーフレーム表示
+                GLKMatrix4 depthCameraPose = [_slamState.tracker lastFrameCameraPose];
+                GLKMatrix4 cameraGLProjection = _display.colorCameraGLProjectionMatrix;
+                
+                // In case we are not using registered depth.
+                GLKMatrix4 colorCameraPoseInDepthCoordinateSpace;
+                [depthFrame colorCameraPoseInDepthCoordinateFrame:colorCameraPoseInDepthCoordinateSpace.m];
+                
+                // colorCameraPoseInWorld
+                GLKMatrix4 cameraViewpoint = GLKMatrix4Multiply(depthCameraPose, colorCameraPoseInDepthCoordinateSpace);
+                
+                // Render the current mesh reconstruction using the last estimated camera pose.
+                [_slamState.scene renderMeshFromViewpoint:cameraViewpoint           // 視点だけ変えられる？
+                                       cameraGLProjection:cameraGLProjection
+                                                    alpha:1.0                   // default: 1.0
+                                 highlightOutOfRangeDepth:false
+                                                //wireframe:false];               // Scanner風味の面表示で再生
+                                                wireframe:true];              // ワイヤーフレーム表示
+            }
             
             break;
         }
