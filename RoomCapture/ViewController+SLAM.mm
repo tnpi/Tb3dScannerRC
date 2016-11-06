@@ -210,6 +210,14 @@ namespace // anonymous namespace for local functions
         case RoomCaptureStateScanning:
         {
             NSLog(@"RoomCaptureStateScanning: start");
+
+            [_slamState.mapper reset];            // 最初に撮った形状にマッピングできればいいのであれば、リセットしなくて良さそう？　しかし、今回は立体的な動きを取るのでリセットは必須…？　有効にすると約20fpsになる=そこそこ重い　このリセットと他2つだけでは時系列再生にならない、trackerが大事？　形状変わらずに絵だけが変わる場合はok
+            //[_slamState.tracker reset];             // Reset the tracker to its initial state. これのリセットを有効にすると時系列再生でき始めた  mapperリセットしないと6fps->8fpsくらいには上がる
+            [_slamState.scene clear];               // 軽い  あってもほぼ30fps
+            [_slamState.keyFrameManager clear];     // 軽い　 あっても30fps
+            
+            _colorizedMesh = nil;
+            _holeFilledMesh = nil;
             
             const bool isFirstFrame = (_slamState.prevFrameTimeStamp < 0.);
             
@@ -488,18 +496,6 @@ namespace // anonymous namespace for local functions
                     //[self resetSLAM];
                     
                     _slamState.prevFrameTimeStamp = 1;
-                    [_slamState.mapper reset];            // 最初に撮った形状にマッピングできればいいのであれば、リセットしなくて良さそう？　しかし、今回は立体的な動きを取るのでリセットは必須…？　有効にすると約20fpsになる=そこそこ重い　このリセットと他2つだけでは時系列再生にならない、trackerが大事？　形状変わらずに絵だけが変わる場合はok
-                    //[_slamState.tracker reset];             // Reset the tracker to its initial state. これのリセットを有効にすると時系列再生でき始めた  mapperリセットしないと6fps->8fpsくらいには上がる
-                    [_slamState.scene clear];               // 軽い  あってもほぼ30fps
-                    [_slamState.keyFrameManager clear];     // 軽い　 あっても30fps
-                    
-                    _colorizedMesh = nil;
-                    _holeFilledMesh = nil;
-                    //NSLog(@"resetSLAM ended");
-                    
-                    //[self enterPoseInitializationState];
-                    //[self enterScanningState];
-                    
                     
                 }
                 
