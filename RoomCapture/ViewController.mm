@@ -384,6 +384,7 @@
                                               NSLog(@"Error during colorizing: %@", [error localizedDescription]);
                                           }
                                           
+                                          /*
                                           dispatch_async(dispatch_get_main_queue(), ^{
                                               
                                               _appStatus.backgroundProcessingStatus = AppStatus::BackgroundProcessingStatusIdle;
@@ -392,6 +393,7 @@
                                               
                                               //[self enterViewingState]; comment out by tanaka
                                           });
+                                          */
                                       }
                                       options:@{kSTColorizerTypeKey: @(STColorizerTextureMapForRoom) }
                                       error:nil];
@@ -502,6 +504,7 @@
     for(int i=0; i<savedFrameCount; i++) {
 
         STMesh *sceneMesh = recordMeshList[i];
+        STScene* localScene = sceneList[i];
 
         NSString* zipFilename = [NSString stringWithFormat:@"mesh_%d.obj", i]; //@"Model.zip";
         NSString* zipTemporaryFilePath = [modelDirPath stringByAppendingPathComponent:zipFilename];
@@ -511,12 +514,54 @@
         
         NSDate *scanNowDate = scanFrameDateList[i];
         
-        
-        
         NSString* scanDateListFilePath = [modelDirPath stringByAppendingPathComponent:scanDateListFileName];
         NSLog(@"scanDateListFilePath: %@", scanDateListFilePath);
         // self.debugInfoLabel.text = [NSString stringWithFormat:@"datePath: %@", scanDateListFilePath];
         
+        /*
+        // |||||||||||||||||||| 後工程 色付け ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+        if (_colorScanSwitch.isOn) {
+            NSLog(@"afterColorizing start");
+            _colorizedMesh = sceneMesh;
+            
+            NSLog(@"make keyFrame start");
+            STKeyFrame* keyFrame = [[STKeyFrame alloc] initWithColorCameraPose:firstCameraPoseOnScan colorFrame:colorFrameList[i] depthFrame:nil];
+            //NSArray *tKeyFrames = [NSArray arrayWithObjects:keyFrame, nil];
+            NSArray *tKeyFrames = @[keyFrame];
+            //NSArray *newArr = @[@"value1", @"value2", @"value3"];
+            
+            NSLog(@"keyFramesList: %@", keyFramesList);
+            NSLog(@"sceneList: %@", sceneList);
+            
+            NSLog(@"make colorizeTask start");          // 落ちる
+            STBackgroundTask* colorizeTask = [STColorizer
+                                              newColorizeTaskWithMesh:_colorizedMesh
+                                              scene:localScene
+                                              //keyframes:keyFramesList[i]
+                                              keyframes:tKeyFrames
+                                              completionHandler: ^(NSError *error)
+                                              {
+                                                  if (error != nil) {
+                                                      NSLog(@"Error during colorizing: %@", [error localizedDescription]);
+                                                  }
+                                              }
+                                              options:@{kSTColorizerTypeKey: @(STColorizerTextureMapForRoom) }
+                                              error:nil];
+            
+            NSLog(@"colorizeTask start");
+            [colorizeTask start];
+            
+            [colorizeTask waitUntilCompletion]; // add by tanaka カラー化が終わるまで処理まち
+            [_slamState.scene unlockSceneMesh];
+            
+            NSLog(@"colorizeTask end");
+            
+            sceneMesh = _colorizedMesh;
+            NSLog(@"afterColorizing end");
+        }
+         */
+        
+        // |||||||||||||||||||| メッシュの保存 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
         NSError* error;
         BOOL success = [sceneMesh writeToFile:zipTemporaryFilePath options:fileWriteOptions error:&error];
         if (!success) {

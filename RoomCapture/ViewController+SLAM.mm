@@ -232,15 +232,13 @@ namespace // anonymous namespace for local functions
             NSString* keyframeErrorMessage = nil;
 
             // Estimate the new camera pose.　新しいカメラ姿勢の推定
-            // ||||||||||||||| トラッカーの更新 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             // 今回のカメラ姿勢を推定して取得・更新を試みる
+            // ||||||||||||||| トラッカーの更新 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             BOOL trackingOk = true;
-            //if (scanFrameCount == 0) {
             if (isFirstFrame) {
                 trackingOk = [_slamState.tracker updateCameraPoseWithDepthFrame:depthFrame colorFrame:colorFrame error:&trackingError]; // important!
-                //trackingOk = [_slamState.tracker updateCameraPoseWithDepthFrame:depthFrame colorFrame:colorFrame error:&trackingError]; // important!
-                //}
                 firstCameraPoseOnScan = [_slamState.tracker lastFrameCameraPose];
+                depthCameraPoseBeforeTracking = depthCameraPoseBeforeTracking;
             }
             
             if (!trackingOk) {
@@ -253,7 +251,7 @@ namespace // anonymous namespace for local functions
             {
                 // ||||||||| Integrate it to update the current mesh estimate. |||||||||||||||||||||||||||||||||||||||||||||||
                 // マッパーのカメラ姿勢・デプス画像ともに最新の（トラッキング成功後の）のデータに更新
-                GLKMatrix4 depthCameraPoseAfterTracking = firstCameraPoseOnScan;//[_slamState.tracker lastFrameCameraPose];
+                GLKMatrix4 depthCameraPoseAfterTracking = firstCameraPoseOnScan; //[_slamState.tracker lastFrameCameraPose];
                 [_slamState.mapper integrateDepthFrame:depthFrame cameraPose:depthCameraPoseAfterTracking];
                 [_slamState.mapper finalizeTriangleMesh];           //not default: wait for integrate background process end
                 
@@ -357,8 +355,6 @@ namespace // anonymous namespace for local functions
                     [self hideTrackingErrorMessage];
                 }
                 */
-
-                // ここにリセットを入れてもいい
                 
                 // -----------------------------------------------
                 // tanaka
@@ -373,6 +369,10 @@ namespace // anonymous namespace for local functions
                             [self colorizeMesh];
                             sceneMesh = _colorizedMesh;
                             
+                            // 後工程色付け用
+                            //sceneMesh = [[STMesh alloc] initWithMesh:[_slamState.scene lockAndGetSceneMesh]];
+                            //[_slamState.scene unlockSceneMesh];     // ロック解除
+                            
                         } else {
                             sceneMesh = [[STMesh alloc] initWithMesh:[_slamState.scene lockAndGetSceneMesh]];
                             [_slamState.scene unlockSceneMesh];     // ロック解除
@@ -384,6 +384,24 @@ namespace // anonymous namespace for local functions
                             
                             [recordMeshList addObject:sceneMesh];
                             [scanGpsDataList addObject:recentLocation];
+                            
+                            /* 後行程いろづけ用
+                            lastKeyFrames = [_slamState.keyFrameManager getKeyFrames];
+                            lastScene = _slamState.scene;
+                            
+                            NSLog(@"lastKeyFrames: %@", lastKeyFrames);
+                            NSLog(@"lastKeyFrame: %@", lastKeyFrames[0]);
+                            
+                            [keyFramesList addObject:lastKeyFrames];
+                            //[colorCameraPoseList addObject:@(firstCameraPoseOnScan)];
+                            [colorFrameList addObject:colorFrame];
+                            [sceneList addObject:lastScene];
+                            
+                            NSLog(@"keyFramesList: %@", keyFramesList);
+                            NSLog(@"sceneList: %@", sceneList);
+                            NSLog(@"colorFrameList: %@", colorFrameList);
+                            NSLog(@"recordMeshList: %@", recordMeshList);
+                             */
                             
                         } else {
                             
@@ -465,19 +483,19 @@ namespace // anonymous namespace for local functions
                     
                     [self countFps];
                     
-                    NSLog(@"resetSLAM started");
+                    //NSLog(@"resetSLAM started");
                     
                     //[self resetSLAM];
                     
                     _slamState.prevFrameTimeStamp = 1;
                     [_slamState.mapper reset];            // 最初に撮った形状にマッピングできればいいのであれば、リセットしなくて良さそう？　しかし、今回は立体的な動きを取るのでリセットは必須…？　有効にすると約20fpsになる=そこそこ重い　このリセットと他2つだけでは時系列再生にならない、trackerが大事？　形状変わらずに絵だけが変わる場合はok
-                    [_slamState.tracker reset];             // Reset the tracker to its initial state. これのリセットを有効にすると時系列再生でき始めた  mapperリセットしないと6fps->8fpsくらいには上がる
+                    //[_slamState.tracker reset];             // Reset the tracker to its initial state. これのリセットを有効にすると時系列再生でき始めた  mapperリセットしないと6fps->8fpsくらいには上がる
                     [_slamState.scene clear];               // 軽い  あってもほぼ30fps
                     [_slamState.keyFrameManager clear];     // 軽い　 あっても30fps
                     
                     _colorizedMesh = nil;
                     _holeFilledMesh = nil;
-                    NSLog(@"resetSLAM ended");
+                    //NSLog(@"resetSLAM ended");
                     
                     //[self enterPoseInitializationState];
                     //[self enterScanningState];

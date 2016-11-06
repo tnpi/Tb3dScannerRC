@@ -244,11 +244,16 @@ struct DisplayData
     NSDate *scanNowDate;
     
     NSMutableArray *recordMeshList; // add by tanaka
+    NSMutableArray *keyFramesList;
+    NSMutableArray *sceneList;
 
     NSMutableArray *scanFrameDateList;
     NSMutableArray *scanGpsDataList;
     NSMutableArray *scanDoFDataList;
     NSMutableArray *slamStateList;
+    NSMutableArray *colorCameraPoseList;
+    NSMutableArray *depthFrameList;
+    NSMutableArray *colorFrameList;
     NSDate *getSceneMeshDate;
     
     //FILE *fpScanDateListFile;
@@ -288,6 +293,9 @@ struct DisplayData
     STDepthFrame *firstGetDepthFrame;
     STColorFrame *firstGetColorFrame;
     GLKMatrix4 firstCameraPoseOnScan;
+    
+    NSArray *lastKeyFrames;
+    STScene *lastScene;
     
 }
 
