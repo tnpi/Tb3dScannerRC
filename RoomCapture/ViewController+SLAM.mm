@@ -209,6 +209,7 @@ namespace // anonymous namespace for local functions
             
         case RoomCaptureStateScanning:
         {
+            
             if (((int)self.intervalSlider.value >= 1) && (scanFrameCount % (int)self.intervalSlider.value != 0)){
                 scanFrameCount++;
                 allFrameCounter++;
@@ -223,10 +224,10 @@ namespace // anonymous namespace for local functions
             
             NSLog(@"RoomCaptureStateScanning: start");
 
-            [_slamState.mapper reset];            // 最初に撮った形状にマッピングできればいいのであれば、リセットしなくて良さそう？　しかし、今回は立体的な動きを取るのでリセットは必須…？　有効にすると約20fpsになる=そこそこ重い　このリセットと他2つだけでは時系列再生にならない、trackerが大事？　形状変わらずに絵だけが変わる場合はok
-            //[_slamState.tracker reset];             // Reset the tracker to its initial state. これのリセットを有効にすると時系列再生でき始めた  mapperリセットしないと6fps->8fpsくらいには上がる
-            [_slamState.scene clear];               // 軽い  あってもほぼ30fps
-            [_slamState.keyFrameManager clear];     // 軽い　 あっても30fps
+            [_slamState.mapper reset];
+            // [_slamState.tracker reset];
+            [_slamState.scene clear];
+            [_slamState.keyFrameManager clear];
             
             _colorizedMesh = nil;
             _holeFilledMesh = nil;
@@ -358,23 +359,7 @@ namespace // anonymous namespace for local functions
                 GLKMatrix4 initialPose = _slamState.tracker.initialCameraPose;      // 初期カメラ姿勢
                 // 初期と現在の移動量（位置の差分
                 float deltaTranslation = GLKVector4Distance(GLKMatrix4GetColumn(depthCameraPoseAfterTracking, 3), GLKMatrix4GetColumn(initialPose, 3));
-                
-                // Show some messages if needed.
-                // 必要なら警告メッセージを表示する
-                if (showHoldDeviceStill)
-                {
-                    [self showTrackingMessage:@"Please hold still so we can capture a keyframe..."];
-                }
-                else if (deltaTranslation > _options.maxDistanceFromInitialPositionInMeters )
-                {
-                    // Warn the user if he's exploring too far away since this demo is optimized for a rotation around oneself.
-                    [self showTrackingMessage:@"Please stay closer to the initial position."];
-                }
-                else
-                {
-                    [self hideTrackingErrorMessage];
-                }
-                */
+                 */
                 
                 // -----------------------------------------------
                 // tanaka
@@ -529,22 +514,6 @@ namespace // anonymous namespace for local functions
                     [_slamState.mapper integrateDepthFrame:depthFrame cameraPose:firstCameraPoseOnScan];//_slamState.tracker.lastFrameCameraPose];
                 }
             }
-            
-            /*
-             エラーメッセージ表示
-            if (trackerErrorMessage)
-            {
-                [self showTrackingMessage:trackerErrorMessage];
-            }
-            else if (keyframeErrorMessage)
-            {
-                [self showTrackingMessage:keyframeErrorMessage];
-            }
-            else
-            {
-                [self hideTrackingErrorMessage];
-            }
-             */
             
             allFrameCounter++;
             
