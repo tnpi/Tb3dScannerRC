@@ -16,6 +16,7 @@
                 <outlet property="doneButton" destination="hrg-ff-rIb" id="UEc-xl-GpI"/>
                 <outlet property="drawModeSwitch" destination="00C-qR-rEU" id="zrt-Rg-gPL"/>
                 <outlet property="drawModeSwitchLabel" destination="Jr1-qE-LdU" id="kNu-Vu-9t0"/>
+                <outlet property="fixedTrackingSwitch" destination="TnI-6K-zOk" id="1Vs-ep-Km7"/>
                 <outlet property="gpsAltitudeLabel" destination="T01-Dg-Zsh" id="JGf-73-zhT"/>
                 <outlet property="gpsCourse" destination="61g-Ay-vWv" id="xqm-dl-Kl2"/>
                 <outlet property="gpsDescriptionLabel" destination="Myc-3d-vFD" id="nC3-2q-4uZ"/>
@@ -59,7 +60,7 @@
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="1" customClass="EAGLView">
-            <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
+            <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="8b4-Zl-yJD" userLabel="Label - Tracking Message">
@@ -525,6 +526,17 @@ Please Realign or Press Reset.</string>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
+                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="TnI-6K-zOk">
+                    <frame key="frameInset" minX="483" minY="423" width="51" height="31"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                </switch>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Fixed tracking " textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="TVM-0q-Egu">
+                    <frame key="frameInset" minX="295" minY="428" width="163" height="21"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <gestureRecognizers/>
@@ -539,7 +551,7 @@ Please Realign or Press Reset.</string>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
-        <simulatedOrientationMetrics key="orientation" orientation="landscapeRight"/>
+        <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
 </document>

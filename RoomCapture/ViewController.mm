@@ -71,6 +71,7 @@
     self.drawModeSwitch.on = udDrawModeSwitch ? YES:NO;
     self.trackingSmallObjectSwitch.on = udTrackingSmallObjectSwitch ? YES:NO;
     self.trackerQualityAccurateSwitch.on = udTrackerQualityAccurate ? YES:NO;
+    self.fixedTrackingSwitch.on = udFixedTrackingSwitch ? YES:NO;
     self.roomSizeSlider.value = udRoomSizeSlider;
     self.resolutionSlider.value = udResolutionSlider;
     self.intervalSlider.value = udIntervalSlider;
@@ -474,6 +475,7 @@
     udDrawModeSwitch = [defaults boolForKey:@"drawModeSwitch"];
     udTrackingSmallObjectSwitch = [defaults boolForKey:@"trackingSmallObjectSwitch"];
     udTrackerQualityAccurate = [defaults boolForKey:@"trackerQualityAccurateSwitch"];
+    udFixedTrackingSwitch = [defaults boolForKey:@"fixedTrackingSwitch"];
     
     udIntervalSlider = (int)[defaults integerForKey:@"intervalSlider"];
     udResolutionSlider = [defaults floatForKey:@"resolutionSlider"];
@@ -1144,6 +1146,7 @@
     [defaults setBool:_colorScanSwitch.isOn forKey:@"colorScanSwitch"];
     [defaults setBool:_trackingSmallObjectSwitch.isOn forKey:@"trackingSmallObjectSwitch"];
     [defaults setBool:_trackerQualityAccurateSwitch.isOn forKey:@"trackerQualityAccurateSwitch"];
+    [defaults setBool:_fixedTrackingSwitch.isOn forKey:@"fixedTrackingSwitch"];
     
     [defaults setInteger:_intervalSlider.value forKey:@"intervalSlider"];
     [defaults setFloat:_resolutionSlider.value  forKey:@"resolutionSlider"];

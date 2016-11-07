@@ -272,6 +272,7 @@ struct DisplayData
     bool udColorScanSwitch;
     bool udDrawModeSwitch;
     bool udTrackingSmallObjectSwitch;
+    bool udFixedTrackingSwitch;
     bool udTrackerQualityAccurate;
     
     int udIntervalSlider;
@@ -319,8 +320,8 @@ struct DisplayData
 @property (weak, nonatomic) IBOutlet UISwitch *recordGpsSwitch;
 @property (weak, nonatomic) IBOutlet UISwitch *trackingSmallObjectSwitch;
 @property (weak, nonatomic) IBOutlet UISwitch *liveWireframeSwitch;
-
 @property (weak, nonatomic) IBOutlet UISwitch *trackerQualityAccurateSwitch;
+@property (weak, nonatomic) IBOutlet UISwitch *fixedTrackingSwitch;
 @property (weak, nonatomic) IBOutlet UISlider *intervalSlider;
 
 @property (weak, nonatomic) IBOutlet UILabel *resolutionLabel;
