@@ -216,7 +216,11 @@ namespace // anonymous namespace for local functions
                 if (_slamState.tracker.poseAccuracy >= STTrackerPoseAccuracyHigh)
                 {
                     //
-                    [_slamState.mapper integrateDepthFrame:depthFrame cameraPose:firstCameraPoseOnScan];//_slamState.tracker.lastFrameCameraPose];
+                    if (self.fixedTrackingSwitch.isOn) {
+                        [_slamState.mapper integrateDepthFrame:depthFrame cameraPose:firstCameraPoseOnScan];//_slamState.tracker.lastFrameCameraPose];
+                    } else {
+                        [_slamState.mapper integrateDepthFrame:depthFrame cameraPose:_slamState.tracker.lastFrameCameraPose];
+                    }
                 }
 
                 break;
@@ -225,7 +229,9 @@ namespace // anonymous namespace for local functions
             NSLog(@"RoomCaptureStateScanning: start");
 
             [_slamState.mapper reset];
-            // [_slamState.tracker reset];
+            if (!self.fixedTrackingSwitch.isOn) {
+                [_slamState.tracker reset];
+            }
             [_slamState.scene clear];
             [_slamState.keyFrameManager clear];
             
@@ -259,7 +265,6 @@ namespace // anonymous namespace for local functions
             if (isFirstFrame) {
                 trackingOk = [_slamState.tracker updateCameraPoseWithDepthFrame:depthFrame colorFrame:colorFrame error:&trackingError]; // important!
                 firstCameraPoseOnScan = [_slamState.tracker lastFrameCameraPose];
-                depthCameraPoseBeforeTracking = depthCameraPoseBeforeTracking;
             }
             
             if (!trackingOk) {
@@ -272,7 +277,12 @@ namespace // anonymous namespace for local functions
             {
                 // ||||||||| Integrate it to update the current mesh estimate. |||||||||||||||||||||||||||||||||||||||||||||||
                 // マッパーのカメラ姿勢・デプス画像ともに最新の（トラッキング成功後の）のデータに更新
-                GLKMatrix4 depthCameraPoseAfterTracking = firstCameraPoseOnScan; //[_slamState.tracker lastFrameCameraPose];
+                GLKMatrix4 depthCameraPoseAfterTracking;
+                if (self.fixedTrackingSwitch.isOn) {
+                    depthCameraPoseAfterTracking = firstCameraPoseOnScan;
+                }else {
+                    depthCameraPoseAfterTracking = [_slamState.tracker lastFrameCameraPose];
+                }
                 [_slamState.mapper integrateDepthFrame:depthFrame cameraPose:depthCameraPoseAfterTracking];
                 [_slamState.mapper finalizeTriangleMesh];           //not default: wait for integrate background process end
                 
@@ -436,7 +446,6 @@ namespace // anonymous namespace for local functions
                             [df setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"ja_JP"]]; // Localeの指定
                             [df setDateFormat:@"yyyy/MM/dd HH:mm:ss.SSS"];
                             
-                            
                             NSDate *nsd = [NSDate date];
                             NSString *strNow = [df stringFromDate:nsd];
                             
@@ -511,7 +520,11 @@ namespace // anonymous namespace for local functions
                 if (_slamState.tracker.poseAccuracy >= STTrackerPoseAccuracyHigh)
                 {
                     //
-                    [_slamState.mapper integrateDepthFrame:depthFrame cameraPose:firstCameraPoseOnScan];//_slamState.tracker.lastFrameCameraPose];
+                    if (self.fixedTrackingSwitch.isOn) {
+                        [_slamState.mapper integrateDepthFrame:depthFrame cameraPose:firstCameraPoseOnScan];
+                    } else {
+                        [_slamState.mapper integrateDepthFrame:depthFrame cameraPose:_slamState.tracker.lastFrameCameraPose];
+                    }
                 }
             }
             
