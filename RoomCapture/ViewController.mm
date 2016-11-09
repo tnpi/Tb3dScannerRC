@@ -1382,6 +1382,8 @@
 
 -(void) doSaveInitializeAction {
     
+    firstScanFlag = true;
+    
     savedFrameCount = 0;
     trackingOkCounter = 0;
     allFrameCounter = 0;

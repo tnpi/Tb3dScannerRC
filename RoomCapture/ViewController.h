@@ -298,6 +298,8 @@ struct DisplayData
     NSArray *lastKeyFrames;
     STScene *lastScene;
     
+    bool firstScanFlag;
+    
 }
 
 @property (nonatomic, retain) AVCaptureSession *avCaptureSession;
