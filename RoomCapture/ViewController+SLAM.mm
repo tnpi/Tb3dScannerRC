@@ -80,7 +80,8 @@ namespace // anonymous namespace for local functions
     // (cameraPoseInitializer: Determine an initial camera pose to make the best use of the cuboid scanning volume.)
     _slamState.cameraPoseInitializer = [[STCameraPoseInitializer alloc]
                                         initWithVolumeSizeInMeters:_slamState.volumeSizeInMeters
-                                        options:@{kSTCameraPoseInitializerStrategyKey:@(STCameraPoseInitializerStrategyGravityAlignedAtVolumeCenter)}
+                                        options:@{kSTCameraPoseInitializerStrategyKey:@(STCameraPoseInitializerStrategyGravityAlignedAtVolumeCenter)
+                                        }
                                         //options:@{kSTCameraPoseInitializerStrategyKey:@(STCameraPoseInitializerStrategyGravityAlignedAtOrigin)}
     ];
     //_slamState.cameraPoseInitializer.
@@ -210,33 +211,30 @@ namespace // anonymous namespace for local functions
         case RoomCaptureStateScanning:
         {
             
-            if (((int)self.intervalSlider.value >= 1) && (scanFrameCount % (int)self.intervalSlider.value != 0)){
-                scanFrameCount++;
-                allFrameCounter++;
-                if (_slamState.tracker.poseAccuracy >= STTrackerPoseAccuracyHigh)
-                {
-                    //
-                    if (self.fixedTrackingSwitch.isOn) {
-                        [_slamState.mapper integrateDepthFrame:depthFrame cameraPose:firstCameraPoseOnScan];//_slamState.tracker.lastFrameCameraPose];
-                    } else {
-                        [_slamState.mapper integrateDepthFrame:depthFrame cameraPose:_slamState.tracker.lastFrameCameraPose];
+            if (self.fixedTrackingSwitch.isOn) {
+                if (((int)self.intervalSlider.value >= 1) && (scanFrameCount % (int)self.intervalSlider.value != 0)){
+                    scanFrameCount++;
+                    allFrameCounter++;
+                    if (_slamState.tracker.poseAccuracy >= STTrackerPoseAccuracyHigh)
+                    {
+                        //
+                            [_slamState.mapper integrateDepthFrame:depthFrame cameraPose:firstCameraPoseOnScan];                    }
                     }
-                }
 
-                break;
-            }
+                    break;
+                }
             
             NSLog(@"RoomCaptureStateScanning: start");
 
-            [_slamState.mapper reset];
-            if (!self.fixedTrackingSwitch.isOn) {
-                [_slamState.tracker reset];
+            if (self.fixedTrackingSwitch.isOn) {
+                [_slamState.mapper reset];
+                
+                [_slamState.scene clear];
+                [_slamState.keyFrameManager clear];
+                
+                _colorizedMesh = nil;
+                _holeFilledMesh = nil;
             }
-            [_slamState.scene clear];
-            [_slamState.keyFrameManager clear];
-            
-            _colorizedMesh = nil;
-            _holeFilledMesh = nil;
             
             const bool isFirstFrame = (_slamState.prevFrameTimeStamp < 0.);
             
@@ -261,10 +259,15 @@ namespace // anonymous namespace for local functions
             // Estimate the new camera pose.　新しいカメラ姿勢の推定
             // 今回のカメラ姿勢を推定して取得・更新を試みる
             // ||||||||||||||| トラッカーの更新 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-            BOOL trackingOk = true;
-            if (isFirstFrame) {
-                trackingOk = [_slamState.tracker updateCameraPoseWithDepthFrame:depthFrame colorFrame:colorFrame error:&trackingError]; // important!
-                firstCameraPoseOnScan = [_slamState.tracker lastFrameCameraPose];
+            BOOL trackingOk;
+            if (self.fixedTrackingSwitch.isOn) {
+                trackingOk = true;
+                if (isFirstFrame) {
+                    trackingOk = [_slamState.tracker updateCameraPoseWithDepthFrame:depthFrame colorFrame:colorFrame error:&trackingError]; // important!
+                    //firstCameraPoseOnScan = [_slamState.tracker lastFrameCameraPose];
+                }
+            } else {
+                trackingOk = [_slamState.tracker updateCameraPoseWithDepthFrame:depthFrame colorFrame:colorFrame error:&trackingError];
             }
             
             if (!trackingOk) {
@@ -275,6 +278,12 @@ namespace // anonymous namespace for local functions
             // 今の状況から、今回の新しいカメラ姿勢が取得できたら
             if (trackingOk)
             {
+                if (isFirstFrame) {
+                    firstCameraPoseOnScan = [_slamState.tracker lastFrameCameraPose];
+                    for(int d=0; d<16; d++) {
+                        NSLog(@"isFirstFrame: %f", firstCameraPoseOnScan.m[d]);
+                    }
+                }
                 // ||||||||| Integrate it to update the current mesh estimate. |||||||||||||||||||||||||||||||||||||||||||||||
                 // マッパーのカメラ姿勢・デプス画像ともに最新の（トラッキング成功後の）のデータに更新
                 GLKMatrix4 depthCameraPoseAfterTracking;
@@ -298,70 +307,69 @@ namespace // anonymous namespace for local functions
                 bool showHoldDeviceStill = false;   // デバイスを固定して待っててねメッセージを出すフラグをfalseで初期化
                 
                 // ||||||| キーフレームの追加 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-                [_slamState.keyFrameManager processKeyFrameCandidateWithColorCameraPose:colorCameraPoseAfterTracking
-                                                                             colorFrame:colorFrame
-                                                                             depthFrame:nil];
-                /*
-                 今回の問題に対するわかりやすさのために一時コメントアウト
-                 
-                // Check if the viewpoint has moved enough to add a new keyframe
-                // 新しいカラーカメラ姿勢で、新しいであろうキーフレーム　視点が新しいキーフレームを追加するほどに十分に動いたかどうかを調べた結果、必要だった場合？
-                // 新しいフレームによって新しい姿勢が得られるかどうか調べる関数　真偽値が返る
-                if ([_slamState.keyFrameManager wouldBeNewKeyframeWithColorCameraPose:colorCameraPoseAfterTracking])
-                {
-                    const bool isFirstFrame = (_slamState.prevFrameTimeStamp < 0.); // 今回が初めてのフレームかどうかを表すフラグ　だった場合true
-                    bool canAddKeyframe = false;                                    // キーフレームを追加できるかどうかのフラグ
-                    
-                    if (isFirstFrame)
+                if (self.fixedTrackingSwitch.isOn) {
+                    [_slamState.keyFrameManager processKeyFrameCandidateWithColorCameraPose:colorCameraPoseAfterTracking
+                                                                                 colorFrame:colorFrame
+                                                                                 depthFrame:nil];
+                } else {
+                
+                    // Check if the viewpoint has moved enough to add a new keyframe
+                    // 新しいカラーカメラ姿勢で、新しいであろうキーフレーム　視点が新しいキーフレームを追加するほどに十分に動いたかどうかを調べた結果、必要だった場合？
+                    // 新しいフレームによって新しい姿勢が得られるかどうか調べる関数　真偽値が返る
+                    if ([_slamState.keyFrameManager wouldBeNewKeyframeWithColorCameraPose:colorCameraPoseAfterTracking])
                     {
-                        canAddKeyframe = true;                                      // 一番最初のフレームならばキーフレームは常に追加できる
-                    }
-                    else    // 一番初めのフレームでない場合　（無条件にキーフレームを追加できない場合
-                    {
-                        // 前回の姿勢との角度の変化差分　秒間の角度変化
-                        float deltaAngularSpeedInDegreesPerSeconds = FLT_MAX;
-                        NSTimeInterval deltaSeconds = depthFrame.timestamp - _slamState.prevFrameTimeStamp;
+                        bool canAddKeyframe = false;                                    // キーフレームを追加できるかどうかのフラグ
                         
-                        // If deltaSeconds is 2x longer than the frame duration of the active video device, do not use it either
-                        // トラッキングに成功した時間間隔がビデオデバイスのフレーム間時間の2倍以上の場合、使わない
-                        // たぶん撮影者がカメラをおおきく振りすぎたときとか、画像がブレブレになるので、キーフレームとしては使わないということ
-                        CMTime frameDuration = self.videoDevice.activeVideoMaxFrameDuration;        // 1フレームの時間の長さ
-                        if (deltaSeconds < (float)frameDuration.value/frameDuration.timescale*2.f)
+                        if (isFirstFrame)
                         {
-                            // Compute angular speed　角速度の計算
-                            // 秒間の角速度 = 2つの姿勢から回転量を度単位で計算し、差分時間で割って秒間の角速度を求める
-                            deltaAngularSpeedInDegreesPerSeconds = deltaRotationAngleBetweenPosesInDegrees (depthCameraPoseBeforeTracking, depthCameraPoseAfterTracking)/deltaSeconds;
+                            canAddKeyframe = true;                                      // 一番最初のフレームならばキーフレームは常に追加できる
+                        }
+                        else    // 一番初めのフレームでない場合　（無条件にキーフレームを追加できない場合
+                        {
+                            // 前回の姿勢との角度の変化差分　秒間の角度変化
+                            float deltaAngularSpeedInDegreesPerSeconds = FLT_MAX;
+                            NSTimeInterval deltaSeconds = depthFrame.timestamp - _slamState.prevFrameTimeStamp;
+                            
+                            // If deltaSeconds is 2x longer than the frame duration of the active video device, do not use it either
+                            // トラッキングに成功した時間間隔がビデオデバイスのフレーム間時間の2倍以上の場合、使わない
+                            // たぶん撮影者がカメラをおおきく振りすぎたときとか、画像がブレブレになるので、キーフレームとしては使わないということ
+                            CMTime frameDuration = self.videoDevice.activeVideoMaxFrameDuration;        // 1フレームの時間の長さ
+                            if (deltaSeconds < (float)frameDuration.value/frameDuration.timescale*2.f)
+                            {
+                                // Compute angular speed　角速度の計算
+                                // 秒間の角速度 = 2つの姿勢から回転量を度単位で計算し、差分時間で割って秒間の角速度を求める
+                                deltaAngularSpeedInDegreesPerSeconds = deltaRotationAngleBetweenPosesInDegrees (depthCameraPoseBeforeTracking, depthCameraPoseAfterTracking)/deltaSeconds;
+                            }
+                            
+                            // If the camera moved too much since the last frame, we will likely end up
+                            // with motion blur and rolling shutter, especially in case of rotation. This
+                            // checks aims at not grabbing keyframes in that case.
+                            // 前回のフレームからカメラが移動しすぎていた場合、ブレとかこんにゃく現象を避けるため、特に回転について、ここで変なキーフレームを掴まないように処理する
+                            if (deltaAngularSpeedInDegreesPerSeconds < _options.maxKeyframeRotationSpeedInDegreesPerSecond)
+                            {
+                                canAddKeyframe = true;
+                            }
                         }
                         
-                        // If the camera moved too much since the last frame, we will likely end up
-                        // with motion blur and rolling shutter, especially in case of rotation. This
-                        // checks aims at not grabbing keyframes in that case.
-                        // 前回のフレームからカメラが移動しすぎていた場合、ブレとかこんにゃく現象を避けるため、特に回転について、ここで変なキーフレームを掴まないように処理する
-                        if (deltaAngularSpeedInDegreesPerSeconds < _options.maxKeyframeRotationSpeedInDegreesPerSecond)
+                        // キーフレーム画像を追加できるとわかった場合　最新のカラーカメラ姿勢と画像をセットで渡す
+                        if (canAddKeyframe)
                         {
-                            canAddKeyframe = true;
-                        }
-                    }
-                    
-                    // キーフレーム画像を追加できるとわかった場合　最新のカラーカメラ姿勢と画像をセットで渡す
-                    if (canAddKeyframe)
-                    {
-                        // ||||||| キーフレームの追加 ||||||||||||||||||||||||||||||||||||||||||||||||||
-                        [_slamState.keyFrameManager processKeyFrameCandidateWithColorCameraPose:colorCameraPoseAfterTracking
-                                                                                     colorFrame:colorFrame
-                                                                                     depthFrame:nil];
-                    } else { // 早すぎたりしてとにかくキーフレームが追加できなかった場合
-                        // Moving too fast. Hint the user to slow down to capture a keyframe
-                        // without rolling shutter and motion blur.
-                        // 早く動かしすぎた場合、キーフレームを捕まえるために、ヒントをユーザーに伝えてゆっくりにさせる
-                        // ブレとかこんにゃく現象とかのないものにするため。
-                        if (_slamState.prevFrameTimeStamp > 0.) // only show the message if it's not the first frame.
-                        {
-                            showHoldDeviceStill = true;         // デバイスを固定して待っててねメッセージを出すフラグをOnに
+                            // ||||||| キーフレームの追加 ||||||||||||||||||||||||||||||||||||||||||||||||||
+                            [_slamState.keyFrameManager processKeyFrameCandidateWithColorCameraPose:colorCameraPoseAfterTracking
+                                                                                         colorFrame:colorFrame
+                                                                                         depthFrame:nil];
+                        } else { // 早すぎたりしてとにかくキーフレームが追加できなかった場合
+                            // Moving too fast. Hint the user to slow down to capture a keyframe
+                            // without rolling shutter and motion blur.
+                            // 早く動かしすぎた場合、キーフレームを捕まえるために、ヒントをユーザーに伝えてゆっくりにさせる
+                            // ブレとかこんにゃく現象とかのないものにするため。
+                            if (_slamState.prevFrameTimeStamp > 0.) // only show the message if it's not the first frame.
+                            {
+                                showHoldDeviceStill = true;         // デバイスを固定して待っててねメッセージを出すフラグをOnに
+                            }
                         }
                     }
                 }
-                 */
                 
                 /*
                 // Compute the translation difference between the initial camera pose and the current one.
@@ -369,7 +377,7 @@ namespace // anonymous namespace for local functions
                 GLKMatrix4 initialPose = _slamState.tracker.initialCameraPose;      // 初期カメラ姿勢
                 // 初期と現在の移動量（位置の差分
                 float deltaTranslation = GLKVector4Distance(GLKMatrix4GetColumn(depthCameraPoseAfterTracking, 3), GLKMatrix4GetColumn(initialPose, 3));
-                 */
+                */
                 
                 // -----------------------------------------------
                 // tanaka
@@ -393,7 +401,17 @@ namespace // anonymous namespace for local functions
                             [_slamState.scene unlockSceneMesh];     // ロック解除
                         }
                         
+                        // ------------------------------------
                         [scanFrameDateList addObject:[NSDate date]];      // １コマ スキャンし終わった日時を保存しておく
+                        
+                        NSMutableArray *matrixArray = [[NSMutableArray alloc]init];
+                        for(int c=0; c<16; c++) {
+                            //NSNumber *n = ];
+                            [matrixArray addObject:[NSNumber numberWithFloat:colorCameraPoseAfterTracking.m[c]] ];
+                        }
+                        //NSLog(@"matrixArray: %@", matrixArray);
+                        [depthCameraPoseList addObject:matrixArray];
+                        //NSLog(@"depthCameraPoseList: %@", depthCameraPoseList);
                         
                         if (self.recordToMemorySwitch.isOn) {       // 速度を稼ぐためにメモリ上にいったん記録して、あとでまとめてファイルに保存
                             
@@ -432,7 +450,7 @@ namespace // anonymous namespace for local functions
                             NSDate *scanNowDate = [NSDate date];
                             
                             NSString* scanDateListFilePath = [modelDirPath stringByAppendingPathComponent:scanDateListFileName];
-                            NSLog(@"scanDateListFilePath: %@", scanDateListFilePath);
+                            //NSLog(@"scanDateListFilePath: %@", scanDateListFilePath);
                             // self.debugInfoLabel.text = [NSString stringWithFormat:@"datePath: %@", scanDateListFilePath];
                             
                             NSError* error;
@@ -499,31 +517,46 @@ namespace // anonymous namespace for local functions
                     
                     //NSLog(@"resetSLAM started");
                     
-                    //[self resetSLAM];
+                    if (!self.fixedTrackingSwitch.isOn) {
+                        //[self resetSLAM];
+                        
+                        [_slamState.mapper reset];
+                        
+                        [_slamState.scene clear];
+                        [_slamState.keyFrameManager clear];
+                        
+                        _colorizedMesh = nil;
+                        _holeFilledMesh = nil;
+
+                    }
                     
                     _slamState.prevFrameTimeStamp = 1;
                     
                 }
                 
                 scanFrameCount++;
+                
                 // -----------------------------------------------
                 trackingOkCounter++;
             }
+            
             else    // トラッキングに失敗していた場合
             {
-                // Update the tracker message if there is any important feedback.
-                // ユーザにメッセージで指示して改善を図る
-                trackerErrorMessage = computeTrackerMessage(_slamState.tracker.trackerHints);
-                                
-                // Integrate the depth frame if the pose accuracy is great.
-                // 今回のトラッキングに失敗しても、姿勢の精度が良ければ、今までに撮れた中では一番新しいカメラ姿勢と最新のデプス情報からマッパーを更新する
-                if (_slamState.tracker.poseAccuracy >= STTrackerPoseAccuracyHigh)
-                {
-                    //
-                    if (self.fixedTrackingSwitch.isOn) {
-                        [_slamState.mapper integrateDepthFrame:depthFrame cameraPose:firstCameraPoseOnScan];
-                    } else {
-                        [_slamState.mapper integrateDepthFrame:depthFrame cameraPose:_slamState.tracker.lastFrameCameraPose];
+                if (self.fixedTrackingSwitch) {
+                    // Update the tracker message if there is any important feedback.
+                    // ユーザにメッセージで指示して改善を図る
+                    trackerErrorMessage = computeTrackerMessage(_slamState.tracker.trackerHints);
+                                    
+                    // Integrate the depth frame if the pose accuracy is great.
+                    // 今回のトラッキングに失敗しても、姿勢の精度が良ければ、今までに撮れた中では一番新しいカメラ姿勢と最新のデプス情報からマッパーを更新する
+                    if (_slamState.tracker.poseAccuracy >= STTrackerPoseAccuracyHigh)
+                    {
+                        //
+                        if (self.fixedTrackingSwitch.isOn) {
+                            [_slamState.mapper integrateDepthFrame:depthFrame cameraPose:firstCameraPoseOnScan];
+                        } else {
+                            [_slamState.mapper integrateDepthFrame:depthFrame cameraPose:_slamState.tracker.lastFrameCameraPose];
+                        }
                     }
                 }
             }

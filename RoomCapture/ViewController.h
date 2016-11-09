@@ -251,7 +251,7 @@ struct DisplayData
     NSMutableArray *scanGpsDataList;
     NSMutableArray *scanDoFDataList;
     NSMutableArray *slamStateList;
-    NSMutableArray *colorCameraPoseList;
+    NSMutableArray *depthCameraPoseList;
     NSMutableArray *depthFrameList;
     NSMutableArray *colorFrameList;
     NSDate *getSceneMeshDate;

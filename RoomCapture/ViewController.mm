@@ -146,8 +146,15 @@
     fpsCount = 0;
     
     [self actionOnRoomSizeSliderValueChanged];
-
     
+
+    depthCameraPoseList = [[NSMutableArray alloc] init];
+    //keyFramesList = [[NSMutableArray alloc] init];
+    //sceneList = [[NSMutableArray alloc] init];
+    
+    //depthFrameList = [[NSMutableArray alloc] init];;
+    //colorFrameList = [[NSMutableArray alloc] init];;
+
 }
 
 - (void)updateClockLabel
@@ -523,7 +530,7 @@
         NSDate *scanNowDate = scanFrameDateList[i];
         
         NSString* scanDateListFilePath = [modelDirPath stringByAppendingPathComponent:scanDateListFileName];
-        NSLog(@"scanDateListFilePath: %@", scanDateListFilePath);
+        //NSLog(@"scanDateListFilePath: %@", scanDateListFilePath);
         // self.debugInfoLabel.text = [NSString stringWithFormat:@"datePath: %@", scanDateListFilePath];
         
         /*
@@ -600,8 +607,10 @@
         // NSDate を NSString に変換します。
         NSString *gpsDateConverted = [formatter stringFromDate:recentLocation.timestamp];
         
+        NSMutableArray *depthPoseMatrix = depthCameraPoseList[i];
+        
         NSString *lineStr = [NSString
-                             stringWithFormat:@"%i,%li,%@,%f,%f,%f,%f,%f,%f,%f,%@\n",
+                             stringWithFormat:@"%i,%li,%@,%f,%f,%f,%f,%f,%f,%f,%@,-,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",
                              i,
                              timeFromScanStart,
                              strNow,
@@ -612,7 +621,23 @@
                              tempLocation.verticalAccuracy,
                              tempLocation.speed,
                              tempLocation.course,
-                             gpsDateConverted
+                             gpsDateConverted,
+                             [depthPoseMatrix[0] floatValue],
+                             [depthPoseMatrix[1] floatValue],
+                             [depthPoseMatrix[2] floatValue],
+                             [depthPoseMatrix[3] floatValue],
+                             [depthPoseMatrix[4] floatValue],
+                             [depthPoseMatrix[5] floatValue],
+                             [depthPoseMatrix[6] floatValue],
+                             [depthPoseMatrix[7] floatValue],
+                             [depthPoseMatrix[8] floatValue],
+                             [depthPoseMatrix[9] floatValue],
+                             [depthPoseMatrix[10] floatValue],
+                             [depthPoseMatrix[11] floatValue],
+                             [depthPoseMatrix[12] floatValue],
+                             [depthPoseMatrix[13] floatValue],
+                             [depthPoseMatrix[14] floatValue],
+                             [depthPoseMatrix[15] floatValue]
                              ];
         
         NSFileManager *fManager = [NSFileManager defaultManager];
@@ -1370,6 +1395,7 @@
     [recordMeshList removeAllObjects];       // add 2016.6
     [scanFrameDateList removeAllObjects];       // add 2016.6
     [scanGpsDataList removeAllObjects];       // add 2016.6
+    [depthCameraPoseList removeAllObjects];
     
     ownKeyframeCounts = 0;
     scanStartDate = [NSDate date];
