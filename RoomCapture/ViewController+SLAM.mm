@@ -211,31 +211,6 @@ namespace // anonymous namespace for local functions
         case RoomCaptureStateScanning:
         {
             
-            if (self.fixedTrackingSwitch.isOn) {
-                if (((int)self.intervalSlider.value >= 1) && (scanFrameCount % (int)self.intervalSlider.value != 0)){
-                    scanFrameCount++;
-                    allFrameCounter++;
-                    if (_slamState.tracker.poseAccuracy >= STTrackerPoseAccuracyHigh)
-                    {
-                        //
-                            [_slamState.mapper integrateDepthFrame:depthFrame cameraPose:firstCameraPoseOnScan];                    }
-                    }
-
-                    break;
-                }
-            
-            NSLog(@"RoomCaptureStateScanning: start");
-
-            if (self.fixedTrackingSwitch.isOn) {
-                [_slamState.mapper reset];
-                
-                [_slamState.scene clear];
-                [_slamState.keyFrameManager clear];
-                
-                _colorizedMesh = nil;
-                _holeFilledMesh = nil;
-            }
-            
             const bool isFirstFrame = (_slamState.prevFrameTimeStamp < 0.);
             
             // tanaka add
@@ -244,20 +219,59 @@ namespace // anonymous namespace for local functions
                 firstGetDepthFrame = depthFrame;
                 firstGetColorFrame = colorFrame;
             }
-            //NSLog(@"width: %d", [firstGetDepthFrame width]);
+            
+            // インターバルで割って0になる回でない場合、マッパーだけ更新させてフレーム終了 ==========================================
+            if (self.fixedTrackingSwitch.isOn) {
+                if (((int)self.intervalSlider.value >= 1) && (scanFrameCount % (int)self.intervalSlider.value != 0)){
+                    scanFrameCount++;
+                    allFrameCounter++;
+                    if (_slamState.tracker.poseAccuracy >= STTrackerPoseAccuracyHigh) {
+                        [_slamState.mapper integrateDepthFrame:depthFrame cameraPose:firstCameraPoseOnScan];
+                    }
+                
+                    _slamState.prevFrameTimeStamp = depthFrame.timestamp;
+                    break;
+                }
+            }
+            
+            NSLog(@"RoomCaptureStateScanning: start");
 
-            // 前回の（情報を更新しない、今の時点で最新の）カメラの姿勢を取得保存する　デプスカメラの姿勢として
+            // 処理前にリセットを行う ==========================================================================================
+            if (self.fixedTrackingSwitch.isOn) {
+                [_slamState.mapper reset];
+                //
+                [_slamState.scene clear];
+                [_slamState.keyFrameManager clear];
+                
+                _colorizedMesh = nil;
+                _holeFilledMesh = nil;
+            }
+            if (self.fixedTrackingSwitch.isOn == false) {
+                //[self resetSLAM];
+                
+                [_slamState.mapper reset];
+                
+                [_slamState.scene clear];
+                [_slamState.keyFrameManager clear];
+                
+                _colorizedMesh = nil;
+                _holeFilledMesh = nil;
+                
+                NSLog(@"SLAM reset: fixedTrackingSwitch is false.");
+                
+            }
+
+            // 今回のトラッキング前の（情報を更新しない、今の時点で最新の）カメラの姿勢を取得保存する　デプスカメラの姿勢として
             GLKMatrix4 depthCameraPoseBeforeTracking = [_slamState.tracker lastFrameCameraPose];
             
             NSError* trackingError = nil;
             NSString* trackingMessage = nil;
-            
             // Reset previous tracker or keyframe messages, they are now obsolete.
             NSString* trackerErrorMessage = nil;
             NSString* keyframeErrorMessage = nil;
 
-            // Estimate the new camera pose.　新しいカメラ姿勢の推定
-            // 今回のカメラ姿勢を推定して取得・更新を試みる
+            // Estimate the new camera pose.
+            // 新しいカメラ姿勢の推定　今回のカメラ姿勢を推定して取得・更新を試みる
             // ||||||||||||||| トラッカーの更新 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             BOOL trackingOk;
             if (self.fixedTrackingSwitch.isOn) {
@@ -280,16 +294,19 @@ namespace // anonymous namespace for local functions
             {
                 if (isFirstFrame) {
                     firstCameraPoseOnScan = [_slamState.tracker lastFrameCameraPose];
+                    /*
                     for(int d=0; d<16; d++) {
                         NSLog(@"isFirstFrame: %f", firstCameraPoseOnScan.m[d]);
                     }
+                     */
                 }
+                
                 // ||||||||| Integrate it to update the current mesh estimate. |||||||||||||||||||||||||||||||||||||||||||||||
                 // マッパーのカメラ姿勢・デプス画像ともに最新の（トラッキング成功後の）のデータに更新
                 GLKMatrix4 depthCameraPoseAfterTracking;
                 if (self.fixedTrackingSwitch.isOn) {
                     depthCameraPoseAfterTracking = firstCameraPoseOnScan;
-                }else {
+                } else {
                     depthCameraPoseAfterTracking = [_slamState.tracker lastFrameCameraPose];
                 }
                 [_slamState.mapper integrateDepthFrame:depthFrame cameraPose:depthCameraPoseAfterTracking];
@@ -324,7 +341,7 @@ namespace // anonymous namespace for local functions
                         {
                             canAddKeyframe = true;                                      // 一番最初のフレームならばキーフレームは常に追加できる
                         }
-                        else    // 一番初めのフレームでない場合　（無条件にキーフレームを追加できない場合
+                        else    // 初回color/depthフレームでない場合　（無条件にキーフレームを追加できない場合
                         {
                             // 前回の姿勢との角度の変化差分　秒間の角度変化
                             float deltaAngularSpeedInDegreesPerSeconds = FLT_MAX;
@@ -351,7 +368,7 @@ namespace // anonymous namespace for local functions
                             }
                         }
                         
-                        // キーフレーム画像を追加できるとわかった場合　最新のカラーカメラ姿勢と画像をセットで渡す
+                        // キーフレーム画像を追加できるとわかった場合　最新のカラーカメラ姿勢と画像をセットで渡す ========================
                         if (canAddKeyframe)
                         {
                             // ||||||| キーフレームの追加 ||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -368,6 +385,7 @@ namespace // anonymous namespace for local functions
                                 showHoldDeviceStill = true;         // デバイスを固定して待っててねメッセージを出すフラグをOnに
                             }
                         }
+                        // ================================================================================================
                     }
                 }
                 
@@ -384,10 +402,14 @@ namespace // anonymous namespace for local functions
                 // ------------------------------------------------------------------
                 if (((int)self.intervalSlider.value >= 1) && (scanFrameCount % (int)self.intervalSlider.value == 0)) {
                     
-                    if (self.saveToFileSwitch.isOn) {
+                    // ファイルに保存する場合 =====================================================================
+                    if (self.saveToFileSwitch.isOn)
+                    {
+                        
+                        [scanFrameDateList addObject:[NSDate date]];      // １コマ スキャンし終わった日時を保存しておく
                         
                         STMesh* sceneMesh;
-                        if (self.colorScanSwitch.isOn) {
+                        if (self.colorScanSwitch.isOn) {    // カラーで保存する場合 ==============================
                             
                             [self colorizeMesh];
                             sceneMesh = _colorizedMesh;
@@ -397,22 +419,24 @@ namespace // anonymous namespace for local functions
                             //[_slamState.scene unlockSceneMesh];     // ロック解除
                             
                         } else {
+                            
+                            // モノクロスキャン
                             sceneMesh = [[STMesh alloc] initWithMesh:[_slamState.scene lockAndGetSceneMesh]];
                             [_slamState.scene unlockSceneMesh];     // ロック解除
+                            
                         }
                         
-                        // ------------------------------------
-                        [scanFrameDateList addObject:[NSDate date]];      // １コマ スキャンし終わった日時を保存しておく
-                        
+                        // 視点移動情報 ------------------------------------
                         NSMutableArray *matrixArray = [[NSMutableArray alloc]init];
                         for(int c=0; c<16; c++) {
                             //NSNumber *n = ];
                             [matrixArray addObject:[NSNumber numberWithFloat:colorCameraPoseAfterTracking.m[c]] ];
                         }
-                        //NSLog(@"matrixArray: %@", matrixArray);
                         [depthCameraPoseList addObject:matrixArray];
+                        //NSLog(@"matrixArray: %@", matrixArray);
                         //NSLog(@"depthCameraPoseList: %@", depthCameraPoseList);
                         
+                        // メモリにいったん保存するかどうか
                         if (self.recordToMemorySwitch.isOn) {       // 速度を稼ぐためにメモリ上にいったん記録して、あとでまとめてファイルに保存
                             
                             [recordMeshList addObject:sceneMesh];
@@ -436,7 +460,7 @@ namespace // anonymous namespace for local functions
                             NSLog(@"recordMeshList: %@", recordMeshList);
                              */
                             
-                        } else {
+                        } else {    // ファイルにリアルタイムに直接保存していく （fpsは遅くなる
                             
                             // Setup names and paths.
                             NSString *modelDirPath = [NSString stringWithFormat:@"%s/%d/", [saveBaseDirPath UTF8String], nowSaveDirNum];
@@ -517,7 +541,8 @@ namespace // anonymous namespace for local functions
                     
                     //NSLog(@"resetSLAM started");
                     
-                    if (!self.fixedTrackingSwitch.isOn) {
+                    /*
+                    if (self.fixedTrackingSwitch.isOn == false) {
                         //[self resetSLAM];
                         
                         [_slamState.mapper reset];
@@ -527,10 +552,11 @@ namespace // anonymous namespace for local functions
                         
                         _colorizedMesh = nil;
                         _holeFilledMesh = nil;
+                        
+                        NSLog(@"SLAM reset: fixedTrackingSwitch is false.");
 
                     }
-                    
-                    _slamState.prevFrameTimeStamp = 1;
+                     */
                     
                 }
                 
@@ -542,7 +568,7 @@ namespace // anonymous namespace for local functions
             
             else    // トラッキングに失敗していた場合
             {
-                if (self.fixedTrackingSwitch) {
+                if (self.fixedTrackingSwitch.isOn == false) {
                     // Update the tracker message if there is any important feedback.
                     // ユーザにメッセージで指示して改善を図る
                     trackerErrorMessage = computeTrackerMessage(_slamState.tracker.trackerHints);
@@ -565,12 +591,14 @@ namespace // anonymous namespace for local functions
             
             self.debugInfoLabel.text = [NSString stringWithFormat:@"ok: %d /  all: %d", trackingOkCounter, allFrameCounter];
             
+            _slamState.prevFrameTimeStamp = depthFrame.timestamp;
+            
             break;
         }
             
         case RoomCaptureStateViewing:
         default:
-        {} // do nothing, the MeshViewController will take care of this.
+            {} // do nothing, the MeshViewController will take care of this.
     }
 }
 
