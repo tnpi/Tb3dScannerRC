@@ -1383,6 +1383,7 @@
 -(void) doSaveInitializeAction {
     
     firstScanFlag = true;
+    frameScanningFinishWaitFlag = false;
     
     savedFrameCount = 0;
     trackingOkCounter = 0;

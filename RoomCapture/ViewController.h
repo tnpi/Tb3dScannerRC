@@ -300,6 +300,8 @@ struct DisplayData
     
     bool firstScanFlag;
     
+    bool frameScanningFinishWaitFlag;
+    
 }
 
 @property (nonatomic, retain) AVCaptureSession *avCaptureSession;

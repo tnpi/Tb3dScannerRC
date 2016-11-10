@@ -446,7 +446,7 @@
 				GCC_PREFIX_HEADER = "RoomCapture/Tb3dScannerRC-Prefix.pch";
 				INFOPLIST_FILE = "RoomCapture/Tb3dScannerRC-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
-				PRODUCT_BUNDLE_IDENTIFIER = net.16px.Tb3dScannerRC0.7;
+				PRODUCT_BUNDLE_IDENTIFIER = net.16px.Tb3dScannerRC0.7.1;
 				PRODUCT_NAME = Tb3dScannerRC;
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -485,7 +485,7 @@
 				GCC_PREFIX_HEADER = "RoomCapture/Tb3dScannerRC-Prefix.pch";
 				INFOPLIST_FILE = "RoomCapture/Tb3dScannerRC-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
-				PRODUCT_BUNDLE_IDENTIFIER = net.16px.Tb3dScannerRC0.7;
+				PRODUCT_BUNDLE_IDENTIFIER = net.16px.Tb3dScannerRC0.7.1;
 				PRODUCT_NAME = Tb3dScannerRC;
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";

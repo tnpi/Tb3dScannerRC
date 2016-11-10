@@ -210,6 +210,11 @@ namespace // anonymous namespace for local functions
             
         case RoomCaptureStateScanning:
         {
+            
+            if (frameScanningFinishWaitFlag) {
+                break;
+            }
+            
             // tanaka add
             if (firstScanFlag) {
                 NSLog(@"RoomCaptureStateScanning.isFirstFrame ");
@@ -291,6 +296,7 @@ namespace // anonymous namespace for local functions
             // 今の状況から、今回の新しいカメラ姿勢が取得できたら
             if (trackingOk)
             {
+                frameScanningFinishWaitFlag = true;
                 _slamState.prevFrameTimeStamp = -1;
                 const bool isFirstFrame = (_slamState.prevFrameTimeStamp < 0.);
                 
@@ -571,6 +577,8 @@ namespace // anonymous namespace for local functions
             
             _slamState.prevFrameTimeStamp = depthFrame.timestamp;
             firstScanFlag = false;
+            
+            frameScanningFinishWaitFlag = false;
 
             break;
         }
