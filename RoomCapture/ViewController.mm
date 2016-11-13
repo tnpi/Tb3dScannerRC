@@ -148,6 +148,7 @@
     [self actionOnRoomSizeSliderValueChanged];
     
 
+    colorCameraPoseList = [[NSMutableArray alloc] init];
     depthCameraPoseList = [[NSMutableArray alloc] init];
     //keyFramesList = [[NSMutableArray alloc] init];
     //sceneList = [[NSMutableArray alloc] init];
@@ -607,10 +608,11 @@
         // NSDate を NSString に変換します。
         NSString *gpsDateConverted = [formatter stringFromDate:recentLocation.timestamp];
         
+        NSMutableArray *colorPoseMatrix = colorCameraPoseList[i];
         NSMutableArray *depthPoseMatrix = depthCameraPoseList[i];
         
         NSString *lineStr = [NSString
-                             stringWithFormat:@"%i,%li,%@,%f,%f,%f,%f,%f,%f,%f,%@,-,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",
+                             stringWithFormat:@"%i,%li,%@,%f,%f,%f,%f,%f,%f,%f,%@,-,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,-,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",
                              i,
                              timeFromScanStart,
                              strNow,
@@ -622,6 +624,23 @@
                              tempLocation.speed,
                              tempLocation.course,
                              gpsDateConverted,
+                             [colorPoseMatrix[0] floatValue],
+                             [colorPoseMatrix[1] floatValue],
+                             [colorPoseMatrix[2] floatValue],
+                             [colorPoseMatrix[3] floatValue],
+                             [colorPoseMatrix[4] floatValue],
+                             [colorPoseMatrix[5] floatValue],
+                             [colorPoseMatrix[6] floatValue],
+                             [colorPoseMatrix[7] floatValue],
+                             [colorPoseMatrix[8] floatValue],
+                             [colorPoseMatrix[9] floatValue],
+                             [colorPoseMatrix[10] floatValue],
+                             [colorPoseMatrix[11] floatValue],
+                             [colorPoseMatrix[12] floatValue],
+                             [colorPoseMatrix[13] floatValue],
+                             [colorPoseMatrix[14] floatValue],
+                             [colorPoseMatrix[15] floatValue],
+                             
                              [depthPoseMatrix[0] floatValue],
                              [depthPoseMatrix[1] floatValue],
                              [depthPoseMatrix[2] floatValue],
@@ -1398,6 +1417,7 @@
     [recordMeshList removeAllObjects];       // add 2016.6
     [scanFrameDateList removeAllObjects];       // add 2016.6
     [scanGpsDataList removeAllObjects];       // add 2016.6
+    [colorCameraPoseList removeAllObjects];
     [depthCameraPoseList removeAllObjects];
     
     ownKeyframeCounts = 0;

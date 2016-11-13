@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "RoomCapture/ViewController.mm"
-            timestampString = "500246414.899725"
+            timestampString = "500759175.458935"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "841"
-            endingLineNumber = "841"
+            startingLineNumber = "860"
+            endingLineNumber = "860"
             landmarkName = "-updateAppStatusMessage"
             landmarkType = "7">
          </BreakpointContent>
@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "RoomCapture/ViewController.h"
-            timestampString = "500424460.798086"
+            timestampString = "500759175.458935"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "325"
-            endingLineNumber = "325"
+            startingLineNumber = "326"
+            endingLineNumber = "326"
             landmarkName = "trackingSmallObjectSwitch"
             landmarkType = "24">
          </BreakpointContent>
@@ -74,11 +74,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "RoomCapture/ViewController.mm"
-            timestampString = "500246414.899725"
+            timestampString = "500759175.458935"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "659"
-            endingLineNumber = "659"
+            startingLineNumber = "678"
+            endingLineNumber = "678"
             landmarkName = "-saveDataMemoryToFile"
             landmarkType = "7">
          </BreakpointContent>
