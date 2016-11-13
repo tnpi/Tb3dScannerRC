@@ -150,11 +150,12 @@
 
     colorCameraPoseList = [[NSMutableArray alloc] init];
     depthCameraPoseList = [[NSMutableArray alloc] init];
-    //keyFramesList = [[NSMutableArray alloc] init];
-    //sceneList = [[NSMutableArray alloc] init];
     
-    //depthFrameList = [[NSMutableArray alloc] init];;
-    //colorFrameList = [[NSMutableArray alloc] init];;
+    // カラー後付けに必要なデータのメモリ上への保存のため
+    depthFrameList = [[NSMutableArray alloc] init];;
+    colorFrameList = [[NSMutableArray alloc] init];;
+    keyFramesList = [[NSMutableArray alloc] init];
+    sceneList = [[NSMutableArray alloc] init];
 
 }
 
