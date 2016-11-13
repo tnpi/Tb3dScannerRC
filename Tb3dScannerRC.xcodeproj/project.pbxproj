@@ -57,6 +57,7 @@
 		7E2288C9198FE3D300F6E3B2 /* CustomUIKitStyles.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7E2288C8198FE3D300F6E3B2 /* CustomUIKitStyles.mm */; };
 		7EAD268F198AACD500638C9C /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EAD268E198AACD500638C9C /* libz.dylib */; };
 		D2013B0C1DB3F5B90024D68D /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2013B0B1DB3F5B90024D68D /* CoreLocation.framework */; };
+		D23250DC1DD905A500CE2228 /* Stats.m in Sources */ = {isa = PBXBuildFile; fileRef = D23250DA1DD905A500CE2228 /* Stats.m */; };
 		D2E1969C1DBAFF4000241B3F /* Structure.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2E1969B1DBAFF4000241B3F /* Structure.framework */; };
 /* End PBXBuildFile section */
 
@@ -130,6 +131,8 @@
 		7EAD268E198AACD500638C9C /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		7EAD26A9198B015000638C9C /* CustomUIKitStyles.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CustomUIKitStyles.h; path = RoomCapture/CustomUIKitStyles.h; sourceTree = "<group>"; };
 		D2013B0B1DB3F5B90024D68D /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		D23250DA1DD905A500CE2228 /* Stats.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Stats.m; sourceTree = "<group>"; };
+		D23250DB1DD905A500CE2228 /* Stats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Stats.h; sourceTree = "<group>"; };
 		D2E196991DBAFF0F00241B3F /* Frameworks */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Frameworks; sourceTree = "<group>"; };
 		D2E1969B1DBAFF4000241B3F /* Structure.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Structure.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -236,6 +239,8 @@
 				7E2288C8198FE3D300F6E3B2 /* CustomUIKitStyles.mm */,
 				2A35A00E1975B89700D8C0B1 /* AppDelegate.h */,
 				2A35A00F1975B89700D8C0B1 /* AppDelegate.mm */,
+				D23250DA1DD905A500CE2228 /* Stats.m */,
+				D23250DB1DD905A500CE2228 /* Stats.h */,
 				2A35A0131975B89F00D8C0B1 /* ViewController.h */,
 				2A35A0141975B89F00D8C0B1 /* ViewController.mm */,
 				2AD988C41A643C9D00CB1B94 /* ViewController+Camera.h */,
@@ -370,6 +375,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D23250DC1DD905A500CE2228 /* Stats.m in Sources */,
 				2A35A0151975B89F00D8C0B1 /* ViewController.mm in Sources */,
 				2A38C13719B8CEE200563312 /* GraphicsRenderer.mm in Sources */,
 				7E2288C9198FE3D300F6E3B2 /* CustomUIKitStyles.mm in Sources */,

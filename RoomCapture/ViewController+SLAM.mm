@@ -432,11 +432,14 @@ namespace // anonymous namespace for local functions
                         // 視点移動情報の保存 ---------------------------------------------------------
                         NSMutableArray *matrixArray = [[NSMutableArray alloc]init];
                         for(int c=0; c<16; c++) {
+                            //NSNumber *n = ];
                             [matrixArray addObject:[NSNumber numberWithFloat:colorCameraPoseAfterTracking.m[c]] ];
                         }
                         [colorCameraPoseList addObject:matrixArray];
+                        
                         NSMutableArray *matrixArray2 = [[NSMutableArray alloc]init];
                         for(int c=0; c<16; c++) {
+                            //NSNumber *n = ];
                             [matrixArray2 addObject:[NSNumber numberWithFloat:depthCameraPoseAfterTracking.m[c]] ];
                         }
                         [depthCameraPoseList addObject:matrixArray2];
