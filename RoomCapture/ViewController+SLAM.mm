@@ -247,7 +247,6 @@ namespace // anonymous namespace for local functions
             GLKMatrix4 depthCameraPoseAfterTracking;
             bool isCanRecordThisFrame = false;
             BOOL trackingOk = false;
-            bool isIntervalFirstFrame = false;
             
 #pragma mark - Fixed Scan
             
@@ -330,10 +329,6 @@ namespace // anonymous namespace for local functions
                     _holeFilledMesh = nil;
                     DLog(@"reset no_fixed end ");
                     
-                    //_slamState.prevFrameTimeStamp = -1;
-                    isIntervalFirstFrame = true;//(_slamState.prevFrameTimeStamp < 0.);
-                    
-                    firstIntervalLoop = false;
                 }
 
                 // 今回のトラッキング前の（情報を更新しない、今の時点で最新の）カメラの姿勢を取得保存する　デプスカメラの姿勢として
@@ -376,13 +371,13 @@ namespace // anonymous namespace for local functions
                     
                     // 新しいカラーカメラ姿勢で、新しいであろうキーフレーム　視点が新しいキーフレームを追加するほどに十分に動いたかどうかを調べた結果、必要だった場合？
                     // 新しいフレームによって新しい姿勢が得られるかどうか調べる関数　真偽値が返る
-                    if ([_slamState.keyFrameManager wouldBeNewKeyframeWithColorCameraPose:colorCameraPoseAfterTracking])
-                    {
-                        DLog(@"[_slamState.keyFrameManager wouldBe..] is passed.");
+                    //if ([_slamState.keyFrameManager wouldBeNewKeyframeWithColorCameraPose:colorCameraPoseAfterTracking])
+                    //{
+                    //    DLog(@"[_slamState.keyFrameManager wouldBe..] is passed.");
                         
                         bool canAddKeyframe = false;                                    // キーフレームを追加できるかどうかのフラグ
                         
-                        if (isIntervalFirstFrame) {
+                        if (firstIntervalLoop) {
                             
                             canAddKeyframe = true;                                      // 一番最初のフレームならばキーフレームは常に追加できる
                             
@@ -432,7 +427,7 @@ namespace // anonymous namespace for local functions
                             // 早く動かしすぎた場合、キーフレームを捕まえるために、ヒントをユーザーに伝えてゆっくりにさせる   ブレとかこんにゃく現象とかのないものにするため。
                         }
                         // ================================================================================================
-                    }
+                    //}
                     
                     
                 // トラッキングに失敗していた場合 ---------------
@@ -454,8 +449,10 @@ namespace // anonymous namespace for local functions
                     }
                 }
                 
+                
             } // fixed - noFixed
-
+            
+            firstIntervalLoop = false;
             
             
 #pragma mark - recording
