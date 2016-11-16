@@ -320,10 +320,10 @@ namespace // anonymous namespace for local functions
             } else {
 
                 // インターバルのループ初回にリセット ---------------------------
-                if ((scanFrameCount % (int)self.intervalSlider.value) == 0){
+                if (firstIntervalLoop){
                     DLog(@"reset no_fixed start");
                     [_slamState.mapper reset];
-                    [_slamState.tracker reset];
+                    //[_slamState.tracker reset];
                     [_slamState.scene clear];
                     [_slamState.keyFrameManager clear];
                     _colorizedMesh = nil;
@@ -332,6 +332,8 @@ namespace // anonymous namespace for local functions
                     
                     //_slamState.prevFrameTimeStamp = -1;
                     isIntervalFirstFrame = true;//(_slamState.prevFrameTimeStamp < 0.);
+                    
+                    firstIntervalLoop = false;
                 }
 
                 // 今回のトラッキング前の（情報を更新しない、今の時点で最新の）カメラの姿勢を取得保存する　デプスカメラの姿勢として
@@ -523,6 +525,8 @@ namespace // anonymous namespace for local functions
                 [self countFps];        // インターバルのタイミングでFPSをカウント
                 
                 //DLog(@"resetSLAM started");
+                
+                firstIntervalLoop = true;
                 
                 trackingOkCounter++;
             }

@@ -486,14 +486,18 @@
     _meshViewController->mvcScanFrameDateList = scanFrameDateList;
     
     // Place the camera in the center of the scanning volume.
-    GLKVector3 cameraCenter = GLKVector3MultiplyScalar(_slamState.cameraPoseInitializer.volumeSizeInMeters, 0.5);
+    //GLKVector3 cameraCenter = GLKVector3MultiplyScalar(_slamState.cameraPoseInitializer.volumeSizeInMeters, 0.5);
+    GLKVector3 cameraCenter = GLKVector3MultiplyScalar(_slamState.cameraPoseInitializer.volumeSizeInMeters, 0.1);
     GLKMatrix4 initialCameraPose = GLKMatrix4MakeTranslation(cameraCenter.x, cameraCenter.y, cameraCenter.z);
 
+    /*
     STMesh *mesh = [_slamState.scene lockAndGetSceneMesh];   //original
     [_slamState.scene unlockSceneMesh];
+    */
     NSLog(@"enterViewingState set mesh end ?");          // この時点でsetMesh->uploadMeshが実行される？
 
-    [self presentMeshViewer:_colorizedMesh withCameraPose:initialCameraPose];
+    //[self presentMeshViewer:_colorizedMesh withCameraPose:initialCameraPose];
+    [self presentMeshViewer:recordMeshList[0] withCameraPose:initialCameraPose];
     
     _slamState.roomCaptureState = RoomCaptureStateViewing;
 
@@ -1468,6 +1472,7 @@
     
     firstScanFlag = true;
     frameScanningFinishWaitFlag = false;
+    firstIntervalLoop = true;
     
     scanFrameCount = 0;
     savedFrameCount = 0;

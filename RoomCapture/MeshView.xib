@@ -14,6 +14,7 @@
                 <outlet property="measurementGuideLabel" destination="u2V-eU-Ewv" id="GeS-ix-mmO"/>
                 <outlet property="meshViewerMessageLabel" destination="ALi-cg-XD4" id="hK4-AW-hSA"/>
                 <outlet property="playbackRecordTimeSlider" destination="y0k-2e-C8p" id="WY8-Ho-YRM"/>
+                <outlet property="playbackRecordTimeSliderLabel" destination="dhg-ei-q5q" id="JuZ-aM-e7F"/>
                 <outlet property="topViewSwitch" destination="LTT-MY-4vH" id="hYa-z1-gHV"/>
                 <outlet property="view" destination="1" id="L7f-Ij-c22"/>
             </connections>
@@ -97,17 +98,25 @@
                     </connections>
                 </button>
                 <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="0.0" maxValue="2.5" translatesAutoresizingMaskIntoConstraints="NO" id="y0k-2e-C8p">
-                    <frame key="frameInset" minX="134" minY="679" width="825" height="31"/>
+                    <frame key="frameInset" minX="134" minY="679" width="787" height="31"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 </slider>
                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="w8K-hM-uST">
-                    <frame key="frameInset" minX="52" minY="710" width="46" height="30"/>
+                    <frame key="frameInset" minX="49" minY="632" width="46" height="30"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <state key="normal" title="Button"/>
                     <connections>
                         <action selector="playRecordButtonPressed:" destination="-1" eventType="touchUpInside" id="rBk-F1-eSE"/>
                     </connections>
                 </button>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dhg-ei-q5q">
+                    <frame key="frameInset" minX="948" minY="684" width="42" height="21"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
             </subviews>
             <color key="backgroundColor" red="0.33333333333333331" green="0.33333333333333331" blue="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>

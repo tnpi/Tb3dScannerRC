@@ -59,6 +59,7 @@
 
 @property (weak, nonatomic) IBOutlet UISlider *playbackRecordTimeSlider;
 
+@property (weak, nonatomic) IBOutlet UILabel *playbackRecordTimeSliderLabel;
 
 - (IBAction)measurementButtonClicked:(id)sender;
 

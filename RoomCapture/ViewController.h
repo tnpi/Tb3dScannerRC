@@ -284,6 +284,8 @@ struct DisplayData
     int fpsCount;      //フレーム数
     float fpsFramerate;  //フレームレート
     
+    bool firstIntervalLoop;
+    
     // tanaka rec to memory --------------------------------------------------
 
     
