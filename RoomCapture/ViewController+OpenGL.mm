@@ -16,6 +16,9 @@
 
 - (void)setupGL
 {
+    
+    DLog(@"setupGL() start");
+    
     // Create an EAGLContext for our EAGLView.
     _display.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
     if (!_display.context) { NSLog(@"Failed to create ES context"); return; }
@@ -48,6 +51,9 @@
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
     }
+    
+    DLog(@"setupGL() end");
+
 }
 
 - (void)setupGLViewport
@@ -78,6 +84,9 @@
 
 - (void)uploadGLColorTexture:(STColorFrame*)colorFrame
 {
+    
+    DLog(@"uploadGLColorTexture() start");
+    
     _display.colorCameraGLProjectionMatrix = [colorFrame glProjectionMatrix];
     
     if (!_display.videoTextureCache)
@@ -162,10 +171,17 @@
     glBindTexture(CVOpenGLESTextureGetTarget(_display.chromaTexture), CVOpenGLESTextureGetName(_display.chromaTexture));
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    
+    DLog(@"uploadGLColorTexture() end");
+    
 }
 
+// スキャン処理直後に実行される描画処理 ---------------
 - (void)renderSceneWithDepthFrame:(STDepthFrame*)depthFrame colorFrame:(STColorFrame*)colorFrame
 {
+    
+    DLog(@"renderSceneWithDepthFrame() start");
+    
     // Activate our view framebuffer.
     [(EAGLView *)self.view setFramebuffer];
     
@@ -177,6 +193,8 @@
     
     switch (_slamState.roomCaptureState)
     {
+            
+        // スキャン前の場合 ======================================================
         case RoomCaptureStatePoseInitialization:
         {
             // Render the background image from the color camera.
@@ -187,11 +205,15 @@
             
             break;
         }
+
             
+        // スキャン中の場合 ======================================================
         case RoomCaptureStateScanning:
         {
             // Render the background image from the color camera.
-            [self renderColorImage];
+            if (self.colorScanSwitch.isOn) {
+                [self renderColorImage];
+            }
             
             if (self.liveWireframeSwitch.isOn) {
             
@@ -216,10 +238,13 @@
             
             break;
         }
+
             
-            // MeshViewerController handles this.
+        // スキャン後の閲覧の場合 ======================================================
+        // MeshViewerController handles this.
         case RoomCaptureStateViewing:
         default: {}
+            
     };
     
     // Check for OpenGL errors
@@ -230,7 +255,11 @@
     }
     
     // Display the rendered framebuffer.
+    // ここで最終的にバッファに描画したものをビューで表示？
     [(EAGLView *)self.view presentFramebuffer];
+    
+    DLog(@"renderSceneWithDepthFrame() end");
+
 }
 
 - (void)renderColorImage
@@ -263,6 +292,9 @@
 // If we are outside of the scanning volume we make the pixels very dark.
 - (void)renderScanningVolumeFeedbackOverlayWithDepthFrame:(STDepthFrame*)depthFrame colorFrame:(STColorFrame*)colorFrame
 {
+    
+    DLog(@"renderScanningVolumeFeedbackOverlayWithDepthFrame() start");
+    
     glActiveTexture(GL_TEXTURE2);
     
     glBindTexture(GL_TEXTURE_2D, _display.scanningVolumeFeedbackTexture);
@@ -298,6 +330,9 @@
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     [_display.rgbaTextureShader useShaderProgram];
     [_display.rgbaTextureShader renderTexture:GL_TEXTURE2];
+    
+    DLog(@"renderScanningVolumeFeedbackOverlayWithDepthFrame() end");
+    
 }
 
 @end

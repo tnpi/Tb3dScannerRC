@@ -96,6 +96,7 @@
 
 - (STSensorControllerInitStatus)connectToStructureSensorAndStartStreaming
 {
+    DLog("connectToStructureSensorAndStartStreaming() start");
     
     // Try connecting to a Structure Sensor.
     STSensorControllerInitStatus result = [_sensorController initializeSensorConnection];
@@ -125,11 +126,15 @@
     
     [self updateIdleTimer];
     
+    DLog("connectToStructureSensorAndStartStreaming() end");
+
     return result;
 }
 
 - (void)startStructureSensorStreaming
 {
+    DLog("startStructureSensorStreaming() start");
+    
     if (![self isStructureConnectedAndCharged])
     {
         NSLog(@"Error: Structure Sensor not connected or not charged.");
@@ -185,11 +190,16 @@
     
     // Notify and initialize streaming dependent objects.
     [self onStructureSensorStartedStreaming];
+
     
+    DLog("startStructureSensorStreaming() end");
 }
 
 - (void)onStructureSensorStartedStreaming
 {
+    
+    DLog("onStructureSensorStartedStreaming() start");
+    
     STCalibrationType calibrationType = [_sensorController calibrationType];
     
     // The Calibrator app will be updated to support future iPads, and additional attachment brackets will be released as well.
@@ -209,17 +219,27 @@
         if (_calibrationOverlay)
             _calibrationOverlay.hidden = true;
     }
+    
+    
+    DLog("onStructureSensorStartedStreaming() end");
 }
 
+// センサがデプスとカラーフレームを同期して出力した場合（更新のベース）
 - (void)sensorDidOutputSynchronizedDepthFrame:(STDepthFrame *)depthFrame
                                    colorFrame:(STColorFrame*)colorFrame
 {
+    
+    DLog("sensorDidOutputSynchronizedDepthFrame() start");
+    
     if (_slamState.initialized)
     {
         [self processDepthFrame:depthFrame colorFrame:colorFrame];
         // Scene rendering is triggered by new frames to avoid rendering the same view several times.
         [self renderSceneWithDepthFrame:depthFrame colorFrame:colorFrame];
     }
+    
+    DLog("sensorDidOutputSynchronizedDepthFrame() end");
+    
 }
 
 @end
