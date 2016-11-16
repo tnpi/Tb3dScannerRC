@@ -387,11 +387,9 @@
 {
     // Take a copy of the scene mesh to safely modify it.
     //_colorizedMesh = [_slamState.scene lockAndGetSceneMesh];//[[STMesh alloc] initWithMesh:[_slamState.scene lockAndGetSceneMesh]];
-    _colorizedMesh = [[STMesh alloc] initWithMesh:[_slamState.scene lockAndGetSceneMesh]];  // very stable!
+    _colorizedMesh = [[STMesh alloc] initWithMesh:[_slamState.scene lockAndGetSceneMesh]];
+    [_slamState.scene unlockSceneMesh];
 
-    //_appStatus.backgroundProcessingStatus = AppStatus::BackgroundProcessingStatusFinalizing;
-    //[self updateAppStatusMessage];
-    
     STBackgroundTask* colorizeTask = [STColorizer
                                       newColorizeTaskWithMesh:_colorizedMesh
                                       scene:_slamState.scene
@@ -401,26 +399,72 @@
                                           if (error != nil) {
                                               NSLog(@"Error during colorizing: %@", [error localizedDescription]);
                                           }
-                                          
-                                          /*
-                                          dispatch_async(dispatch_get_main_queue(), ^{
-                                              
-                                              _appStatus.backgroundProcessingStatus = AppStatus::BackgroundProcessingStatusIdle;
-                                              _appStatus.statusMessageDisabled = true;
-                                              [self updateAppStatusMessage];
-                                              
-                                              //[self enterViewingState]; comment out by tanaka
-                                          });
-                                          */
                                       }
+                                      // 部屋向けのオプション
                                       options:@{kSTColorizerTypeKey: @(STColorizerTextureMapForRoom) }
+                                      // 人やオブジェクト向けのオプション
+                                      /*options:@{
+                                                kSTColorizerTypeKey: @(STColorizerTextureMapForObject),
+                                                kSTColorizerQualityKey: @(STColorizerNormalQuality), // default:STColorizerHighQuality. Only STColorizerTextureMapForObject will honor this option.
+                                                kSTColorizerTargetNumberOfFacesKey: @(20000), // Defaults to @(20000) Only supported by STColorizerTextureMapForObject.
+                                                kSTColorizerPrioritizeFirstFrameColorKey: @NO//Defaults to @NO. Only supported by STColorizerTextureMapForObject.
+                                                }
+                                       */
                                       error:nil];
     
     [colorizeTask start];
     
     [colorizeTask waitUntilCompletion]; // add by tanaka カラー化が終わるまで処理まち
-    [_slamState.scene unlockSceneMesh];
 }
+
+/*
+ The options dictionary. The valid keys are:
+ 
+ kSTColorizerTypeKey:
+ Specifies the colorizing algorithm.
+ NSNumber integral value equal to one the STColorizerType constants.
+ Required.
+ kSTColorizerPrioritizeFirstFrameColorKey:
+ Specifies whether the colorizer should give the first frame the highest priority.
+ NSNumber boolean value.
+ Defaults to @NO.
+ Particularly useful when we want to emphasize the appearance in the first frame, for example, when scanning a human face.
+ Only supported by STColorizerTextureMapForObject.
+ kSTColorizerTargetNumberOfFacesKey:
+ Specifies a target number of faces for the final mesh.
+ NSNumber integral value.
+ Defaults to @(20000).
+ Only supported by STColorizerTextureMapForObject.
+ kSTColorizerQualityKey:
+ Specifies the desired speed/quality trade-off.
+ NSNumber integral value equal to one the STColorizerQuality constants.
+ Defaults to STColorizerHighQuality.
+ Only STColorizerTextureMapForObject will honor this option.
+ 
+ -------------------
+ 
+ Definition
+ typedef NS_ENUM(NSInteger, STColorizerType ) {
+ STColorizerPerVertex = 0,
+ STColorizerTextureMapForRoom = 1,
+ STColorizerTextureMapForObject = 2,
+ };
+ Constants
+ STColorizerPerVertex
+ Generate a color for each vertex of the mesh. Best for small objects.
+ 
+ Declared In StructureSLAM.h.
+ 
+ STColorizerTextureMapForRoom
+ Generate a global texture map, and UV coordinates for each vertex of the mesh. Optimized for large rooms. Note: Only 640x480 color images are supported by this colorizer.
+ 
+ Declared In StructureSLAM.h.
+ 
+ STColorizerTextureMapForObject
+ Generates a global texture map, and UV coordinates for each vertex of the mesh. Optimized for objects and people.
+ 
+
+ */
 //------------------------------------------------------
 
 - (void)enterViewingState
