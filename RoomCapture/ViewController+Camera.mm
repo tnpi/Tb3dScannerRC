@@ -215,6 +215,8 @@
     
 }
 
+
+// ホワイトバランスや焦点の設定をどうするか
 - (void)setColorCameraParametersForScanning
 {
     NSError *error;
@@ -232,11 +234,17 @@
     [self.videoDevice unlockForConfiguration];
 }
 
+
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection
 {
+    DLog("captureOutput() start //////////////////////////////////////////////////////////////");
+    
     // Pass color buffers directly to the driver, which will then produce synchronized depth/color pairs.
     [_sensorController frameSyncNewColorBuffer:sampleBuffer];
+    
+    DLog("captureOutput() end");
 }
+
 
 // add by tanaka from scanner ------------------------------
 // キャプチャフォーマットの選択

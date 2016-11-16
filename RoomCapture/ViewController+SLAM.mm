@@ -177,7 +177,8 @@ namespace // anonymous namespace for local functions
 - (void)processDepthFrame:(STDepthFrame *)depthFrame
                colorFrame:(STColorFrame *)colorFrame
 {
-    DLog(@"processDepthFrame: start ----------");
+    
+    DLog(@"processDepthFrame: start  / allFrameCounter:%d scanFrameCount:%d", allFrameCounter, scanFrameCount);
 
     //[_slamState.tracker setOptions:@{kSTTrackerQualityKey:@(STTrackerQualityFast)}];
 
@@ -320,20 +321,22 @@ namespace // anonymous namespace for local functions
             } else {
 
                 // リセット ---------------------------
-                DLog(@"processDepthFrame.reset() no_fixed");
+                DLog(@"reset no_fixed start");
                 [_slamState.mapper reset];
                 [_slamState.scene clear];
                 [_slamState.keyFrameManager clear];
                 _colorizedMesh = nil;
                 _holeFilledMesh = nil;
+                DLog(@"reset no_fixed end ");
 
                 // 今回のトラッキング前の（情報を更新しない、今の時点で最新の）カメラの姿勢を取得保存する　デプスカメラの姿勢として
                 GLKMatrix4 depthCameraPoseBeforeTracking = [_slamState.tracker lastFrameCameraPose];
                 
                 // 新しいカメラ姿勢の推定　今回のカメラ姿勢を推定して取得・更新を試みる
                 // トラッカーの更新 --------------------
-                DLog(@"tracking process");
+                DLog(@"tracking process start");
                 trackingOk = [_slamState.tracker updateCameraPoseWithDepthFrame:depthFrame colorFrame:colorFrame error:&trackingError];
+                DLog(@"tracking process end");
                 
                 // 今の状況から、今回の新しいカメラ姿勢が取得できたら
                 if (trackingOk)
@@ -343,20 +346,26 @@ namespace // anonymous namespace for local functions
                     _slamState.prevFrameTimeStamp = -1;
                     const bool isFirstFrame = (_slamState.prevFrameTimeStamp < 0.);
                     
+                    DLog(@"[_slamState.tracker lastFrameCameraPose] start");
                     if (firstScanFlag) {
                         firstCameraPoseOnScan = [_slamState.tracker lastFrameCameraPose];
                     }
                     
                     // マッパーのカメラ姿勢・デプス画像ともに最新の（トラッキング成功後の）のデータに更新
                     depthCameraPoseAfterTracking = [_slamState.tracker lastFrameCameraPose];
+                    DLog(@"[_slamState.tracker lastFrameCameraPose] end");
                     
+                    DLog(@"[_slamState.mapper integrateDepthFrame ..] start");
                     [_slamState.mapper integrateDepthFrame:depthFrame cameraPose:depthCameraPoseAfterTracking];
+                    DLog(@"[_slamState.mapper finalizeTriangleMesh] start");
                     [_slamState.mapper finalizeTriangleMesh];           //not default: wait for integrate background process end
+                    DLog(@"[_slamState.mapper finalizeTriangleMesh] end");
                     
                     // 確認してください　私達がレジスターデプスを使わない場合、姿勢はカラーカメラの座標内です
-                    // colorCameraPoseInDepthCoordinateFrame: Get the rigid body transformation (RBT) between the iOS color camera and the depth image viewpoint.
+                    DLog(@"[depthFrame colorCameraPoseInDepthCoordinateFrame ..] start");
                     GLKMatrix4 colorCameraPoseInDepthCoordinateSpace;       // デプス座標空間内のカラーカメラの姿勢　の宣言
                     [depthFrame colorCameraPoseInDepthCoordinateFrame:colorCameraPoseInDepthCoordinateSpace.m]; // デプス座標フレーム内のカラーカメラ姿勢
+                    
                     // 最新の（トラッキング成功後の）カラーカメラ姿勢を、最新のデプスカメラ姿勢とデプス座標空間内のカラーカメラ姿勢から 乗算から計算？
                     colorCameraPoseAfterTracking = GLKMatrix4Multiply(depthCameraPoseAfterTracking,
                                                                                  colorCameraPoseInDepthCoordinateSpace);
@@ -368,6 +377,8 @@ namespace // anonymous namespace for local functions
                     // 新しいフレームによって新しい姿勢が得られるかどうか調べる関数　真偽値が返る
                     if ([_slamState.keyFrameManager wouldBeNewKeyframeWithColorCameraPose:colorCameraPoseAfterTracking])
                     {
+                        DLog(@"[_slamState.keyFrameManager wouldBe..] is passed.");
+                        
                         bool canAddKeyframe = false;                                    // キーフレームを追加できるかどうかのフラグ
                         
                         if (isFirstFrame)
@@ -399,10 +410,14 @@ namespace // anonymous namespace for local functions
                         // キーフレーム画像を追加できるとわかった場合　最新のカラーカメラ姿勢と画像をセットで渡す ========================
                         if (canAddKeyframe)
                         {
+                            DLog(@"canAddKeyframe is passed.");
+                            
+                            DLog(@"[_slamState.keyFrameManager processKeyFrameCandidateWithColorCameraPose ..] start");
                             // ||||||| キーフレームの追加 ||||||||||||||||||||||||||||||||||||||||||||||||||
                             [_slamState.keyFrameManager processKeyFrameCandidateWithColorCameraPose:colorCameraPoseAfterTracking
                                                                                          colorFrame:colorFrame
                                                                                          depthFrame:nil];
+                            DLog(@"[_slamState.keyFrameManager processKeyFrameCandidateWithColorCameraPose ..] end");
                             
                             isCanRecordThisFrame = true;
                             
@@ -416,7 +431,8 @@ namespace // anonymous namespace for local functions
                     
                 // トラッキングに失敗していた場合 ---------------
                 } else {
-                
+                    DLog(@"Tracking: NG");
+
                     DLog(@"[Structure] STTracker Error: %@.", [trackingError localizedDescription]);
                     trackingMessage = [trackingError localizedDescription];                    // ※次のエラーが主に出る　[Structure] STTracker Error: STTracker needs DeviceMotion input for tracking.
 
@@ -426,7 +442,9 @@ namespace // anonymous namespace for local functions
                     // マッパーの更新 ------ 今回のトラッキングに失敗しても、姿勢の精度が良ければ、今までに撮れた中では一番新しいカメラ姿勢と最新のデプス情報からマッパーを更新する
                     if (_slamState.tracker.poseAccuracy >= STTrackerPoseAccuracyHigh)
                     {
+                        DLog(@"NG [_slamState.mapper integrateDepthFrame ..] start");
                         [_slamState.mapper integrateDepthFrame:depthFrame cameraPose:_slamState.tracker.lastFrameCameraPose];
+                        DLog(@"NG [_slamState.mapper integrateDepthFrame ..] end");
                     }
                 }
                 
@@ -500,7 +518,7 @@ namespace // anonymous namespace for local functions
             _slamState.prevFrameTimeStamp = depthFrame.timestamp;
             firstScanFlag = false;
 
-            DLog(@"RoomCaptureStateScanning: end --------------------");
+            DLog(@"RoomCaptureStateScanning: end / allFrameCounter:%d scanFrameCount:%d", allFrameCounter, scanFrameCount);
             break;
         }
             
