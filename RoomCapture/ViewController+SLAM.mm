@@ -286,7 +286,7 @@ namespace // anonymous namespace for local functions
 
                     if (trackingOk)
                     {
-                        DLog(@"if trackingOk is true");
+                        DLog(@"Tracking: OK");
                         
                         // マッパーのカメラ姿勢・デプス画像ともに最新の（トラッキング成功後の）のデータに更新
                         depthCameraPoseAfterTracking = firstCameraPoseOnScan;
@@ -322,7 +322,6 @@ namespace // anonymous namespace for local functions
                 // リセット ---------------------------
                 DLog(@"processDepthFrame.reset() no_fixed");
                 [_slamState.mapper reset];
-                //[_slamState.tracker reset];
                 [_slamState.scene clear];
                 [_slamState.keyFrameManager clear];
                 _colorizedMesh = nil;
@@ -339,7 +338,7 @@ namespace // anonymous namespace for local functions
                 // 今の状況から、今回の新しいカメラ姿勢が取得できたら
                 if (trackingOk)
                 {
-                    DLog(@"if trackingOk is true");
+                    DLog(@"Tracking: OK");
                     
                     _slamState.prevFrameTimeStamp = -1;
                     const bool isFirstFrame = (_slamState.prevFrameTimeStamp < 0.);
