@@ -171,6 +171,9 @@ namespace // anonymous namespace for local functions
     _slamState.mapper = [[STMapper alloc] initWithScene:_slamState.scene options:mapperOptions];
 }
 
+
+#pragma mark - processDepthFrame:
+
 - (void)processDepthFrame:(STDepthFrame *)depthFrame
                colorFrame:(STColorFrame *)colorFrame
 {
@@ -216,6 +219,7 @@ namespace // anonymous namespace for local functions
             break;
         }
             
+#pragma mark - Scanning state
         // スキャン中画面の場合 ======================================================================================================
         case RoomCaptureStateScanning:
         {
@@ -236,20 +240,22 @@ namespace // anonymous namespace for local functions
             GLKMatrix4 depthCameraPoseAfterTracking;
             bool isCanRecordThisFrame = false;
             
+#pragma mark - Fixed Scan
             // 固定スキャンの場合 ===========================================================
             if (self.fixedTrackingSwitch.isOn) {
                 
                 // インターバルで割って0になる回でない場合、マッパーだけ更新させてフレーム終了 ==========================================
-                DLog(@"self.fixedTrackingSwitch.isOn && self.intervalSlider.value != 0 is true.");
-                if (((int)self.intervalSlider.value >= 1) && (scanFrameCount % (int)self.intervalSlider.value != 0)){
-                    scanFrameCount++;
-                    allFrameCounter++;
+                if (scanFrameCount % (int)self.intervalSlider.value != 0){
+                    DLog(@"fixed scan - mapper update.");
                     if (_slamState.tracker.poseAccuracy >= STTrackerPoseAccuracyHigh) {
+                        DLog(@"fixed scan - mapper update success.");
                         [_slamState.mapper integrateDepthFrame:depthFrame cameraPose:firstCameraPoseOnScan];
                     }
                 
                     _slamState.prevFrameTimeStamp = depthFrame.timestamp;
                     firstScanFlag = false;
+                    scanFrameCount++;
+                    allFrameCounter++;
                     break;
                 }
                 
@@ -305,7 +311,8 @@ namespace // anonymous namespace for local functions
                     trackingMessage = [trackingError localizedDescription];
                     // ※次のエラーが主に出る　[Structure] STTracker Error: STTracker needs DeviceMotion input for tracking.
                 }
-
+                
+#pragma mark - no-Fixed Scan
             // 移動しながらのスキャンの場合 ===================================================================
             } else {
 
@@ -429,10 +436,12 @@ namespace // anonymous namespace for local functions
                 }
                 
             } // fixed - noFixed
-            
+
+#pragma mark - recording
             // 今回のフレームが記録できる場合
             if (isCanRecordThisFrame) {
-                
+
+                // インターバル設定
                 if (scanFrameCount % (int)self.intervalSlider.value == 0) {
                     
                     // 撮影結果をファイルに保存するスイッチが入っている場合 =====================================================================
@@ -444,20 +453,15 @@ namespace // anonymous namespace for local functions
 
                         // メッシュデータの保存
                         STMesh* sceneMesh;
-                        if (self.colorScanSwitch.isOn) {    // カラーで保存する場合 ==============================
-                            
+                        if (self.colorScanSwitch.isOn) {    // カラーで保存する場合 ======
                             [self colorizeMesh];
                             sceneMesh = _colorizedMesh;
-                            
-                        } else {
-                            
-                            // モノクロスキャン
+                        } else {      // モノクロ保存（高速） =====
                             sceneMesh = [[STMesh alloc] initWithMesh:[_slamState.scene lockAndGetSceneMesh]];
-                            [_slamState.scene unlockSceneMesh];     // ロック解除
-                            
+                            [_slamState.scene unlockSceneMesh]; // ロック解除
                         }
                         
-                        // メモリへの視点移動情報の保存 ---------------------------------------------------------
+                        // メモリへの視点移動情報の保存 -----------------
                         NSMutableArray *matrixArray = [[NSMutableArray alloc]init];
                         for(int c=0; c<16; c++) {
                             [matrixArray addObject:[NSNumber numberWithFloat:colorCameraPoseAfterTracking.m[c]] ];
@@ -470,6 +474,7 @@ namespace // anonymous namespace for local functions
                         }
                         [depthCameraPoseList addObject:matrixArray2];
                         
+                        // =========================================================================
                         // メモリにいったん保存する（fpsは早い） ------------------------------------------------
                         if (self.recordToMemorySwitch.isOn) {       // 速度を稼ぐためにメモリ上にいったん記録して、あとでまとめてファイルに保存
                             
@@ -486,7 +491,6 @@ namespace // anonymous namespace for local functions
                     [self countFps];        // インターバルのタイミングでFPSをカウント
                     
                     //DLog(@"resetSLAM started");
-                    //[self resetSLAM];
                     
                 }
                 
