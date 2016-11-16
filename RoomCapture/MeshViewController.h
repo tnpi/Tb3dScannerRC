@@ -33,6 +33,7 @@
     
     NSDate *scanStartDate;
     
+@public
     NSMutableArray *mvcRecordMeshList;
     NSMutableArray *mvcScanFrameDateList;        // add 2016.6
 
@@ -55,6 +56,10 @@
 @property (weak, nonatomic) IBOutlet UISwitch *XRaySwitch;
 @property (weak, nonatomic) IBOutlet UISwitch *holeFillingSwitch;
 @property (weak, nonatomic) IBOutlet UIButton *measurementButton;
+
+@property (weak, nonatomic) IBOutlet UISlider *playbackRecordTimeSlider;
+
+
 - (IBAction)measurementButtonClicked:(id)sender;
 
 - (IBAction)topViewSwitchChanged:(id)sender;
@@ -69,6 +74,7 @@
 - (void)setHorizontalFieldOfView:(float)fovXRadians aspectRatio:(float)aspectRatio;
 - (void)setCameraPose:(GLKMatrix4)pose;
 
+- (IBAction)playRecordButtonPressed:(id)sender;
 
 /* scanner
 @property (weak, nonatomic) IBOutlet UISegmentedControl *displayControl;

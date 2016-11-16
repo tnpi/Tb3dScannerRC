@@ -106,6 +106,8 @@ enum MeasurementState {
 - (id)initWithNibName:(NSString *)nibNameOrNil
                bundle:(NSBundle *)nibBundleOrNil
 {
+    NSLog(@"MeshViewControler::initWithNibName start ");
+
     // Initialize C++ members.
     _meshRenderer = 0;
     _graphicsRenderer = 0;
@@ -163,6 +165,8 @@ enum MeasurementState {
         
     }
     
+    NSLog(@"MeshViewControler::initWithNibName end ");
+    
     return self;
 }
 
@@ -175,20 +179,14 @@ enum MeasurementState {
 
 - (void)viewDidLoad
 {
-    NSLog(@"MeshViewControler::viewDidLoad ");
+    NSLog(@"MeshViewControler::viewDidLoad start");
 
     [super viewDidLoad];
 
     gestureAreaHeight = 650;
-    NSLog(@"viewDidLoad _recordMeshNum:%d", _recordMeshNum);
+    NSLog(@"viewDidLoad _recordMeshNum:%d",  [mvcRecordMeshList count]);
     
-    playbackFlag = true;
-    playbackFrameCounter = 0;
-    /* mem play
-    _playbackRecordTimeSlider.minimumValue = 0;
-    _playbackRecordTimeSlider.maximumValue = _recordMeshNum;
-    _playbackRecordTimeSlider.value = 0;//_recordMeshNum/2;
-     */
+    
     
     savedMeshNum = 0;
     
@@ -218,10 +216,24 @@ enum MeasurementState {
     
     [self setupGL];
     [self setupGestureRecognizer];
+    
+    NSLog(@"MeshViewControler::viewDidLoad end");
+
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
+    
+    playbackFlag = true;
+    playbackFrameCounter = 0;
+    
+    _playbackRecordTimeSlider.minimumValue = 0;
+    _playbackRecordTimeSlider.maximumValue = [mvcRecordMeshList count];
+    _playbackRecordTimeSlider.value = 0;
+    
+    
+    NSLog(@"MeshViewControler::viewWillAppear start");
+    
     [super viewWillAppear:animated];
     
     if (_displayLink)
@@ -245,6 +257,8 @@ enum MeasurementState {
     [self enterMeasurementState:Measurement_Clear];
     
     _meshRenderer->setRenderingMode(MeshRenderer::RenderingModeTextured);
+    
+    NSLog(@"MeshViewControler::viewWillAppear end");
 }
 
 - (void)didReceiveMemoryWarning
@@ -360,13 +374,14 @@ enum MeasurementState {
 {
     NSLog(@"MeshViewController setMesh start");
     _mesh = meshRef;
+    _meshRenderer->uploadMesh(meshRef);
     
     /*
     if (meshRef)
     {
         NSLog(@"MeshViewController setMesh mesh exists");
         
-        _renderer->uploadMesh(meshRef);
+        _meshRenderer->uploadMesh(meshRef);
         //NSLog(@"MeshViewController setMesh mesh upload 2times");
         //_renderer->uploadMesh(meshRef);
         
@@ -375,32 +390,10 @@ enum MeasurementState {
         self.needsDisplay = TRUE;
     }
      */
-}
-
-
-// tanaka add
-- (void)setRecordMeshList:(NSMutableArray *)listRef
-{
-    mvcRecordMeshList = listRef; // add by tanaka
-    savedMeshNum = 0;
     
-}
-
-// add 2016.6
-- (void)setScanFrameDateList:(NSMutableArray *)listRef
-{
-    mvcScanFrameDateList = listRef; // add by tanaka
     
+    NSLog(@"MeshViewController setMesh end");
 }
-
-
-// tanaka add
-- (void)setScanStartDate:(NSDate *)date
-{
-    scanStartDate = date; // add by tanaka
-}
-
-
 
 
 
@@ -645,14 +638,11 @@ enum MeasurementState {
         _maxDiskSpaceLabel.text = [NSString stringWithFormat:@"%.1f GB", total];
     }
      */
+
+    playbackFrame = playbackFrameCounter;
     
-    
-    /* for mem play
-     playbackFrame = (playbackFrameCounter % (_recordMeshNum-2)) + 2;
-     STMesh* tMesh = [mvcRecordMeshList objectAtIndex:playbackFrame];       // tanaka add important!
-     //[self setMesh:tMesh];
-     _renderer->uploadMesh(tMesh); // ここを更新しないとアニメーションはしなくなります tanaka
-     */
+    STMesh* tMesh = [mvcRecordMeshList objectAtIndex:playbackFrame];       // tanaka add important!
+    [self setMesh:tMesh];
     
     [(EAGLView *)self.view setFramebuffer];
     
@@ -677,7 +667,7 @@ enum MeasurementState {
     
     _meshRenderer->clear();
     _meshRenderer->render(currentProjection, currentModelView);
-
+    
     if (_measurementState == Measurement_Point2 || _measurementState == Measurement_Done)
     {
         GLKVector2 onScreenPt1;
@@ -716,24 +706,28 @@ enum MeasurementState {
     
     _needsDisplay = false;
     
-    /* mem play
-     add by tanaka -------------------------------------------------------
-     
+    
     if (playbackFlag) {     // tanaka add
         NSLog(@"now on play..");
         playbackFrameCounter++;
         
+        playbackFrameCounter %= [mvcRecordMeshList count];
+        DLog("%lu", (unsigned long)[mvcRecordMeshList count]);
+        /*
         if (_loopPlaySwitch.isOn) {
-            playbackFrameCounter %= _recordMeshNum;
         } else {
             if (playbackFrameCounter >= _recordMeshNum) {
                 playbackFrameCounter = 0;
                 playbackFlag = false;
             }
         }
-        
+        */
         //self.playbackRecordTimeValueLabel.text = [NSString stringWithFormat:@"%d",playbackFrameCounter];
     }
+    
+    _playbackRecordTimeSlider.value = playbackFrameCounter;
+    
+/*
     _playbackRecordTimeSlider.value = playbackFrameCounter;
     _playbackRecordTimeValueLabel.text = [NSString stringWithFormat:@"%d", playbackFrameCounter];
     
@@ -1168,4 +1162,7 @@ enum MeasurementState {
 
 
 
+- (IBAction)playRecordButtonPressed:(id)sender {
+    playbackFlag ^= true;
+}
 @end

@@ -318,6 +318,9 @@
     [self setColorCameraParametersForScanning];
     
     _slamState.roomCaptureState = RoomCaptureStateScanning;
+    
+    NSLog(@"enterScanningState end");
+    
 }
 
 - (void)enterFinalizingState
@@ -339,12 +342,20 @@
     [self stopColorCamera];
     
     // Tell the mapper to compute a final triangle mesh from its data. Will also stop background processing.
-    [_slamState.mapper finalizeTriangleMesh];
+    //[_slamState.mapper finalizeTriangleMesh];
     
     _slamState.roomCaptureState = RoomCaptureStateFinalizing;
     
+    int playbackFrameCounter = 0;
+    
     // Colorize the mesh in a background queue.
-    [self colorizeMeshInBackground];
+    //[self colorizeMeshInBackground]; 本来はこのバックグラウンド処理が終わった[self enterViewingState]に飛ぶ
+    
+    
+    [self enterViewingState];
+    
+    NSLog(@"enterFinalizingState() end");
+
 }
 
 - (void)colorizeMeshInBackground
@@ -469,6 +480,11 @@
 
 - (void)enterViewingState
 {
+    
+    // パラメータ参照渡し
+    _meshViewController->mvcRecordMeshList = recordMeshList;
+    _meshViewController->mvcScanFrameDateList = scanFrameDateList;
+    
     // Place the camera in the center of the scanning volume.
     GLKVector3 cameraCenter = GLKVector3MultiplyScalar(_slamState.cameraPoseInitializer.volumeSizeInMeters, 0.5);
     GLKMatrix4 initialCameraPose = GLKMatrix4MakeTranslation(cameraCenter.x, cameraCenter.y, cameraCenter.z);
@@ -1078,13 +1094,15 @@
     // Handles simultaneous press of Done & Reset.
     if(self.doneButton.hidden) return;
     
-    if (self.recordToMemorySwitch.isOn) {
+    if (self.recordToMemorySwitch.isOn) {       // ここでなくてもいいかも
         [self saveDataMemoryToFile];
     }
     
-    [self resetButtonPressed:self.resetButton];
+    //[self resetButtonPressed:self.resetButton];       // tanka tenji
     
-    //[self enterFinalizingState];  //default
+    [self enterFinalizingState];  //default
+    
+    NSLog(@"doneButtonPressed: end");
     
 }
 

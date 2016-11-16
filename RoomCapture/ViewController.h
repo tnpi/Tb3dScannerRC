@@ -303,6 +303,8 @@ struct DisplayData
     
     bool frameScanningFinishWaitFlag;
     
+    int playbackFrameCounter;
+    
 }
 
 @property (nonatomic, retain) AVCaptureSession *avCaptureSession;

@@ -247,6 +247,7 @@ namespace // anonymous namespace for local functions
             GLKMatrix4 depthCameraPoseAfterTracking;
             bool isCanRecordThisFrame = false;
             BOOL trackingOk = false;
+            bool isIntervalFirstFrame = false;
             
 #pragma mark - Fixed Scan
             
@@ -277,8 +278,7 @@ namespace // anonymous namespace for local functions
                     trackingOk = true;
                 }
 
-                if (trackingOk)
-                {
+                if (trackingOk) {
                     DLog(@"Tracking: OK");
                     
                     // マッパーのカメラ姿勢・デプス画像ともに最新の（トラッキング成功後の）のデータに更新
@@ -309,9 +309,8 @@ namespace // anonymous namespace for local functions
                     scanFrameCount++;
                     
                 } else {
-                    DLog(@"[Structure] STTracker Error: %@.", [trackingError localizedDescription]);
+                    DLog(@"[Structure] fixedTracking - STTracker Error:  %@.", [trackingError localizedDescription]);
                     trackingMessage = [trackingError localizedDescription];
-                    // ※次のエラーが主に出る　[Structure] STTracker Error: STTracker needs DeviceMotion input for tracking.
                 }
             
             
@@ -330,6 +329,9 @@ namespace // anonymous namespace for local functions
                     _colorizedMesh = nil;
                     _holeFilledMesh = nil;
                     DLog(@"reset no_fixed end ");
+                    
+                    //_slamState.prevFrameTimeStamp = -1;
+                    isIntervalFirstFrame = true;//(_slamState.prevFrameTimeStamp < 0.);
                 }
 
                 // 今回のトラッキング前の（情報を更新しない、今の時点で最新の）カメラの姿勢を取得保存する　デプスカメラの姿勢として
@@ -342,12 +344,9 @@ namespace // anonymous namespace for local functions
                 DLog(@"tracking process end");
                 
                 // 今の状況から、今回の新しいカメラ姿勢が取得できたら
-                if (trackingOk)
-                {
-                    DLog(@"Tracking: OK");
+                if (trackingOk) {
                     
-                    _slamState.prevFrameTimeStamp = -1;
-                    const bool isFirstFrame = (_slamState.prevFrameTimeStamp < 0.);
+                    DLog(@"Tracking: OK");
                     
                     DLog(@"[_slamState.tracker lastFrameCameraPose] start");
                     if (firstScanFlag) {
@@ -381,12 +380,12 @@ namespace // anonymous namespace for local functions
                         
                         bool canAddKeyframe = false;                                    // キーフレームを追加できるかどうかのフラグ
                         
-                        if (isFirstFrame)
-                        {
+                        if (isIntervalFirstFrame) {
+                            
                             canAddKeyframe = true;                                      // 一番最初のフレームならばキーフレームは常に追加できる
-                        }
-                        else    // 初回color/depthフレームでない場合　（無条件にキーフレームを追加できない場合
-                        {
+                            
+                        } else {    // 初回color/depthフレームでない場合　（無条件にキーフレームを追加できない場合
+                            
                             // 前回の姿勢との角度の変化差分　秒間の角度変化
                             float deltaAngularSpeedInDegreesPerSeconds = FLT_MAX;
                             NSTimeInterval deltaSeconds = depthFrame.timestamp - _slamState.prevFrameTimeStamp;
@@ -405,6 +404,7 @@ namespace // anonymous namespace for local functions
                             {
                                 canAddKeyframe = true;
                             }
+                            
                         }
                         
                         // キーフレーム画像を追加できるとわかった場合　最新のカラーカメラ姿勢と画像をセットで渡す ========================
@@ -413,7 +413,7 @@ namespace // anonymous namespace for local functions
                             DLog(@"canAddKeyframe is passed.");
                             
                             DLog(@"[_slamState.keyFrameManager processKeyFrameCandidateWithColorCameraPose ..] start");
-                            // ||||||| キーフレームの追加 ||||||||||||||||||||||||||||||||||||||||||||||||||
+                            // キーフレームの追加 ------------
                             [_slamState.keyFrameManager processKeyFrameCandidateWithColorCameraPose:colorCameraPoseAfterTracking
                                                                                          colorFrame:colorFrame
                                                                                          depthFrame:nil];
