@@ -502,11 +502,11 @@
     NSDate *tNowDate = [NSDate date];
     
     NSTimeInterval deltaTime = [tNowDate timeIntervalSinceDate:fpsBasetime];
-    NSLog(@"countFps fpsBasetime:%@", fpsBasetime);
-    NSLog(@"countFps tNowDate:%@", tNowDate);
-    NSLog(@"countFps deltaTime:%.3f", deltaTime);
+    DLog(@"countFps fpsBasetime:%@", fpsBasetime);
+    DLog(@"countFps tNowDate:%@", tNowDate);
+    DLog(@"countFps deltaTime:%.3f", deltaTime);
     if (deltaTime > 1.0) {
-        NSLog(@"countFps Update");
+        DLog(@"countFps Update");
         fpsFramerate = (float)fpsCount / (float)deltaTime;
         fpsBasetime = tNowDate;
         fpsCount = 0;

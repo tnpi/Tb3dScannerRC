@@ -402,5 +402,4 @@ struct DisplayData
 - (void)saveDataMemoryToFile;
 - (BOOL)createFile:(NSString *)localFilePath;
 - (void)updateClockLabel;
-
 @end

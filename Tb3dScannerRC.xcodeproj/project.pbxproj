@@ -448,11 +448,12 @@
 					../Frameworks,
 					"$(PROJECT_DIR)",
 				);
+				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "RoomCapture/Tb3dScannerRC-Prefix.pch";
 				INFOPLIST_FILE = "RoomCapture/Tb3dScannerRC-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
-				PRODUCT_BUNDLE_IDENTIFIER = net.16px.Tb3dScannerRC0.7.2b;
+				PRODUCT_BUNDLE_IDENTIFIER = net.16px.Tb3dScannerRC0.7.3;
 				PRODUCT_NAME = Tb3dScannerRC;
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -487,11 +488,13 @@
 					../Frameworks,
 					"$(PROJECT_DIR)",
 				);
+				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "RoomCapture/Tb3dScannerRC-Prefix.pch";
 				INFOPLIST_FILE = "RoomCapture/Tb3dScannerRC-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
-				PRODUCT_BUNDLE_IDENTIFIER = net.16px.Tb3dScannerRC0.7.2b;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = net.16px.Tb3dScannerRC0.7.3;
 				PRODUCT_NAME = Tb3dScannerRC;
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";

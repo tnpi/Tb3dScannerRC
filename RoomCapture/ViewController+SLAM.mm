@@ -138,8 +138,8 @@ namespace // anonymous namespace for local functions
     volumeBounds.y = roundf(_slamState.volumeSizeInMeters.y / volumeResolution);
     volumeBounds.z = roundf(_slamState.volumeSizeInMeters.z / volumeResolution);
     
-    NSLog(@"volumeBounds.x: %f", volumeBounds.x);
-    NSLog(@"volumeResolution: %f", volumeResolution);
+    DLog(@"volumeBounds.x: %f", volumeBounds.x);
+    DLog(@"volumeResolution: %f", volumeResolution);
     
     NSDictionary* mapperOptions = @{
                                     kSTMapperVolumeResolutionKey: @(volumeResolution),
@@ -174,6 +174,8 @@ namespace // anonymous namespace for local functions
 - (void)processDepthFrame:(STDepthFrame *)depthFrame
                colorFrame:(STColorFrame *)colorFrame
 {
+    DLog(@"processDepthFrame: start ----------");
+
     //[_slamState.tracker setOptions:@{kSTTrackerQualityKey:@(STTrackerQualityFast)}];
 
     /*
@@ -183,21 +185,25 @@ namespace // anonymous namespace for local functions
         BOOL couldApplyCorrection = [depthFrame applyExpensiveCorrection];
         if (!couldApplyCorrection)
         {
-            NSLog(@"Warning: could not improve depth map accuracy, is your firmware too old?");
+            DLog(@"Warning: could not improve depth map accuracy, is your firmware too old?");
         }
     }
     */
 
     // Upload the new color image for next rendering.
     if (self.drawModeSwitch.isOn) {
-        if (colorFrame != nil)
+        if (colorFrame != nil) {
+            DLog(@"uploadGLColorTexture: start ----------");
             [self uploadGLColorTexture:colorFrame];
+        }
     }
     
     switch (_slamState.roomCaptureState)
     {
         case RoomCaptureStatePoseInitialization:
         {
+            DLog(@"RoomCaptureStatePoseInitialization: start ----------");
+            
             // Estimate the new scanning volume position as soon as gravity has an estimate.
             if (GLKVector3Length(_lastCoreMotionGravity) > 1e-5f)
             {
@@ -205,11 +211,13 @@ namespace // anonymous namespace for local functions
                 NSAssert (success, @"Camera pose initializer error.");
             }
             
+            DLog(@"RoomCaptureStatePoseInitialization: end ----------");
             break;
         }
             
         case RoomCaptureStateScanning:
         {
+            DLog(@"RoomCaptureStateScanning: start ----------");
             
             if (frameScanningFinishWaitFlag) {
                 break;
@@ -217,13 +225,14 @@ namespace // anonymous namespace for local functions
             
             // tanaka add
             if (firstScanFlag) {
-                NSLog(@"RoomCaptureStateScanning.isFirstFrame ");
+                DLog(@"RoomCaptureStateScanning.isFirstFrame ");
                 firstGetDepthFrame = depthFrame;
                 firstGetColorFrame = colorFrame;
             }
             
             // インターバルで割って0になる回でない場合、マッパーだけ更新させてフレーム終了 ==========================================
             if (self.fixedTrackingSwitch.isOn) {
+                DLog(@"self.fixedTrackingSwitch.isOn && self.intervalSlider.value != 0 is true.");
                 if (((int)self.intervalSlider.value >= 1) && (scanFrameCount % (int)self.intervalSlider.value != 0)){
                     scanFrameCount++;
                     allFrameCounter++;
@@ -236,11 +245,10 @@ namespace // anonymous namespace for local functions
                     break;
                 }
             }
-            
-            NSLog(@"RoomCaptureStateScanning: start");
 
             // 処理前にリセットを行う ==========================================================================================
             if (self.fixedTrackingSwitch.isOn) {
+                DLog(@"processDepthFrame.reset() fixed");
                 [_slamState.mapper reset];
                 //
                 [_slamState.scene clear];
@@ -249,17 +257,16 @@ namespace // anonymous namespace for local functions
                 _colorizedMesh = nil;
                 _holeFilledMesh = nil;
             } else {
+                DLog(@"processDepthFrame.reset() no_fixed");
                 //[self resetSLAM];
                 
                 [_slamState.mapper reset];
-                
+                //[_slamState.tracker reset];
                 [_slamState.scene clear];
                 [_slamState.keyFrameManager clear];
                 
                 _colorizedMesh = nil;
                 _holeFilledMesh = nil;
-                
-                NSLog(@"SLAM reset: fixedTrackingSwitch is false.");
                 
             }
 
@@ -275,6 +282,7 @@ namespace // anonymous namespace for local functions
             // Estimate the new camera pose.
             // 新しいカメラ姿勢の推定　今回のカメラ姿勢を推定して取得・更新を試みる
             // ||||||||||||||| トラッカーの更新 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+            DLog(@"tracking process");
             BOOL trackingOk;
             if (self.fixedTrackingSwitch.isOn) {
                 if (firstScanFlag) {
@@ -288,7 +296,7 @@ namespace // anonymous namespace for local functions
             }
             
             if (!trackingOk) {
-                NSLog(@"[Structure] STTracker Error: %@.", [trackingError localizedDescription]);
+                DLog(@"[Structure] STTracker Error: %@.", [trackingError localizedDescription]);
                 trackingMessage = [trackingError localizedDescription];
                 // ※次のエラーが主に出る　[Structure] STTracker Error: STTracker needs DeviceMotion input for tracking.
             }
@@ -296,7 +304,9 @@ namespace // anonymous namespace for local functions
             // 今の状況から、今回の新しいカメラ姿勢が取得できたら
             if (trackingOk)
             {
-                frameScanningFinishWaitFlag = true;
+                DLog(@"if trackingOk is true");
+                
+                //frameScanningFinishWaitFlag = true;
                 _slamState.prevFrameTimeStamp = -1;
                 const bool isFirstFrame = (_slamState.prevFrameTimeStamp < 0.);
                 
@@ -313,7 +323,7 @@ namespace // anonymous namespace for local functions
                     depthCameraPoseAfterTracking = [_slamState.tracker lastFrameCameraPose];
                 }
                 [_slamState.mapper integrateDepthFrame:depthFrame cameraPose:depthCameraPoseAfterTracking];
-                [_slamState.mapper finalizeTriangleMesh];           //not default: wait for integrate background process end
+                //[_slamState.mapper finalizeTriangleMesh];           //not default: wait for integrate background process end
                 
                 // Make sure the pose is in color camera coordinates in case we are not using registered depth.
                 // 確認してください　私達がレジスターデプスを使わない場合、姿勢はカラーカメラの座標内です
@@ -327,6 +337,7 @@ namespace // anonymous namespace for local functions
                 bool showHoldDeviceStill = false;   // デバイスを固定して待っててねメッセージを出すフラグをfalseで初期化
                 
                 // ||||||| キーフレームの追加 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+                DLog(@"add keyframe process ----");
                 if (self.fixedTrackingSwitch.isOn) {
                     [_slamState.keyFrameManager processKeyFrameCandidateWithColorCameraPose:colorCameraPoseAfterTracking
                                                                                  colorFrame:colorFrame
@@ -404,10 +415,12 @@ namespace // anonymous namespace for local functions
                 // tanaka
                 // ------------------------------------------------------------------
                 if (((int)self.intervalSlider.value >= 1) && (scanFrameCount % (int)self.intervalSlider.value == 0)) {
-                    
+                    DLog(@"no fixed interval == 0 process  ----");
+
                     // ファイルに保存する場合 =====================================================================
                     if (self.saveToFileSwitch.isOn)
                     {
+                        DLog(@"save to file(or mem) process  ----");
                         
                         [scanFrameDateList addObject:[NSDate date]];      // １コマ スキャンし終わった日時を保存しておく
                         
@@ -444,8 +457,6 @@ namespace // anonymous namespace for local functions
                         }
                         [depthCameraPoseList addObject:matrixArray2];
                         
-                        //NSLog(@"matrixArray: %@", matrixArray);
-                        //NSLog(@"depthCameraPoseList: %@", depthCameraPoseList);
                         
                         // メモリにいったん保存するかどうか ------------------------------------------------
                         if (self.recordToMemorySwitch.isOn) {       // 速度を稼ぐためにメモリ上にいったん記録して、あとでまとめてファイルに保存
@@ -457,18 +468,18 @@ namespace // anonymous namespace for local functions
                             lastKeyFrames = [_slamState.keyFrameManager getKeyFrames];
                             lastScene = _slamState.scene;
                             
-                            NSLog(@"lastKeyFrames: %@", lastKeyFrames);
-                            NSLog(@"lastKeyFrame: %@", lastKeyFrames[0]);
+                            DLog(@"lastKeyFrames: %@", lastKeyFrames);
+                            DLog(@"lastKeyFrame: %@", lastKeyFrames[0]);
                             
                             [keyFramesList addObject:lastKeyFrames];
                             //[colorCameraPoseList addObject:@(firstCameraPoseOnScan)];
                             [colorFrameList addObject:colorFrame];
                             [sceneList addObject:lastScene];
                             
-                            NSLog(@"keyFramesList: %@", keyFramesList);
-                            NSLog(@"sceneList: %@", sceneList);
-                            NSLog(@"colorFrameList: %@", colorFrameList);
-                            NSLog(@"recordMeshList: %@", recordMeshList);
+                            DLog(@"keyFramesList: %@", keyFramesList);
+                            DLog(@"sceneList: %@", sceneList);
+                            DLog(@"colorFrameList: %@", colorFrameList);
+                            DLog(@"recordMeshList: %@", recordMeshList);
                              */
                             
                         } else {    // ファイルにリアルタイムに直接保存していく （fpsは遅くなる
@@ -485,7 +496,7 @@ namespace // anonymous namespace for local functions
                             NSDate *scanNowDate = [NSDate date];
                             
                             NSString* scanDateListFilePath = [modelDirPath stringByAppendingPathComponent:scanDateListFileName];
-                            //NSLog(@"scanDateListFilePath: %@", scanDateListFilePath);
+                            //DLog(@"scanDateListFilePath: %@", scanDateListFilePath);
                             // self.debugInfoLabel.text = [NSString stringWithFormat:@"datePath: %@", scanDateListFilePath];
                             
                             NSError* error;
@@ -550,7 +561,7 @@ namespace // anonymous namespace for local functions
                     
                     [self countFps];
                     
-                    //NSLog(@"resetSLAM started");
+                    //DLog(@"resetSLAM started");
                     
                     //if (!self.fixedTrackingSwitch.isOn) {
                         //[self resetSLAM];
@@ -588,6 +599,8 @@ namespace // anonymous namespace for local functions
             
             frameScanningFinishWaitFlag = false;
 
+            DLog(@"RoomCaptureStateScanning: end --------------------");
+
             break;
         }
             
@@ -595,6 +608,9 @@ namespace // anonymous namespace for local functions
         default:
             {} // do nothing, the MeshViewController will take care of this.
     }
+    
+    DLog(@"processDepthFrame: end ----------");
+
 }
 
 
