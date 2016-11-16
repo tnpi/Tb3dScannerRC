@@ -200,9 +200,12 @@ namespace // anonymous namespace for local functions
             [self uploadGLColorTexture:colorFrame];
         }
     }
+
+    
     
     switch (_slamState.roomCaptureState)
     {
+            
         // スキャン前画面の場合 ======================================================================================================
         case RoomCaptureStatePoseInitialization:
         {
@@ -219,7 +222,10 @@ namespace // anonymous namespace for local functions
             break;
         }
             
+            
+            
 #pragma mark - Scanning state
+            
         // スキャン中画面の場合 ======================================================================================================
         case RoomCaptureStateScanning:
         {
@@ -242,6 +248,7 @@ namespace // anonymous namespace for local functions
             BOOL trackingOk = false;
             
 #pragma mark - Fixed Scan
+            
             // 固定スキャンの場合 ===========================================================
             if (self.fixedTrackingSwitch.isOn) {
                 
@@ -308,6 +315,7 @@ namespace // anonymous namespace for local functions
                 }
                 
 #pragma mark - no-Fixed Scan
+                
             // 移動しながらのスキャンの場合 ===================================================================
             } else {
 
@@ -427,6 +435,7 @@ namespace // anonymous namespace for local functions
 
             
 #pragma mark - recording
+            
             // 今回のフレームが記録できる場合
             if (isCanRecordThisFrame) {
                 
@@ -496,12 +505,16 @@ namespace // anonymous namespace for local functions
             break;
         }
             
+            
+            
         // 閲覧画面の場合 ======================================================================================================
         case RoomCaptureStateViewing:
         default:
             {} // do nothing, the MeshViewController will take care of this.
             
     }
+    
+    
     
     DLog(@"processDepthFrame: end ----------");
 
