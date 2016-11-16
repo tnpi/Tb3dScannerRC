@@ -1451,6 +1451,7 @@
     firstScanFlag = true;
     frameScanningFinishWaitFlag = false;
     
+    scanFrameCount = 0;
     savedFrameCount = 0;
     trackingOkCounter = 0;
     allFrameCounter = 0;
