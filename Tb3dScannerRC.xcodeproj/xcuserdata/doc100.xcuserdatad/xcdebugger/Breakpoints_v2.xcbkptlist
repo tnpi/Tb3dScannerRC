@@ -42,12 +42,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "RoomCapture/ViewController.mm"
-            timestampString = "500763856.593654"
+            timestampString = "501085389.118931"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "863"
-            endingLineNumber = "863"
-            landmarkName = "-updateAppStatusMessage"
+            startingLineNumber = "874"
+            endingLineNumber = "874"
+            landmarkName = "-processDeviceMotion:withError:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -58,12 +58,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "RoomCapture/ViewController.h"
-            timestampString = "500763454.763101"
+            timestampString = "501085389.118931"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "326"
-            endingLineNumber = "326"
-            landmarkName = "trackingSmallObjectSwitch"
+            startingLineNumber = "333"
+            endingLineNumber = "333"
+            landmarkName = "saveToFileSwitch"
             landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
@@ -74,11 +74,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "RoomCapture/ViewController.mm"
-            timestampString = "500763856.593654"
+            timestampString = "501085389.118931"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "681"
-            endingLineNumber = "681"
+            startingLineNumber = "692"
+            endingLineNumber = "692"
             landmarkName = "-saveDataMemoryToFile"
             landmarkType = "7">
          </BreakpointContent>

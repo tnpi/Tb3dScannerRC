@@ -6,6 +6,7 @@
 
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
+#import <AudioToolBox/AudioToolBox.h>
 #define HAS_LIBCXX
 #import <Structure/Structure.h>
 
@@ -15,6 +16,9 @@
 #include <vector>
 //#include <stdio.h>
 #import <CoreLocation/CoreLocation.h>
+
+#import "MyUdpConnection.h" // ogawa add
+
 
 struct Options
 {
@@ -275,6 +279,7 @@ struct DisplayData
     bool udTrackingSmallObjectSwitch;
     bool udFixedTrackingSwitch;
     bool udTrackerQualityAccurate;
+    bool onManualControl;
     
     int udIntervalSlider;
     float udResolutionSlider;
@@ -307,6 +312,9 @@ struct DisplayData
     
     int playbackFrameCounter;
     
+    SystemSoundID soundIdScan;
+    SystemSoundID soundIdScanStop;
+    SystemSoundID soundIdSave;
 }
 
 @property (nonatomic, retain) AVCaptureSession *avCaptureSession;
@@ -367,6 +375,7 @@ struct DisplayData
 
 @property (weak, nonatomic) IBOutlet UILabel *clockLabel;
 
+@property (weak, nonatomic) IBOutlet UILabel *receivedMessageUDPLabel;
 
 
 - (IBAction)scanButtonPressed:(id)sender;
@@ -406,4 +415,8 @@ struct DisplayData
 - (void)saveDataMemoryToFile;
 - (BOOL)createFile:(NSString *)localFilePath;
 - (void)updateClockLabel;
+
+// ogawa add
+- (void)receiveUdpData:(NSData *)data;
+
 @end

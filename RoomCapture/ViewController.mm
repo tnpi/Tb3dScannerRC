@@ -158,6 +158,17 @@
     keyFramesList = [[NSMutableArray alloc] init];
     sceneList = [[NSMutableArray alloc] init];
      */
+    soundIdScan = UINT32_MAX;
+    soundIdScanStop = UINT32_MAX;
+    soundIdSave = UINT32_MAX;
+    AudioServicesCreateSystemSoundID((__bridge CFURLRef)[[NSBundle mainBundle] URLForResource:@"scan" withExtension:@"aiff"], &(soundIdScan));
+    AudioServicesCreateSystemSoundID((__bridge CFURLRef)[[NSBundle mainBundle] URLForResource:@"scan_stop" withExtension:@"aiff"], &(soundIdScanStop));
+    AudioServicesCreateSystemSoundID((__bridge CFURLRef)[[NSBundle mainBundle] URLForResource:@"save" withExtension:@"aiff"], &(soundIdSave));
+
+    // ogawa add
+    // Do any additional setup after loading the view, typically from a nib.
+    MyUdpConnection *udp = [[MyUdpConnection alloc]initWithDelegate:self portNum:5555];
+    [udp bind];
 
 }
 
@@ -1606,5 +1617,62 @@
 }
 
 
+
+- (void)receiveUdpData:(NSData *)data {
+    NSString *receivedData =  [[NSString alloc] initWithData:data
+                                                    encoding:NSUTF8StringEncoding];
+    // receivedDataがlength:12のデータになっているので、Length:4に変換する
+    char *recvChars = (char *) [receivedData UTF8String];
+    receivedData = [NSString stringWithCString: recvChars encoding:NSUTF8StringEncoding];
+    
+    NSLog(@"ViewController::receiveUdpData: %@", receivedData);
+    
+    
+    //NSString *mes = [NSString stringWithFormat:@"2Received UDP: %@, A B2", receivedData];
+    NSString *mes = [NSString stringWithFormat:@"2Received UDP: %@, ", receivedData];
+    
+    NSLog(@"rData length: %lu", (unsigned long)[receivedData length]);
+    
+    _receivedMessageUDPLabel.text = mes;
+    
+    if ([receivedData compare:@"scan"] == NSOrderedSame){
+        
+        if (_slamState.roomCaptureState == RoomCaptureStatePoseInitialization) {
+            NSLog(@"Remote SCAN --------------------------");
+            AudioServicesPlaySystemSound(soundIdScan);
+            [self scanButtonPressed:self];
+            //[self enterScanningState];
+            //[self enterViewingState];
+        }
+        
+    } else if ([receivedData compare:@"scan_stop"] == NSOrderedSame) {
+        if (_slamState.roomCaptureState == RoomCaptureStateScanning) {
+            NSLog(@"Remote SCAN_STOP --------------------------");
+            [self resetButtonPressed:self];
+            AudioServicesPlaySystemSound(soundIdScanStop);
+        }
+        
+    } else if ([receivedData compare:@"scan_save"] == NSOrderedSame) {
+        
+        if (_slamState.roomCaptureState == RoomCaptureStateScanning) {
+            
+            NSLog(@"Remote SCAN_SAVE --------------------------");
+            AudioServicesPlaySystemSound(soundIdSave);
+            //[self doneButtonPressed:self];
+            
+            if (self.recordToMemorySwitch.isOn) {       // ここでなくてもいいかも
+                [self saveDataMemoryToFile];
+            }
+            [self resetButtonPressed:self];
+            AudioServicesPlaySystemSound(soundIdScanStop);
+            
+            //[self resetSLAM];
+            
+        }
+        
+    } else {
+    }
+    
+}
 
 @end

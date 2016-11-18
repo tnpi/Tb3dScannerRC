@@ -58,6 +58,11 @@
 		7EAD268F198AACD500638C9C /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EAD268E198AACD500638C9C /* libz.dylib */; };
 		D2013B0C1DB3F5B90024D68D /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2013B0B1DB3F5B90024D68D /* CoreLocation.framework */; };
 		D23250DC1DD905A500CE2228 /* Stats.m in Sources */ = {isa = PBXBuildFile; fileRef = D23250DA1DD905A500CE2228 /* Stats.m */; };
+		D2BEB50F1DDDE5AC0046B4A6 /* MyUdpConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = D2BEB50E1DDDE5AC0046B4A6 /* MyUdpConnection.m */; };
+		D2BEB5131DDDE5D40046B4A6 /* save.aiff in Resources */ = {isa = PBXBuildFile; fileRef = D2BEB5101DDDE5D40046B4A6 /* save.aiff */; };
+		D2BEB5141DDDE5D40046B4A6 /* scan_stop.aiff in Resources */ = {isa = PBXBuildFile; fileRef = D2BEB5111DDDE5D40046B4A6 /* scan_stop.aiff */; };
+		D2BEB5151DDDE5D40046B4A6 /* scan.aiff in Resources */ = {isa = PBXBuildFile; fileRef = D2BEB5121DDDE5D40046B4A6 /* scan.aiff */; };
+		D2BEB5171DDDF4BD0046B4A6 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2BEB5161DDDF4BD0046B4A6 /* AudioToolbox.framework */; };
 		D2E1969C1DBAFF4000241B3F /* Structure.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2E1969B1DBAFF4000241B3F /* Structure.framework */; };
 /* End PBXBuildFile section */
 
@@ -133,6 +138,12 @@
 		D2013B0B1DB3F5B90024D68D /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		D23250DA1DD905A500CE2228 /* Stats.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Stats.m; sourceTree = "<group>"; };
 		D23250DB1DD905A500CE2228 /* Stats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Stats.h; sourceTree = "<group>"; };
+		D2BEB50D1DDDE5AC0046B4A6 /* MyUdpConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyUdpConnection.h; sourceTree = "<group>"; };
+		D2BEB50E1DDDE5AC0046B4A6 /* MyUdpConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyUdpConnection.m; sourceTree = "<group>"; };
+		D2BEB5101DDDE5D40046B4A6 /* save.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = save.aiff; sourceTree = "<group>"; };
+		D2BEB5111DDDE5D40046B4A6 /* scan_stop.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = scan_stop.aiff; sourceTree = "<group>"; };
+		D2BEB5121DDDE5D40046B4A6 /* scan.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = scan.aiff; sourceTree = "<group>"; };
+		D2BEB5161DDDF4BD0046B4A6 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		D2E196991DBAFF0F00241B3F /* Frameworks */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Frameworks; sourceTree = "<group>"; };
 		D2E1969B1DBAFF4000241B3F /* Structure.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Structure.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -142,6 +153,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D2BEB5171DDDF4BD0046B4A6 /* AudioToolbox.framework in Frameworks */,
 				D2E1969C1DBAFF4000241B3F /* Structure.framework in Frameworks */,
 				D2013B0C1DB3F5B90024D68D /* CoreLocation.framework in Frameworks */,
 				77AAADA31CA5AFA400D91B6C /* Metal.framework in Frameworks */,
@@ -207,6 +219,7 @@
 		2AFC8D76176F966000F7F3B5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D2BEB5161DDDF4BD0046B4A6 /* AudioToolbox.framework */,
 				D2E1969B1DBAFF4000241B3F /* Structure.framework */,
 				D2E196991DBAFF0F00241B3F /* Frameworks */,
 				D2013B0B1DB3F5B90024D68D /* CoreLocation.framework */,
@@ -252,8 +265,13 @@
 				2AD988CA1A643C9D00CB1B94 /* ViewController+SLAM.h */,
 				2AD988CB1A643C9D00CB1B94 /* ViewController+SLAM.mm */,
 				2A35A0161975B8A700D8C0B1 /* MeshViewController.h */,
+				D2BEB50D1DDDE5AC0046B4A6 /* MyUdpConnection.h */,
+				D2BEB50E1DDDE5AC0046B4A6 /* MyUdpConnection.m */,
 				2A35A0171975B8A700D8C0B1 /* MeshViewController.mm */,
 				2D5B856D199CAF7F00F22AB9 /* CustomShaders.h */,
+				D2BEB5101DDDE5D40046B4A6 /* save.aiff */,
+				D2BEB5111DDDE5D40046B4A6 /* scan_stop.aiff */,
+				D2BEB5121DDDE5D40046B4A6 /* scan.aiff */,
 				2D5B856E199CAF7F00F22AB9 /* CustomShaders.mm */,
 				2D5B856F199CAF7F00F22AB9 /* MeshRenderer.h */,
 				2D5B8570199CAF7F00F22AB9 /* MeshRenderer.mm */,
@@ -355,12 +373,15 @@
 				2A40186C19BA8D1E0000CA48 /* measurementTape.png in Resources */,
 				2A35A0421975B8F600D8C0B1 /* ViewController_iPad.xib in Resources */,
 				2A839F92197F111600A5B817 /* innerCircle@2x.png in Resources */,
+				D2BEB5151DDDE5D40046B4A6 /* scan.aiff in Resources */,
 				2A35A0311975B8D100D8C0B1 /* Default-568h@2x.png in Resources */,
 				2A35A0201975B8C800D8C0B1 /* Images.xcassets in Resources */,
+				D2BEB5141DDDE5D40046B4A6 /* scan_stop.aiff in Resources */,
 				2A35A0331975B8D100D8C0B1 /* Default-Landscape~ipad.png in Resources */,
 				2A35A0481975B90F00D8C0B1 /* InfoPlist.strings in Resources */,
 				2A35A0341975B8D100D8C0B1 /* Default@2x.png in Resources */,
 				2AEE4CE71A6DE2D100BEB2F9 /* resetScanButton@2x.png in Resources */,
+				D2BEB5131DDDE5D40046B4A6 /* save.aiff in Resources */,
 				2A839F93197F111600A5B817 /* outerCircle@2x.png in Resources */,
 				2A35A0391975B8D100D8C0B1 /* Splash.png in Resources */,
 				2A35A0321975B8D100D8C0B1 /* Default-Landscape@2x~ipad.png in Resources */,
@@ -380,6 +401,7 @@
 				2A38C13719B8CEE200563312 /* GraphicsRenderer.mm in Sources */,
 				7E2288C9198FE3D300F6E3B2 /* CustomUIKitStyles.mm in Sources */,
 				2D5B8572199CAF7F00F22AB9 /* MeshRenderer.mm in Sources */,
+				D2BEB50F1DDDE5AC0046B4A6 /* MyUdpConnection.m in Sources */,
 				2A839F68197DC88C00A5B817 /* Joystick.mm in Sources */,
 				2AD988CF1A643C9D00CB1B94 /* ViewController+SLAM.mm in Sources */,
 				2AD988CD1A643C9D00CB1B94 /* ViewController+OpenGL.mm in Sources */,
@@ -443,6 +465,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 8JYXP253P4;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					../Frameworks,
@@ -453,10 +476,10 @@
 				GCC_PREFIX_HEADER = "RoomCapture/Tb3dScannerRC-Prefix.pch";
 				INFOPLIST_FILE = "RoomCapture/Tb3dScannerRC-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
-				PRODUCT_BUNDLE_IDENTIFIER = net.16px.Tb3dScannerRC0.7.3;
+				PRODUCT_BUNDLE_IDENTIFIER = net.16px.Tb3dScannerRC0.8.0;
 				PRODUCT_NAME = Tb3dScannerRC;
 				PROVISIONING_PROFILE = "";
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Debug;
 		};
@@ -483,6 +506,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 8JYXP253P4;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					../Frameworks,
@@ -494,10 +518,10 @@
 				INFOPLIST_FILE = "RoomCapture/Tb3dScannerRC-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = net.16px.Tb3dScannerRC0.7.3;
+				PRODUCT_BUNDLE_IDENTIFIER = net.16px.Tb3dScannerRC0.8.0;
 				PRODUCT_NAME = Tb3dScannerRC;
 				PROVISIONING_PROFILE = "";
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Release;
 		};

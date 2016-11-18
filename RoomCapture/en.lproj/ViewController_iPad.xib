@@ -34,6 +34,7 @@
                 <outlet property="mapperDepthThresholdSliderLabel" destination="sxh-4r-Ov9" id="6mu-PF-gY5"/>
                 <outlet property="nearModeSwitch" destination="HQv-7c-q9D" id="Wgb-43-MMb"/>
                 <outlet property="nearModeSwitchLabel" destination="Ybq-4K-QkT" id="mfc-wb-49M"/>
+                <outlet property="receivedMessageUDPLabel" destination="FGH-T7-DZ3" id="8O5-4q-HDR"/>
                 <outlet property="recordGpsSwitch" destination="D4x-hb-61w" id="h2M-4R-GLI"/>
                 <outlet property="recordGpsSwitchLabel" destination="Ybq-4K-QkT" id="JKU-RY-IDB"/>
                 <outlet property="recordToMemorySwitch" destination="si1-Zp-xdO" id="rgA-Sg-EbQ"/>
@@ -60,7 +61,7 @@
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="1" customClass="EAGLView">
-            <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
+            <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="8b4-Zl-yJD" userLabel="Label - Tracking Message">
@@ -537,6 +538,13 @@ Please Realign or Press Reset.</string>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="UDP" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="FGH-T7-DZ3">
+                    <frame key="frameInset" minX="20" minY="48" width="259" height="21"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <gestureRecognizers/>
@@ -551,7 +559,7 @@ Please Realign or Press Reset.</string>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
-        <simulatedOrientationMetrics key="orientation"/>
+        <simulatedOrientationMetrics key="orientation" orientation="landscapeRight"/>
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
 </document>
